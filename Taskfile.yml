@@ -1,0 +1,33 @@
+version: 3
+
+tasks:
+  default:
+    cmds:
+      - echo "Hello, World!"
+    deps:
+      - clean
+      - restore
+      - build
+      - test
+      - deploy
+  clean:
+    cmds:
+      - dotnet clean
+  restore:
+    cmds:
+      - dotnet restore
+  build:
+    cmds:
+      - dotnet build --no-restore
+  test:
+    cmds:
+      - dotnet test
+  bump-alpha:
+    cmds:
+      - versionize --pre-release alpha
+      - git push --follow-tags origin
+  message-pack:
+    cmds:
+      - dotnet mpc -i "src/Elderforge.Network/ElderGloom.Network.csproj" -o "src/Elderforge.Network/Generated/MessagePackGenerated.cs"
+    deps:
+      - restore
