@@ -62,10 +62,9 @@ public class NetworkPacketsTests : IDisposable
     {
         var factory = new NetworkMessageFactory(_messageTypesService);
         var messageDispatcherService = new MessageDispatcherService(
-            _messageTypesService, factory);
-
-      //  factory.RegisterEncoder(new ProtobufEncoder());
-      //  factory.RegisterDecoder(new ProtobufDecoder());
+            _messageTypesService,
+            factory
+        );
 
         messageDispatcherService.RegisterMessageListener<PingMessage>(
             async (s, message) =>
@@ -106,6 +105,5 @@ public class NetworkPacketsTests : IDisposable
 
     public void Dispose()
     {
-
     }
 }
