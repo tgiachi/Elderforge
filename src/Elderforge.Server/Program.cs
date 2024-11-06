@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Elderforge.Network.Server.Extensions;
+using Elderforge.Server.Data;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 
@@ -15,6 +17,16 @@ class Program
         var hostBuilder = Host.CreateDefaultBuilder(args);
 
         hostBuilder.ConfigureLogging(s => { s.ClearProviders().AddSerilog(); });
+
+        hostBuilder.ConfigureServices(
+            (context, services) =>
+            {
+                services
+                    .RegisterNetworkServer<ElderforgeSession>()
+                    .RegisterProtobufEncoder()
+                    .RegisterProtobufDecoder();
+            }
+        );
 
         var host = hostBuilder.Build();
 

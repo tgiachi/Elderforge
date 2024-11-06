@@ -13,7 +13,6 @@ namespace Elderforge.Network.Services;
 public class MessageParserWriterService : IMessageParserWriterService
 {
     public ChannelWriter<SessionNetworkMessage> SessionMessagesWriter => _sessionMessages.Writer;
-
     public ChannelReader<SessionNetworkMessage> SessionMessagesReader => _sessionMessages.Reader;
 
     private readonly ILogger _logger = Log.ForContext<MessageParserWriterService>();
@@ -22,9 +21,7 @@ public class MessageParserWriterService : IMessageParserWriterService
 
     private readonly Channel<SessionNetworkMessage> _sessionMessages = Channel.CreateUnbounded<SessionNetworkMessage>();
 
-
     private readonly INetworkMessageFactory _networkMessageFactory;
-
 
     public MessageParserWriterService(INetworkMessageFactory networkMessageFactory)
     {
