@@ -13,6 +13,7 @@ public static class NetworkMethodExtension
         return services
             .AddSingleton<IMessageTypesService, MessageTypesService>()
             .AddSingleton<INetworkMessageFactory, NetworkMessageFactory>()
+            .AddSingleton<IMessageParserWriterService, MessageParserWriterService>()
             .AddSingleton<IMessageDispatcherService, MessageDispatcherService>();
     }
 

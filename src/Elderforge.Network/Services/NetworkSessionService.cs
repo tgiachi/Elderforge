@@ -1,18 +1,22 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Elderforge.Network.Data.Session;
 using Elderforge.Network.Interfaces.Services;
 using Serilog;
 
 namespace Elderforge.Network.Services;
 
-public class NetworkSessionService<TSessionObject> : INetworkSessionService<TSessionObject> where TSessionObject : class
+public class NetworkSessionService<TSessionData> : INetworkSessionService<TSessionData> where TSessionData : class
 {
-    private readonly ConcurrentDictionary<string, TSessionObject> _sessions = new();
-    private readonly ILogger _logger = Log.ForContext<NetworkSessionService<TSessionObject>>();
+    private readonly ConcurrentDictionary<string, SessionObject<TSessionData>> _sessions = new();
+    private readonly ILogger _logger = Log.ForContext<NetworkSessionService< SessionObject<TSessionData>>>();
 
-    public TSessionObject? GetSessionObject(string sessionId) => _sessions.GetValueOrDefault(sessionId);
+    public SessionObject<TSessionData>? GetSessionObject(string sessionId)
+    {
+        return _sessions.GetValueOrDefault(sessionId);
+    }
 
-    public void AddSession(string sessionId, TSessionObject sessionObject)
+    public void AddSession(string sessionId, SessionObject<TSessionData> sessionObject)
     {
         _logger.Debug("Adding session {sessionId}", sessionId);
         _sessions.TryAdd(sessionId, sessionObject);
