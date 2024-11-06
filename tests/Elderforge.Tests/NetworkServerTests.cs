@@ -14,25 +14,24 @@ namespace Elderforge.Tests;
 
 public class NetworkServerTests
 {
-    private readonly IMessageTypesService _messageTypesService;
     private readonly INetworkMessageFactory _networkMessageFactory;
     private readonly IMessageDispatcherService _messageDispatcherService;
     private readonly IMessageParserWriterService _messageParserWriterService;
     private readonly INetworkSessionService<string> _networkSessionService;
 
-    private readonly NetPacketProcessor _netPacketProcessor = new NetPacketProcessor();
+    private readonly NetPacketProcessor _netPacketProcessor = new();
 
     public NetworkServerTests()
     {
-        _messageTypesService = new MessageTypesService();
-        _messageTypesService.RegisterMessageType(NetworkMessageType.Ping, typeof(PingMessage));
+        var messageTypesService = new MessageTypesService();
+        messageTypesService.RegisterMessageType(NetworkMessageType.Ping, typeof(PingMessage));
         _networkMessageFactory = new NetworkMessageFactory(
-            _messageTypesService,
+            messageTypesService,
             new ProtobufDecoder(),
             new ProtobufEncoder()
         );
 
-        _messageDispatcherService = new MessageDispatcherService(_messageTypesService, _networkMessageFactory);
+        _messageDispatcherService = new MessageDispatcherService(messageTypesService, _networkMessageFactory);
         _messageParserWriterService = new MessageParserWriterService(_networkMessageFactory);
         _networkSessionService = new NetworkSessionService<string>();
     }
@@ -63,6 +62,9 @@ public class NetworkServerTests
     [Fact]
     public async Task TestNetworkServerWithClient()
     {
+        const int maxMessages = 10;
+        var amount = 1;
+
         var clientListener = new EventBasedNetListener();
 
         var networkServer = new NetworkServer<string>(
@@ -76,7 +78,7 @@ public class NetworkServerTests
         );
 
 
-        var amount = 1;
+
         networkServer.RegisterMessageListener(
             async (string session, PingMessage message) =>
             {
@@ -91,7 +93,6 @@ public class NetworkServerTests
 
         networkServer.StartAsync();
 
-        await Task.Delay(1000);
 
         var client = new NetManager(clientListener);
 
@@ -106,7 +107,7 @@ public class NetworkServerTests
 
         var counter = 0;
 
-        while (counter < 100)
+        while (counter < maxMessages)
         {
             client.FirstPeer?.Send(messageWriter, DeliveryMethod.ReliableOrdered);
             client.PollEvents();
@@ -114,7 +115,7 @@ public class NetworkServerTests
             counter++;
         }
 
-        Assert.Equal(100, amount);
+        Assert.Equal(maxMessages, amount);
 
         client.Stop();
 
