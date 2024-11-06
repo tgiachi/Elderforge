@@ -3,6 +3,8 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Interfaces.Messages;
+using Elderforge.Network.Interfaces.Packets;
+using Elderforge.Network.Packets.Base;
 using LiteNetLib;
 using LiteNetLib.Utils;
 
@@ -16,5 +18,5 @@ public interface IMessageParserWriterService
 
     void ReadPackets(NetDataReader reader, NetPeer peer);
 
-    Task WriteMessageAsync(NetPeer peer, NetDataWriter writer, INetworkMessage message);
+    Task WriteMessageAsync(NetPeer peer, NetDataWriter writer, NetworkPacket message);
 }

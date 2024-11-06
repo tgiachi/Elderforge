@@ -2,6 +2,7 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Interfaces.Messages;
+using Elderforge.Network.Interfaces.Packets;
 using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Packets.Base;
 using LiteNetLib;
@@ -44,15 +45,14 @@ public class MessageParserWriterService : IMessageParserWriterService
         _netPacketProcessor.ReadAllPackets(reader, peer);
     }
 
-    public async Task WriteMessageAsync(NetPeer peer, NetDataWriter writer, INetworkMessage message)
+    public async Task WriteMessageAsync(NetPeer peer, NetDataWriter writer, NetworkPacket message)
     {
         writer.Reset();
 
-        var packet = await _networkMessageFactory.SerializeAsync(message);
 
-        _logger.Debug("Writing message to {peerId} type: {Type}", peer.Id, packet.MessageType);
+        _logger.Debug("Writing message to {peerId} type: {Type}", peer.Id, message.MessageType);
 
-        _netPacketProcessor.Write(writer, (NetworkPacket)packet);
+        _netPacketProcessor.Write(writer, message);
 
         peer.Send(writer, DeliveryMethod.ReliableOrdered);
     }
