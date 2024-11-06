@@ -13,7 +13,6 @@ public interface INetworkMessageFactory
 
     void RegisterDecoder(INetworkMessageDecoder decoder);
 
-    void RegisterMessageType(NetworkMessageType messageType, Type type);
 
     Task<INetworkPacket> SerializeAsync<T>(T message) where T : class, INetworkMessage;
 

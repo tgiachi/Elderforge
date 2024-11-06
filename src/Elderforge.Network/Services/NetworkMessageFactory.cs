@@ -1,13 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 using Elderforge.Network.Interfaces.Encoders;
 using Elderforge.Network.Interfaces.Messages;
 using Elderforge.Network.Interfaces.Packets;
 using Elderforge.Network.Interfaces.Services;
-using Elderforge.Network.Types;
 using Serilog;
 
 namespace Elderforge.Network.Services;
@@ -16,11 +12,17 @@ public class NetworkMessageFactory : INetworkMessageFactory
 {
     private readonly ILogger _logger = Log.ForContext<NetworkMessageFactory>();
 
-    private ReadOnlyDictionary<NetworkMessageType, Type> _messageTypes = new(new Dictionary<NetworkMessageType, Type>());
+    private readonly IMessageTypesService _messageTypesService;
+
 
     private INetworkMessageDecoder _decoder;
 
     private INetworkMessageEncoder _encoder;
+
+    public NetworkMessageFactory(IMessageTypesService messageTypesService)
+    {
+        _messageTypesService = messageTypesService;
+    }
 
     public void RegisterEncoder(INetworkMessageEncoder encoder)
     {
@@ -34,27 +36,6 @@ public class NetworkMessageFactory : INetworkMessageFactory
         _logger.Debug("Registered decoder {decoder}", decoder.GetType().Name);
     }
 
-    public void RegisterMessageType(NetworkMessageType messageType, Type type)
-    {
-        if (!typeof(INetworkMessage).IsAssignableFrom(type))
-        {
-            _logger.Error("Type {type} does not implement INetworkMessage", type.Name);
-            throw new ArgumentException("Type does not implement INetworkMessage", nameof(type));
-        }
-
-        if (_messageTypes.ContainsKey(messageType))
-        {
-            _logger.Error("Message type {messageType} is already registered", messageType);
-            throw new ArgumentException("Message type is already registered", nameof(messageType));
-        }
-
-
-        _logger.Debug("Registered message type {messageType} with type {type}", messageType, type.Name);
-
-        var dictionary = new Dictionary<NetworkMessageType, Type>(_messageTypes) { { messageType, type } };
-
-        _messageTypes = new ReadOnlyDictionary<NetworkMessageType, Type>(dictionary);
-    }
 
     public async Task<INetworkPacket> SerializeAsync<T>(T message) where T : class, INetworkMessage
     {
@@ -65,9 +46,7 @@ public class NetworkMessageFactory : INetworkMessageFactory
         }
 
 
-        var messageType = _messageTypes.FirstOrDefault(x => x.Value == message.GetType()).Key;
-
-        return _encoder.Encode(message, messageType);
+        return _encoder.Encode(message, _messageTypesService.GetMessageType(typeof(T)));
     }
 
     public async Task<INetworkMessage> ParseAsync(INetworkPacket packet)
@@ -78,13 +57,8 @@ public class NetworkMessageFactory : INetworkMessageFactory
             throw new InvalidOperationException("No message decoder registered");
         }
 
-        if (!_messageTypes.TryGetValue(packet.MessageType, out var type))
-        {
-            _logger.Error("No message type registered for {messageType}", packet.MessageType);
-            throw new InvalidOperationException("No message type registered");
-        }
 
-        var message = _decoder.Decode(packet, type);
+        var message = _decoder.Decode(packet, _messageTypesService.GetMessageType(packet.MessageType));
 
         return message;
     }

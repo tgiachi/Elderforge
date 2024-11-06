@@ -1,4 +1,5 @@
 ﻿using Elderforge.Network.Encoders;
+using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Packets;
 using Elderforge.Network.Services;
 using Elderforge.Network.Types;
@@ -7,15 +8,22 @@ namespace Elderforge.Tests;
 
 public class NetworkPacketsTests
 {
+    private readonly IMessageTypesService _messageTypesService;
+
+
+    public NetworkPacketsTests()
+    {
+        _messageTypesService = new MessageTypesService();
+        _messageTypesService.RegisterMessageType(NetworkMessageType.Ping, typeof(PingMessage));
+    }
+
     [Fact]
     public async Task TestPacketBuild()
     {
-        var networkMessageFactory = new NetworkMessageFactory();
+        var networkMessageFactory = new NetworkMessageFactory(_messageTypesService);
 
         networkMessageFactory.RegisterEncoder(new ProtobufEncoder());
         networkMessageFactory.RegisterDecoder(new ProtobufDecoder());
-
-        networkMessageFactory.RegisterMessageType(NetworkMessageType.Ping, typeof(PingMessage));
 
 
         var pingMessage = new PingMessage(DateTime.Now);
@@ -28,12 +36,11 @@ public class NetworkPacketsTests
     [Fact]
     public async Task TestPacketParse()
     {
-        var networkMessageFactory = new NetworkMessageFactory();
+        var networkMessageFactory = new NetworkMessageFactory(_messageTypesService);
 
         networkMessageFactory.RegisterEncoder(new ProtobufEncoder());
         networkMessageFactory.RegisterDecoder(new ProtobufDecoder());
 
-        networkMessageFactory.RegisterMessageType(NetworkMessageType.Ping, typeof(PingMessage));
 
         var pingMessage = new PingMessage(DateTime.Now);
 
@@ -46,5 +53,11 @@ public class NetworkPacketsTests
         Assert.NotNull(parsedMessage);
 
         Assert.Equal(pingMessage.Timestamp, parsedMessage.Timestamp);
+    }
+
+
+    [Fact]
+    public async Task TestMessageDispatcher()
+    {
     }
 }
