@@ -11,6 +11,9 @@ namespace Elderforge.Network.Server.Services;
 
 public class NetworkServer<TSession> : INetworkServer where TSession : class
 {
+    public bool IsRunning { get; private set; }
+
+
     private readonly ILogger _logger = Log.ForContext<INetworkServer>();
 
     private readonly IMessageDispatcherService _messageDispatcherService;
@@ -70,7 +73,6 @@ public class NetworkServer<TSession> : INetworkServer where TSession : class
                 _netServer.PollEvents();
             }
 
-
             await Task.Delay(15);
         }
     }
@@ -125,11 +127,14 @@ public class NetworkServer<TSession> : INetworkServer where TSession : class
         _networkSessionService.AddSession(peer.Id.ToString(), new SessionObject<TSession>(peer, default));
     }
 
+
     public Task StartAsync()
     {
         _logger.Information("Starting server on port: {Port}", _config.Port);
 
         _netServer.Start(_config.Port);
+
+        IsRunning = true;
 
         return Task.CompletedTask;
     }
@@ -139,6 +144,8 @@ public class NetworkServer<TSession> : INetworkServer where TSession : class
         _logger.Information("Stopping server");
 
         _netServer.Stop();
+
+        IsRunning = false;
 
         return Task.CompletedTask;
     }
