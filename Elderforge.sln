@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elderforge.Tests", "tests\E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elderforge.Core", "src\Elderforge.Core\Elderforge.Core.csproj", "{110D58E5-271D-4F8C-9BB1-ECA6659E1975}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elderforge.Server", "src\Elderforge.Server\Elderforge.Server.csproj", "{FFB07ADE-F69C-4C2F-880D-DF94E2B3E1F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elderforge.Network.Server", "src\Elderforge.Network.Server\Elderforge.Network.Server.csproj", "{DE0C1B90-7A95-4BE4-BDEC-B76BC93450D6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,13 @@ Global
 		{110D58E5-271D-4F8C-9BB1-ECA6659E1975}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{110D58E5-271D-4F8C-9BB1-ECA6659E1975}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{110D58E5-271D-4F8C-9BB1-ECA6659E1975}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFB07ADE-F69C-4C2F-880D-DF94E2B3E1F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFB07ADE-F69C-4C2F-880D-DF94E2B3E1F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFB07ADE-F69C-4C2F-880D-DF94E2B3E1F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFB07ADE-F69C-4C2F-880D-DF94E2B3E1F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE0C1B90-7A95-4BE4-BDEC-B76BC93450D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE0C1B90-7A95-4BE4-BDEC-B76BC93450D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE0C1B90-7A95-4BE4-BDEC-B76BC93450D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE0C1B90-7A95-4BE4-BDEC-B76BC93450D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

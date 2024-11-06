@@ -21,10 +21,11 @@ public class NetworkPacketsTests : IDisposable
     [Fact]
     public async Task TestPacketBuild()
     {
-        var networkMessageFactory = new NetworkMessageFactory(_messageTypesService);
-
-        networkMessageFactory.RegisterEncoder(new ProtobufEncoder());
-        networkMessageFactory.RegisterDecoder(new ProtobufDecoder());
+        var networkMessageFactory = new NetworkMessageFactory(
+            _messageTypesService,
+            new ProtobufDecoder(),
+            new ProtobufEncoder()
+        );
 
 
         var pingMessage = new PingMessage(DateTime.Now);
@@ -37,11 +38,11 @@ public class NetworkPacketsTests : IDisposable
     [Fact]
     public async Task TestPacketParse()
     {
-        var networkMessageFactory = new NetworkMessageFactory(_messageTypesService);
-
-        networkMessageFactory.RegisterEncoder(new ProtobufEncoder());
-        networkMessageFactory.RegisterDecoder(new ProtobufDecoder());
-
+        var networkMessageFactory = new NetworkMessageFactory(
+            _messageTypesService,
+            new ProtobufDecoder(),
+            new ProtobufEncoder()
+        );
 
         var pingMessage = new PingMessage(DateTime.Now);
 
@@ -60,7 +61,7 @@ public class NetworkPacketsTests : IDisposable
     [Fact]
     public async Task TestMessageDispatcherWithDispatchMessage()
     {
-        var factory = new NetworkMessageFactory(_messageTypesService);
+        var factory = new NetworkMessageFactory(_messageTypesService, new ProtobufDecoder(), new ProtobufEncoder());
         var messageDispatcherService = new MessageDispatcherService(
             _messageTypesService,
             factory
@@ -82,9 +83,8 @@ public class NetworkPacketsTests : IDisposable
     [Fact]
     public async Task TestMessageDispatcherWithChannelWriter()
     {
-        var factory = new NetworkMessageFactory(_messageTypesService);
-        factory.RegisterEncoder(new ProtobufEncoder());
-        factory.RegisterDecoder(new ProtobufDecoder());
+        var factory = new NetworkMessageFactory(_messageTypesService, new ProtobufDecoder(), new ProtobufEncoder());
+
         var messageDispatcherService = new MessageDispatcherService(_messageTypesService, factory);
 
         messageDispatcherService.RegisterMessageListener<PingMessage>(

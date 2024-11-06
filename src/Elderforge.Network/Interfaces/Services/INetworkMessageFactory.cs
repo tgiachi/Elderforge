@@ -9,11 +9,6 @@ namespace Elderforge.Network.Interfaces.Services;
 
 public interface INetworkMessageFactory
 {
-    void RegisterEncoder(INetworkMessageEncoder encoder);
-
-    void RegisterDecoder(INetworkMessageDecoder decoder);
-
-
     Task<INetworkPacket> SerializeAsync<T>(T message) where T : class, INetworkMessage;
 
     Task<INetworkMessage> ParseAsync(INetworkPacket packet);

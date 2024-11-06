@@ -16,27 +16,18 @@ public class NetworkMessageFactory : INetworkMessageFactory
 
     private readonly IMessageTypesService _messageTypesService;
 
+    private readonly INetworkMessageDecoder _decoder;
 
-    private INetworkMessageDecoder _decoder;
+    private readonly INetworkMessageEncoder _encoder;
 
-    private INetworkMessageEncoder _encoder;
-
-    public NetworkMessageFactory(IMessageTypesService messageTypesService)
+    public NetworkMessageFactory(IMessageTypesService messageTypesService, INetworkMessageDecoder decoder, INetworkMessageEncoder encoder)
     {
         _messageTypesService = messageTypesService;
-    }
-
-    public void RegisterEncoder(INetworkMessageEncoder encoder)
-    {
-        _encoder = encoder;
-        _logger.Debug("Registered encoder {encoder}", encoder.GetType().Name);
-    }
-
-    public void RegisterDecoder(INetworkMessageDecoder decoder)
-    {
         _decoder = decoder;
-        _logger.Debug("Registered decoder {decoder}", decoder.GetType().Name);
+        _encoder = encoder;
     }
+
+
 
 
     public async Task<INetworkPacket> SerializeAsync<T>(T message) where T : class, INetworkMessage
