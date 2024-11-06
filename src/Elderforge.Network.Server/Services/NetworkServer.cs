@@ -50,14 +50,13 @@ public class NetworkServer<TSession> : INetworkServer where TSession : class
         _serverListener.PeerDisconnectedEvent += OnPeerDisconnection;
         _serverListener.NetworkReceiveEvent += OnNetworkEvent;
 
+        _messageDispatcherService.SetOutgoingMessagesChannel(_outgoingMessagesChannel);
+
+        _netServer = new NetManager(_serverListener);
 
         _poolEventTask = ServerPoolEvents();
         _readMessageChannelTask = ReadMessageChannel();
         _outputMessageChannelTask = WriteMessageChannel();
-
-        _messageDispatcherService.SetOutgoingMessagesChannel(_outgoingMessagesChannel);
-
-        _netServer = new NetManager(_serverListener);
     }
 
     private async Task ServerPoolEvents()
@@ -66,7 +65,11 @@ public class NetworkServer<TSession> : INetworkServer where TSession : class
 
         while (!_readMessageCancellationTokenSource.Token.IsCancellationRequested)
         {
-            _netServer.PollEvents();
+            if (_netServer.IsRunning)
+            {
+                _netServer.PollEvents();
+            }
+
 
             await Task.Delay(15);
         }

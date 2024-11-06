@@ -1,5 +1,8 @@
-﻿using Elderforge.Network.Server.Extensions;
+﻿using Elderforge.Network.Interfaces.Services;
+using Elderforge.Network.Server.Data;
+using Elderforge.Network.Server.Extensions;
 using Elderforge.Server.Data;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -25,11 +28,17 @@ class Program
                     .RegisterNetworkServer<ElderforgeSession>()
                     .RegisterProtobufEncoder()
                     .RegisterProtobufDecoder();
+
+                services.AddSingleton(new NetworkServerConfig());
             }
         );
 
         var host = hostBuilder.Build();
 
+
+        var server = host.Services.GetService<INetworkServer>();
+
+        await server.StartAsync();
 
         await host.RunAsync();
     }
