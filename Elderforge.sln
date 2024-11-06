@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elderforge.Network", "src\E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elderforge.Tests", "tests\Elderforge.Tests\Elderforge.Tests.csproj", "{8D74D541-AD1B-4402-BE24-7ABCBD0ABCB2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elderforge.Core", "src\Elderforge.Core\Elderforge.Core.csproj", "{110D58E5-271D-4F8C-9BB1-ECA6659E1975}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{8D74D541-AD1B-4402-BE24-7ABCBD0ABCB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D74D541-AD1B-4402-BE24-7ABCBD0ABCB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D74D541-AD1B-4402-BE24-7ABCBD0ABCB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{110D58E5-271D-4F8C-9BB1-ECA6659E1975}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{110D58E5-271D-4F8C-9BB1-ECA6659E1975}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{110D58E5-271D-4F8C-9BB1-ECA6659E1975}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{110D58E5-271D-4F8C-9BB1-ECA6659E1975}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

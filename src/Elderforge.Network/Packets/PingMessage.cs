@@ -14,8 +14,5 @@ public class PingMessage : INetworkMessage
     {
     }
 
-    public PingMessage(DateTime dateTime)
-    {
-        Timestamp = dateTime.Ticks;
-    }
+    public PingMessage(DateTime dateTime) => Timestamp = dateTime.Ticks;
 }

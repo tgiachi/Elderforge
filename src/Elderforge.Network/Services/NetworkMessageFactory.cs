@@ -1,5 +1,7 @@
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
+using Elderforge.Core.Utils;
 using Elderforge.Network.Interfaces.Encoders;
 using Elderforge.Network.Interfaces.Messages;
 using Elderforge.Network.Interfaces.Packets;
@@ -45,8 +47,20 @@ public class NetworkMessageFactory : INetworkMessageFactory
             throw new InvalidOperationException("No message encoder registered");
         }
 
+        var startTime = Stopwatch.GetTimestamp();
 
-        return _encoder.Encode(message, _messageTypesService.GetMessageType(typeof(T)));
+
+        var encodedNetworkPacket = _encoder.Encode(message, _messageTypesService.GetMessageType(typeof(T)));
+
+        var endTime = Stopwatch.GetTimestamp();
+
+        _logger.Debug(
+            "Encoding message of type {messageType} took {time}ms",
+            typeof(T).Name,
+            StopwatchUtils.GetElapsedMilliseconds(startTime, endTime)
+        );
+
+        return encodedNetworkPacket;
     }
 
     public async Task<INetworkMessage> ParseAsync(INetworkPacket packet)
@@ -57,8 +71,17 @@ public class NetworkMessageFactory : INetworkMessageFactory
             throw new InvalidOperationException("No message decoder registered");
         }
 
+        var startTime = Stopwatch.GetTimestamp();
 
         var message = _decoder.Decode(packet, _messageTypesService.GetMessageType(packet.MessageType));
+
+        var endTime = Stopwatch.GetTimestamp();
+
+        _logger.Debug(
+            "Decoding message of type {messageType} took {time}ms",
+            message.GetType().Name,
+            StopwatchUtils.GetElapsedMilliseconds(startTime, endTime)
+        );
 
         return message;
     }

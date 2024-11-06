@@ -16,5 +16,8 @@ public class SessionNetworkMessage
 
     public SessionNetworkMessage()
     {
+
     }
+
+    public override string ToString() => $"SessionId: {SessionId}, Packet: {Packet.GetType()}";
 }

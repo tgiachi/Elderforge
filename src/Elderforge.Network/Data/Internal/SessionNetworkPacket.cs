@@ -17,4 +17,6 @@ public class SessionNetworkPacket
     public SessionNetworkPacket()
     {
     }
+
+    public override string ToString() => $"SessionId: {SessionId}, Packet: {Packet.MessageType}";
 }
