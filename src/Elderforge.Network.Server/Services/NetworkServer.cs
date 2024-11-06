@@ -1,6 +1,8 @@
 using System.Threading.Channels;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Data.Session;
+using Elderforge.Network.Interfaces.Listeners;
+using Elderforge.Network.Interfaces.Messages;
 using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Packets.Base;
 using Elderforge.Network.Server.Data;
@@ -148,6 +150,19 @@ public class NetworkServer<TSession> : INetworkServer where TSession : class
         IsRunning = false;
 
         return Task.CompletedTask;
+    }
+
+    public void RegisterMessageListener<TMessage>(INetworkMessageListener<TMessage> listener)
+        where TMessage : class, INetworkMessage
+    {
+        _messageDispatcherService.RegisterMessageListener(listener);
+    }
+
+    public void RegisterMessageListener<TMessage>(
+        Func<string, TMessage, ValueTask<IEnumerable<SessionNetworkMessage>>> listener
+    ) where TMessage : class, INetworkMessage
+    {
+        _messageDispatcherService.RegisterMessageListener(listener);
     }
 
     public void Dispose()

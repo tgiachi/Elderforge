@@ -1,3 +1,4 @@
+using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Encoders;
 using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Packets;
@@ -74,11 +75,25 @@ public class NetworkServerTests
             }
         );
 
+
+        var amount = 1;
+        networkServer.RegisterMessageListener(
+            async (string session, PingMessage message) =>
+            {
+                Assert.NotNull(message);
+                Assert.NotNull(session);
+
+                Interlocked.Add(ref amount, 1);
+
+                return ArraySegment<SessionNetworkMessage>.Empty;
+            }
+        );
+
         networkServer.StartAsync();
 
         await Task.Delay(1000);
 
-        var _client = new NetManager(clientListener);
+        var client = new NetManager(clientListener);
 
         var message = new PingMessage();
         var packet = await _networkMessageFactory.SerializeAsync(message);
@@ -86,18 +101,23 @@ public class NetworkServerTests
 
         _netPacketProcessor.Write(messageWriter, (NetworkPacket)packet);
 
-
-        _client.Start();
-        _client.Connect("localhost", new NetworkServerConfig().Port, string.Empty);
+        client.Start();
+        client.Connect("localhost", new NetworkServerConfig().Port, string.Empty);
 
         var counter = 0;
 
         while (counter < 100)
         {
-            _client.FirstPeer?.Send(messageWriter, DeliveryMethod.ReliableOrdered);
-            _client.PollEvents();
+            client.FirstPeer?.Send(messageWriter, DeliveryMethod.ReliableOrdered);
+            client.PollEvents();
             await Task.Delay(100);
             counter++;
         }
+
+        Assert.Equal(100, amount);
+
+        client.Stop();
+
+        networkServer.StopAsync();
     }
 }
