@@ -12,6 +12,7 @@ public class PingMessage : INetworkMessage
 
     public PingMessage()
     {
+        Timestamp = DateTime.UtcNow.Ticks;
     }
 
     public PingMessage(DateTime dateTime) => Timestamp = dateTime.Ticks;
