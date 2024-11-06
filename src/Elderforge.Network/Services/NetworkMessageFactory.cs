@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Elderforge.Network.Interfaces.Encoders;
 using Elderforge.Network.Interfaces.Messages;
@@ -15,7 +16,7 @@ public class NetworkMessageFactory : INetworkMessageFactory
 {
     private readonly ILogger _logger = Log.ForContext<NetworkMessageFactory>();
 
-    private ReadOnlyDictionary<NetworkMessageType, Type> _messageTypes;
+    private ReadOnlyDictionary<NetworkMessageType, Type> _messageTypes = new(new Dictionary<NetworkMessageType, Type>());
 
     private INetworkMessageDecoder _decoder;
 
@@ -63,10 +64,10 @@ public class NetworkMessageFactory : INetworkMessageFactory
             throw new InvalidOperationException("No message encoder registered");
         }
 
-        var bytes = _encoder.Encode(message);
 
+        var messageType = _messageTypes.FirstOrDefault(x => x.Value == message.GetType()).Key;
 
-        return bytes;
+        return _encoder.Encode(message, messageType);
     }
 
     public async Task<INetworkMessage> ParseAsync(INetworkPacket packet)
