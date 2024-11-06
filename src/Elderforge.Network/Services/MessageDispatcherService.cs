@@ -22,8 +22,9 @@ public class MessageDispatcherService : IMessageDispatcherService
     private readonly IMessageTypesService _messageTypesService;
     private readonly INetworkMessageFactory _networkMessageFactory;
 
-    private readonly Channel<SessionNetworkPacket> _incomingMessages;
+    private readonly Task _dispatchIncomingMessagesTask;
 
+    private readonly Channel<SessionNetworkPacket> _incomingMessages;
 
     private ChannelWriter<SessionNetworkPacket>? _outgoingMessages;
 
@@ -45,15 +46,22 @@ public class MessageDispatcherService : IMessageDispatcherService
                 AllowSynchronousContinuations = false
             }
         );
+
+        _dispatchIncomingMessagesTask = Task.Run(DispatchIncomingMessages);
     }
 
     private async Task DispatchIncomingMessages()
     {
-        await foreach (var message in _incomingMessages.Reader.ReadAllAsync(_incomingMessagesCancellationTokenSource.Token))
+        while (!_incomingMessagesCancellationTokenSource.Token.IsCancellationRequested)
         {
-            var parsedMessage = await _networkMessageFactory.ParseAsync(message.Packet);
+            await foreach (var message in _incomingMessages.Reader.ReadAllAsync(
+                               _incomingMessagesCancellationTokenSource.Token
+                           ))
+            {
+                var parsedMessage = await _networkMessageFactory.ParseAsync(message.Packet);
 
-            DispatchMessage(message.SessionId, parsedMessage);
+                DispatchMessage(message.SessionId, parsedMessage);
+            }
         }
     }
 
@@ -124,8 +132,11 @@ public class MessageDispatcherService : IMessageDispatcherService
         _outgoingMessages = outgoingMessages;
     }
 
+    public ChannelWriter<SessionNetworkPacket> GetOutgoingMessagesChannel() => _incomingMessages.Writer;
+
     public void Dispose()
     {
+        _dispatchIncomingMessagesTask.Wait();
         _incomingMessages.Writer.Complete();
         _incomingMessagesCancellationTokenSource.Cancel();
         _incomingMessagesCancellationTokenSource.Dispose();

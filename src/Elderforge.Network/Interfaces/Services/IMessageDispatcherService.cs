@@ -19,4 +19,7 @@ public interface IMessageDispatcherService : IDisposable
     void DispatchMessage<TMessage>(string sessionId, TMessage message) where TMessage : class, INetworkMessage;
 
     void SetOutgoingMessagesChannel(ChannelWriter<SessionNetworkPacket> outgoingMessages);
+
+    ChannelWriter<SessionNetworkPacket> GetOutgoingMessagesChannel();
+
 }

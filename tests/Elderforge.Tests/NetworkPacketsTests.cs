@@ -1,4 +1,5 @@
-﻿using Elderforge.Network.Encoders;
+﻿using Elderforge.Network.Data.Internal;
+using Elderforge.Network.Encoders;
 using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Packets;
 using Elderforge.Network.Services;
@@ -6,7 +7,7 @@ using Elderforge.Network.Types;
 
 namespace Elderforge.Tests;
 
-public class NetworkPacketsTests
+public class NetworkPacketsTests : IDisposable
 {
     private readonly IMessageTypesService _messageTypesService;
 
@@ -57,7 +58,54 @@ public class NetworkPacketsTests
 
 
     [Fact]
-    public async Task TestMessageDispatcher()
+    public async Task TestMessageDispatcherWithDispatchMessage()
     {
+        var factory = new NetworkMessageFactory(_messageTypesService);
+        var messageDispatcherService = new MessageDispatcherService(
+            _messageTypesService, factory);
+
+      //  factory.RegisterEncoder(new ProtobufEncoder());
+      //  factory.RegisterDecoder(new ProtobufDecoder());
+
+        messageDispatcherService.RegisterMessageListener<PingMessage>(
+            async (s, message) =>
+            {
+                Assert.NotNull(message);
+                return Array.Empty<SessionNetworkMessage>();
+            }
+        );
+
+        var pingMessage = new PingMessage(DateTime.Now);
+
+        messageDispatcherService.DispatchMessage(string.Empty, pingMessage);
+    }
+
+    [Fact]
+    public async Task TestMessageDispatcherWithChannelWriter()
+    {
+        var factory = new NetworkMessageFactory(_messageTypesService);
+        factory.RegisterEncoder(new ProtobufEncoder());
+        factory.RegisterDecoder(new ProtobufDecoder());
+        var messageDispatcherService = new MessageDispatcherService(_messageTypesService, factory);
+
+        messageDispatcherService.RegisterMessageListener<PingMessage>(
+            async (s, message) =>
+            {
+                Assert.NotNull(message);
+                return Array.Empty<SessionNetworkMessage>();
+            }
+        );
+
+        var pingMessage = new PingMessage(DateTime.Now);
+
+        var packet = await factory.SerializeAsync(pingMessage);
+
+
+        messageDispatcherService.GetOutgoingMessagesChannel().TryWrite(new SessionNetworkPacket(string.Empty, packet));
+    }
+
+    public void Dispose()
+    {
+
     }
 }
