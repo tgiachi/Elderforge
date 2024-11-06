@@ -1,6 +1,10 @@
-﻿using Elderforge.Network.Interfaces.Services;
+﻿using Elderforge.Core.Extensions;
+using Elderforge.Network.Data.Internal;
+using Elderforge.Network.Interfaces.Services;
+using Elderforge.Network.Packets;
 using Elderforge.Network.Server.Data;
 using Elderforge.Network.Server.Extensions;
+using Elderforge.Network.Types;
 using Elderforge.Server.Data;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,6 +18,7 @@ class Program
     private static async Task Main(string[] args)
     {
         Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Debug()
             .WriteTo.Console()
             .CreateLogger();
 
@@ -24,6 +29,8 @@ class Program
         hostBuilder.ConfigureServices(
             (context, services) =>
             {
+                services.AddToRegisterTypedList(new MessageTypeObject(NetworkMessageType.Ping, typeof(PingMessage)));
+
                 services
                     .RegisterNetworkServer<ElderforgeSession>()
                     .RegisterProtobufEncoder()

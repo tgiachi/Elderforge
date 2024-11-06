@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Interfaces.Messages;
 using Elderforge.Network.Interfaces.Services;
+using Elderforge.Network.Packets;
 using Elderforge.Network.Types;
 using Serilog;
 
@@ -14,6 +16,18 @@ public class MessageTypesService : IMessageTypesService
     private readonly ILogger _logger = Log.ForContext<MessageTypesService>();
 
     private ReadOnlyDictionary<NetworkMessageType, Type> _messageTypes = new(new Dictionary<NetworkMessageType, Type>());
+
+    public MessageTypesService(List<MessageTypeObject>? messageTypes = null)
+    {
+        if (messageTypes != null)
+        {
+            foreach (var messageType in messageTypes)
+            {
+                RegisterMessageType(messageType.MessageType, messageType.Type);
+            }
+        }
+    }
+
 
     public Type GetMessageType(NetworkMessageType messageType)
     {
