@@ -3,6 +3,7 @@ using CommandLine;
 using Elderforge.Core.Extensions;
 using Elderforge.Core.Interfaces.Services;
 using Elderforge.Core.Server.Data;
+using Elderforge.Core.Server.Interfaces.Services;
 using Elderforge.Core.Server.Types;
 using Elderforge.Core.Services;
 using Elderforge.Network.Data.Internal;
@@ -15,6 +16,7 @@ using Elderforge.Network.Types;
 using Elderforge.Server.Data;
 using Elderforge.Server.Extensions;
 using Elderforge.Server.HostingService;
+using Elderforge.Server.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -95,7 +97,9 @@ class Program
         hostBuilder.Services.AddSingleton(directoriesConfig);
 
 
-        hostBuilder.Services.AddSingleton<IEventBusService, EventBusService>();
+        hostBuilder.Services
+            .AddSingleton<IEventBusService, EventBusService>()
+            .AddSingleton<IChatService, ChatService>();
 
         hostBuilder.Services.AddAutoStartService<INetworkServer>();
 

@@ -10,10 +10,12 @@ public class ChatService : IChatService, INetworkMessageListener<ChatMessage>
 {
     private readonly ILogger _logger = Log.Logger.ForContext<ChatService>();
 
-    
 
-    public ValueTask<IEnumerable<SessionNetworkMessage>> OnMessageReceivedAsync(string sessionId, ChatMessage message)
+
+    public async ValueTask<IEnumerable<SessionNetworkMessage>> OnMessageReceivedAsync(string sessionId, ChatMessage message)
     {
 
+
+        return [];
     }
 }
