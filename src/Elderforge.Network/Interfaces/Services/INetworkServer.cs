@@ -21,4 +21,7 @@ public interface INetworkServer : IDisposable, IElderforgeService
 
     void RegisterMessageListener<TMessage>(Func<string, TMessage, ValueTask<IEnumerable<SessionNetworkMessage>>> listener)
         where TMessage : class, INetworkMessage;
+
+
+    void Send
 }
