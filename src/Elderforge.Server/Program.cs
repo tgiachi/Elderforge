@@ -81,10 +81,13 @@ class Program
 
 
         hostBuilder.Services
-            .AddToRegisterTypedList(new MessageTypeObject(NetworkMessageType.Ping, typeof(PingMessage)))
             .RegisterNetworkServer<ElderforgeSession>()
             .RegisterProtobufEncoder()
             .RegisterProtobufDecoder();
+
+
+        hostBuilder.Services
+            .RegisterNetworkMessage<PingMessage>(NetworkMessageType.Ping);
 
         hostBuilder.Services.AddSingleton(directoriesConfig);
 

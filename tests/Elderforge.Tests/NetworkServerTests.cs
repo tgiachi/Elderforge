@@ -119,6 +119,8 @@ public class NetworkServerTests
             counter++;
         }
 
+        Assert.True(amount >= 0);
+
 
         client.Stop();
 
