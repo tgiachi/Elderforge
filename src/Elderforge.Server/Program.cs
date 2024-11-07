@@ -8,6 +8,7 @@ using Elderforge.Network.Server.Extensions;
 using Elderforge.Network.Types;
 using Elderforge.Server.Data;
 using Elderforge.Server.Extensions;
+using Elderforge.Server.HostingService;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -38,7 +39,8 @@ class Program
                         }
                     );
                 }
-            );
+            )
+            .WithNotParsed(_ => Environment.Exit(1));
 
 
         hostBuilder.Logging.ClearProviders().AddSerilog();
@@ -46,10 +48,14 @@ class Program
         hostBuilder.Services
             .AddToRegisterTypedList(new MessageTypeObject(NetworkMessageType.Ping, typeof(PingMessage)))
             .RegisterNetworkServer<ElderforgeSession>()
-            .RegisterProtobufEncoder();
+            .RegisterProtobufEncoder()
+            .RegisterProtobufDecoder();
 
 
         hostBuilder.Services.AddAutoStartService<INetworkServer>();
+
+
+        hostBuilder.Services.AddHostedService<AutoStartHostingService>();
 
         var host = hostBuilder.Build();
 
