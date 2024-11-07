@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using Elderforge.Core.Extensions;
+using Elderforge.Core.Server.Data;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Packets;
@@ -20,15 +21,10 @@ class Program
 {
     private static async Task Main(string[] args)
     {
-        Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
-            .WriteTo.Console()
-            .CreateLogger();
-
         var hostBuilder = Host.CreateApplicationBuilder(args);
 
 
-        Parser.Default.ParseArguments<ElderforgeServerOptions>(args)
+        var options = Parser.Default.ParseArguments<ElderforgeServerOptions>(args)
             .WithParsed(
                 s =>
                 {
@@ -43,13 +39,41 @@ class Program
             .WithNotParsed(_ => Environment.Exit(1));
 
 
+        var loggerConfiguration = new LoggerConfiguration();
+
+        if (options.Value.IsDebug)
+        {
+            loggerConfiguration = loggerConfiguration.MinimumLevel.Debug();
+        }
+        else
+        {
+            loggerConfiguration.MinimumLevel.Information();
+        }
+
+        Log.Logger = loggerConfiguration.CreateLogger();
+
+
         hostBuilder.Logging.ClearProviders().AddSerilog();
+
+        if (string.IsNullOrEmpty(options.Value.RootDirectory) ||
+            string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("ELDERFORGE_ROOT_DIRECTORY")))
+        {
+            options.Value.RootDirectory = Path.Combine(Directory.GetCurrentDirectory(), "elderforge");
+        }
+
+        if (Environment.GetEnvironmentVariable("ELDERFORGE_ROOT_DIRECTORY") != null)
+        {
+            options.Value.RootDirectory = Environment.GetEnvironmentVariable("ELDERFORGE_ROOT_DIRECTORY");
+        }
+
 
         hostBuilder.Services
             .AddToRegisterTypedList(new MessageTypeObject(NetworkMessageType.Ping, typeof(PingMessage)))
             .RegisterNetworkServer<ElderforgeSession>()
             .RegisterProtobufEncoder()
             .RegisterProtobufDecoder();
+
+        hostBuilder.Services.AddSingleton(new DirectoriesConfig(options.Value.RootDirectory));
 
 
         hostBuilder.Services.AddAutoStartService<INetworkServer>();

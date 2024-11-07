@@ -32,8 +32,17 @@ public class AutoStartHostingService : IHostedService
         }
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
+    public async Task StopAsync(CancellationToken cancellationToken)
     {
-        return Task.CompletedTask;
+        foreach (var serviceType in _autoStartServices.OrderByDescending(s => s.Priority))
+        {
+            _logger.Information("Stopping service: {Service}", serviceType.ServiceType.Name);
+            var service = _serviceProvider.GetService(serviceType.ServiceType);
+
+            if (service is IElderforgeService elderforgeService)
+            {
+                await elderforgeService.StopAsync();
+            }
+        }
     }
 }

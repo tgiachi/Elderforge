@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Elderforge.Core.Extensions;
 
-public static class JsonServiceCollection
+public static class JsonServiceCollectionExtension
 {
     public static IServiceCollection RegisterDefaultJsonOptions(this IServiceCollection services)
     {

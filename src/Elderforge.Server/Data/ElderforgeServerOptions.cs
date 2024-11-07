@@ -10,4 +10,9 @@ public class ElderforgeServerOptions
     [Option('p', "port", Required = false, HelpText = "The port the server will listen on.")]
     public int Port { get; set; } = 5000;
 
+
+    [Option('d', "debug", Required = true, HelpText = "Whether the server should run in debug mode.")]
+    public bool IsDebug { get; set; }
+
 }
+
