@@ -8,6 +8,7 @@ using Elderforge.Core.Services;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Packets;
+using Elderforge.Network.Packets.Chat;
 using Elderforge.Network.Server.Data;
 using Elderforge.Network.Server.Extensions;
 using Elderforge.Network.Types;
@@ -87,7 +88,9 @@ class Program
 
 
         hostBuilder.Services
-            .RegisterNetworkMessage<PingMessage>(NetworkMessageType.Ping);
+            .RegisterNetworkMessage<PingMessage>(NetworkMessageType.Ping)
+            .RegisterNetworkMessage<ChatMessage>(NetworkMessageType.Chat)
+            ;
 
         hostBuilder.Services.AddSingleton(directoriesConfig);
 
