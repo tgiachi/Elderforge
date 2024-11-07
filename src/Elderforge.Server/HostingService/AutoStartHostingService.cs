@@ -1,4 +1,5 @@
 using Elderforge.Core.Interfaces.Services;
+using Elderforge.Core.Interfaces.Services.Base;
 using Elderforge.Server.Data.Services;
 using Microsoft.Extensions.Hosting;
 using Serilog;

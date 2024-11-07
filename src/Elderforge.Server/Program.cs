@@ -1,7 +1,10 @@
-﻿using CommandLine;
+﻿using System.Globalization;
+using CommandLine;
 using Elderforge.Core.Extensions;
+using Elderforge.Core.Interfaces.Services;
 using Elderforge.Core.Server.Data;
 using Elderforge.Core.Server.Types;
+using Elderforge.Core.Services;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Packets;
@@ -70,8 +73,9 @@ class Program
         Log.Logger = loggerConfiguration
             .WriteTo.Console()
             .WriteTo.File(
-                Path.Combine(directoriesConfig[DirectoryType.Logs], "elderforge_server.log"),
-                rollingInterval: RollingInterval.Day
+                Path.Combine(directoriesConfig[DirectoryType.Logs], "elderforge_server_.log"),
+                rollingInterval: RollingInterval.Day,
+                formatProvider: CultureInfo.InvariantCulture
             )
             .CreateLogger();
 
@@ -84,6 +88,8 @@ class Program
 
         hostBuilder.Services.AddSingleton(directoriesConfig);
 
+
+        hostBuilder.Services.AddSingleton<IEventBusService, EventBusService>();
 
         hostBuilder.Services.AddAutoStartService<INetworkServer>();
 
