@@ -4,11 +4,11 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["src/Elderforge.Server/Elderforge.Server.csproj", "src/Elderforge.Server/"]
+WORKDIR /
+COPY ["src", "src/"]
 RUN dotnet restore "src/Elderforge.Server/Elderforge.Server.csproj"
 COPY . .
-WORKDIR "/src/src/Elderforge.Server"
+WORKDIR "/src/Elderforge.Server"
 RUN dotnet build "Elderforge.Server.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
