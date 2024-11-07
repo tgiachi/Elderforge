@@ -1,6 +1,7 @@
 ﻿using CommandLine;
 using Elderforge.Core.Extensions;
 using Elderforge.Core.Server.Data;
+using Elderforge.Core.Server.Types;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Packets;
@@ -50,8 +51,6 @@ class Program
             loggerConfiguration.MinimumLevel.Information();
         }
 
-        Log.Logger = loggerConfiguration.CreateLogger();
-
 
         hostBuilder.Logging.ClearProviders().AddSerilog();
 
@@ -66,6 +65,16 @@ class Program
             options.Value.RootDirectory = Environment.GetEnvironmentVariable("ELDERFORGE_ROOT_DIRECTORY");
         }
 
+        var directoriesConfig = new DirectoriesConfig(options.Value.RootDirectory);
+
+        Log.Logger = loggerConfiguration
+            .WriteTo.Console()
+            .WriteTo.File(
+                Path.Combine(directoriesConfig[DirectoryType.Logs], "elderforge_server.log"),
+                rollingInterval: RollingInterval.Day
+            )
+            .CreateLogger();
+
 
         hostBuilder.Services
             .AddToRegisterTypedList(new MessageTypeObject(NetworkMessageType.Ping, typeof(PingMessage)))
@@ -73,7 +82,7 @@ class Program
             .RegisterProtobufEncoder()
             .RegisterProtobufDecoder();
 
-        hostBuilder.Services.AddSingleton(new DirectoriesConfig(options.Value.RootDirectory));
+        hostBuilder.Services.AddSingleton(directoriesConfig);
 
 
         hostBuilder.Services.AddAutoStartService<INetworkServer>();
@@ -84,6 +93,8 @@ class Program
         var host = hostBuilder.Build();
 
 
-        await host.RunAsync();
+        await host.StartAsync();
+
+        await host.WaitForShutdownAsync();
     }
 }
