@@ -10,6 +10,9 @@ tasks:
       - build
       - test
       - deploy
+  docker_build:
+    cmds:
+      - docker buildx build -t elderforge/server .
   clean:
     cmds:
       - dotnet clean
@@ -26,8 +29,3 @@ tasks:
     cmds:
       - versionize --pre-release alpha
       - git push --follow-tags origin
-  message-pack:
-    cmds:
-      - dotnet mpc -i "src/Elderforge.Network/ElderGloom.Network.csproj" -o "src/Elderforge.Network/Generated/MessagePackGenerated.cs"
-    deps:
-      - restore
