@@ -6,10 +6,7 @@
         <Nullable>enable</Nullable>
         <Version>0.0.1</Version>
     </PropertyGroup>
-
-    <ItemGroup>
-        <PackageReference Include="FastEnum" Version="2.0.1"/>
-    </ItemGroup>
+    
 
     <ItemGroup>
         <ProjectReference Include="..\Elderforge.Core\Elderforge.Core.csproj"/>

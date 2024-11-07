@@ -1,6 +1,6 @@
 using Elderforge.Core.Extensions;
 using Elderforge.Core.Server.Types;
-using FastEnumUtility;
+
 
 namespace Elderforge.Core.Server.Data;
 
@@ -21,7 +21,7 @@ public class DirectoriesConfig
 
     public string GetPath(DirectoryType directoryType)
     {
-        return Path.Combine(_rootDirectory, directoryType.GetEnumMemberValue().ToSnakeCase());
+        return Path.Combine(_rootDirectory, directoryType.ToString().ToSnakeCase());
     }
 
     private void Init()
@@ -31,7 +31,12 @@ public class DirectoriesConfig
             Directory.CreateDirectory(_rootDirectory);
         }
 
-        foreach (var directory in FastEnum.GetValues<DirectoryType>())
+        var directoryTypes = Enum.GetValues<DirectoryType>().ToList();
+
+        directoryTypes.Remove(DirectoryType.Root);
+
+
+        foreach (var directory in directoryTypes)
         {
             var path = GetPath(directory);
 

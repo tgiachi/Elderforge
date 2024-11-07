@@ -11,8 +11,6 @@ public class ElderforgeServerOptions
     public int Port { get; set; } = 5000;
 
 
-    [Option('d', "debug", Required = true, HelpText = "Whether the server should run in debug mode.")]
+    [Option('d', "debug", Default = true, Required = false, HelpText = "Whether the server should run in debug mode.")]
     public bool IsDebug { get; set; }
-
 }
-
