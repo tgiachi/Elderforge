@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Elderforge.Core.Interfaces.Services;
+using Elderforge.Core.Interfaces.Services.Base;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Interfaces.Listeners;
 using Elderforge.Network.Interfaces.Messages;

@@ -1,4 +1,4 @@
-namespace Elderforge.Core.Interfaces.Services;
+namespace Elderforge.Core.Interfaces.Services.Base;
 
 public interface IElderforgeService
 {

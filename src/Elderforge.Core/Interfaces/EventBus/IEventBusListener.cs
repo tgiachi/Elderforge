@@ -1,6 +1,6 @@
 namespace Elderforge.Core.Interfaces.EventBus;
 
-public class IEventBusListener
+public interface IEventBusListener<in TEvent>
 {
-    
+    Task OnMessageAsync(TEvent message);
 }

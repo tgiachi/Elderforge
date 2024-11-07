@@ -1,6 +1,5 @@
+using Elderforge.Core.Interfaces.Events;
+
 namespace Elderforge.Tests.Data;
 
-public class DummyEvent
-{
-    
-}
+public record DummyEvent(int Id) : IElderforgeEvent;

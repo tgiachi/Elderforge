@@ -5,4 +5,5 @@ public enum DirectoryType
     Root,
     Database,
     Scripts,
+    Logs,
 }
