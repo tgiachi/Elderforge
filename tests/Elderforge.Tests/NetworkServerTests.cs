@@ -1,3 +1,5 @@
+using Elderforge.Core.Interfaces.Services;
+using Elderforge.Core.Services;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Encoders;
 using Elderforge.Network.Interfaces.Services;
@@ -18,6 +20,7 @@ public class NetworkServerTests
     private readonly IMessageDispatcherService _messageDispatcherService;
     private readonly IMessageParserWriterService _messageParserWriterService;
     private readonly INetworkSessionService<string> _networkSessionService;
+    private readonly IEventBusService _eventBusService = new EventBusService();
 
     private readonly NetPacketProcessor _netPacketProcessor = new();
 
@@ -44,6 +47,7 @@ public class NetworkServerTests
             _messageDispatcherService,
             _messageParserWriterService,
             _networkSessionService,
+            _eventBusService,
             new NetworkServerConfig
             {
                 Port = 5000
@@ -71,6 +75,7 @@ public class NetworkServerTests
             _messageDispatcherService,
             _messageParserWriterService,
             _networkSessionService,
+            _eventBusService,
             new NetworkServerConfig
             {
                 Port = 5000

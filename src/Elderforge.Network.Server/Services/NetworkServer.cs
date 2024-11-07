@@ -1,4 +1,6 @@
 using System.Threading.Channels;
+using Elderforge.Core.Interfaces.Services;
+using Elderforge.Core.Server.Events;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Data.Session;
 using Elderforge.Network.Interfaces.Listeners;
@@ -25,6 +27,8 @@ public class NetworkServer<TSession> : INetworkServer where TSession : class
 
     private readonly NetworkServerConfig _config;
 
+    private readonly IEventBusService _eventBusService;
+
     private readonly IMessageParserWriterService _messageParserWriterService;
 
     private readonly INetworkSessionService<TSession> _networkSessionService;
@@ -43,10 +47,11 @@ public class NetworkServer<TSession> : INetworkServer where TSession : class
 
     public NetworkServer(
         IMessageDispatcherService messageDispatcherService, IMessageParserWriterService messageParserWriterService,
-        INetworkSessionService<TSession> networkSessionService, NetworkServerConfig config
+        INetworkSessionService<TSession> networkSessionService, IEventBusService eventBusService, NetworkServerConfig config
     )
     {
         _config = config;
+        _eventBusService = eventBusService;
         _messageDispatcherService = messageDispatcherService;
         _messageParserWriterService = messageParserWriterService;
         _networkSessionService = networkSessionService;
@@ -118,6 +123,8 @@ public class NetworkServer<TSession> : INetworkServer where TSession : class
         _logger.Information("Peer {peerId} disconnected", peer.Id);
 
         _networkSessionService.RemoveSession(peer.Id.ToString());
+
+        _eventBusService.PublishAsync(new ClientDisconnectedEvent(peer.Id.ToString()));
     }
 
     private void OnConnectionRequested(ConnectionRequest request)
@@ -127,6 +134,8 @@ public class NetworkServer<TSession> : INetworkServer where TSession : class
         var peer = request.Accept();
 
         _networkSessionService.AddSession(peer.Id.ToString(), new SessionObject<TSession>(peer, default));
+
+        _eventBusService.PublishAsync(new ClientConnectedEvent(peer.Id.ToString()));
     }
 
 
