@@ -22,23 +22,16 @@ class Program
             .WriteTo.Console()
             .CreateLogger();
 
-        var hostBuilder = Host.CreateDefaultBuilder(args);
+        var hostBuilder = Host.CreateApplicationBuilder(args);
 
-        hostBuilder.ConfigureLogging(s => { s.ClearProviders().AddSerilog(); });
+        hostBuilder.Logging.ClearProviders().AddSerilog();
 
-        hostBuilder.ConfigureServices(
-            (context, services) =>
-            {
-                services.AddToRegisterTypedList(new MessageTypeObject(NetworkMessageType.Ping, typeof(PingMessage)));
-
-                services
-                    .RegisterNetworkServer<ElderforgeSession>()
-                    .RegisterProtobufEncoder()
-                    .RegisterProtobufDecoder();
-
-                services.AddSingleton(new NetworkServerConfig());
-            }
-        );
+        hostBuilder.Services
+            .AddToRegisterTypedList(new MessageTypeObject(NetworkMessageType.Ping, typeof(PingMessage)))
+            .RegisterNetworkServer<ElderforgeSession>()
+            .RegisterProtobufEncoder()
+            .RegisterProtobufDecoder()
+            .AddSingleton(new NetworkServerConfig());
 
         var host = hostBuilder.Build();
 
