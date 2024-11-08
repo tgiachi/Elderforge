@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Elderforge.Network.Client.Interfaces;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Encoders;
+using Elderforge.Network.Interfaces.Messages;
 using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Packets.Base;
 using Elderforge.Network.Services;
@@ -25,6 +26,7 @@ public class NetworkClient : INetworkClient
 
     private readonly NetPacketProcessor _netPacketProcessor = new();
 
+    private readonly NetDataWriter writer = new();
 
     public NetworkClient(string host, int port, List<MessageTypeObject> messageTypes)
     {
@@ -62,6 +64,16 @@ public class NetworkClient : INetworkClient
     {
         _netManager.Start();
         _netManager.Connect(_host, _port, string.Empty);
+    }
+
+    public void SendMessage<T>(T message) where T : class, INetworkMessage
+    {
+        var packet = (NetworkPacket)_networkMessageFactory.SerializeAsync(message).Result;
+
+        writer.Reset();
+        _netPacketProcessor.Write(writer, packet);
+
+        _netManager.FirstPeer.Send(writer, DeliveryMethod.ReliableOrdered);
     }
 
 
