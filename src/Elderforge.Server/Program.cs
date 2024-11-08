@@ -107,11 +107,14 @@ class Program
             .AddSingleton<IEventBusService, EventBusService>()
             .AddSingleton<IScriptEngineService, ScriptEngineService>()
             .AddSingleton<IVariablesService, VariableService>()
+            .AddSingleton<IVersionService, VersionService>()
             .AddSingleton<IChatService, ChatService>();
 
         hostBuilder.Services
-            .AddAutoStartService<IScriptEngineService>()
             .AddAutoStartService<IVariablesService>(-1)
+            .AddAutoStartService<IScriptEngineService>()
+            .AddAutoStartService<IChatService>()
+            .AddAutoStartService<IVersionService>()
             .AddAutoStartService<INetworkServer>();
 
 
