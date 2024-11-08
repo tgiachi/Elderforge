@@ -115,13 +115,6 @@ public class Program
         hostBuilder.Services.AddSingleton(directoriesConfig);
 
 
-        // hostBuilder.Services
-        //     .AddSingleton<IEventBusService, EventBusService>()
-        //     .AddSingleton<IScriptEngineService, ScriptEngineService>()
-        //     .AddSingleton<IVariablesService, VariableService>()
-        //     .AddSingleton<IVersionService, VersionService>()
-        //     .AddSingleton<IChatService, ChatService>();
-
         hostBuilder.Services
             .AddAutoStartService<IEventBusService, EventBusService>()
             .AddAutoStartService<IScriptEngineService, ScriptEngineService>()
@@ -130,6 +123,14 @@ public class Program
             .AddAutoStartService<IMotdService, MotdService>()
             .AddAutoStartService<IChatService, ChatService>();
 
+
+        if (options.Value.DatabaseType == DatabaseType.LiteDb)
+        {
+            hostBuilder.Services.AddAutoStartService<IDatabaseService, LiteDbDatabaseService>();
+        }
+
+
+        hostBuilder.Services.AddSingleton(options.Value);
 
         hostBuilder.Services.AddHostedService<AutoStartHostingService>();
 
