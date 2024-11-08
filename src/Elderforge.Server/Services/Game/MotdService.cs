@@ -34,6 +34,8 @@ public class MotdService : AbstractGameService, IMotdService
     {
         var motd = _scriptEngineService.GetContextVariable<MotdObject>(MotdContextVariable, false);
 
+        _logger.Debug("Sending MOTD to {sessionId}", obj.SessionId);
+
         if (motd == null)
         {
             _logger.Warning("No MOTD object found in script engine context, sending default MOTD");
