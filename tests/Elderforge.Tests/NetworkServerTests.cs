@@ -48,7 +48,7 @@ public class NetworkServerTests
     [Fact]
     public async Task TestNetworkServer()
     {
-        var networkServer = new NetworkServer<string>(
+        var networkServer = new NetworkServer(
             _messageDispatcherService,
             _messageParserWriterService,
             _networkSessionService,
@@ -78,7 +78,7 @@ public class NetworkServerTests
 
         var clientListener = new EventBasedNetListener();
 
-        var networkServer = new NetworkServer<string>(
+        var networkServer = new NetworkServer(
             _messageDispatcherService,
             _messageParserWriterService,
             _networkSessionService,

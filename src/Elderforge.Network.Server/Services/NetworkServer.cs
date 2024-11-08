@@ -15,7 +15,7 @@ using Serilog;
 
 namespace Elderforge.Network.Server.Services;
 
-public class NetworkServer<TSession> : INetworkServer, IEventBusListener<SendMessageEvent> where TSession : class
+public class NetworkServer : INetworkServer, IEventBusListener<SendMessageEvent>
 {
     public bool IsRunning { get; private set; }
 

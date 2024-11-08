@@ -22,7 +22,7 @@ public static class NetworkMethodExtension
                 .AddSingleton<INetworkMessageFactory, NetworkMessageFactory>()
                 .AddSingleton<IMessageParserWriterService, MessageParserWriterService>()
                 .AddSingleton<IMessageDispatcherService, MessageDispatcherService>()
-                .AddSingleton<INetworkServer, NetworkServer<TSessionObject>>()
+                .AddSingleton<INetworkServer, NetworkServer>()
             ;
     }
 
