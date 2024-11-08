@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
@@ -9,7 +9,7 @@
     
 
     <ItemGroup>
-        <ProjectReference Include="..\Elderforge.Core\Elderforge.Core.csproj"/>
+        <ProjectReference Include="..\Elderforge.Core\Elderforge.Core.csproj" />
     </ItemGroup>
     
     <ItemGroup>
