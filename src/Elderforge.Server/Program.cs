@@ -3,9 +3,11 @@ using CommandLine;
 using Elderforge.Core.Extensions;
 using Elderforge.Core.Interfaces.Services;
 using Elderforge.Core.Server.Data;
+using Elderforge.Core.Server.Data.Directories;
 using Elderforge.Core.Server.Interfaces.Services;
 using Elderforge.Core.Server.Types;
 using Elderforge.Core.Services;
+using Elderforge.Core.Utils;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Packets;
@@ -16,6 +18,7 @@ using Elderforge.Network.Types;
 using Elderforge.Server.Data;
 using Elderforge.Server.Extensions;
 using Elderforge.Server.HostingService;
+using Elderforge.Server.ScriptModules;
 using Elderforge.Server.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -82,6 +85,9 @@ class Program
             )
             .CreateLogger();
 
+        hostBuilder.Services.RegisterScriptModule<LoggerModule>();
+
+        hostBuilder.Services.AddSingleton(JsonUtils.GetDefaultJsonSettings());
 
         hostBuilder.Services
             .RegisterNetworkServer<ElderforgeSession>()
@@ -99,9 +105,12 @@ class Program
 
         hostBuilder.Services
             .AddSingleton<IEventBusService, EventBusService>()
+            .AddSingleton<IScriptEngineService, ScriptEngineService>()
             .AddSingleton<IChatService, ChatService>();
 
-        hostBuilder.Services.AddAutoStartService<INetworkServer>();
+        hostBuilder.Services
+            .AddAutoStartService<IScriptEngineService>()
+            .AddAutoStartService<INetworkServer>();
 
 
         hostBuilder.Services.AddHostedService<AutoStartHostingService>();

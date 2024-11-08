@@ -1,8 +1,7 @@
 using Elderforge.Core.Extensions;
 using Elderforge.Core.Server.Types;
 
-
-namespace Elderforge.Core.Server.Data;
+namespace Elderforge.Core.Server.Data.Directories;
 
 public class DirectoriesConfig
 {

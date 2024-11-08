@@ -13,7 +13,6 @@ public class ChatService : IChatService, INetworkMessageListener<ChatMessage>
 {
     private readonly ILogger _logger = Log.Logger.ForContext<ChatService>();
 
-
     private readonly INetworkServer _networkServer;
     private readonly IEventBusService _eventBusService;
 
@@ -28,7 +27,6 @@ public class ChatService : IChatService, INetworkMessageListener<ChatMessage>
 
     private void OnClientConnected(ClientConnectedEvent obj)
     {
-
     }
 
 

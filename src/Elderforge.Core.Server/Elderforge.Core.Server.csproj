@@ -11,5 +11,14 @@
     <ItemGroup>
         <ProjectReference Include="..\Elderforge.Core\Elderforge.Core.csproj"/>
     </ItemGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="NLua" Version="1.7.3" />
+    </ItemGroup>
+    
+
+    <ItemGroup>
+      <Folder Include="Attributes\" />
+    </ItemGroup>
 
 </Project>
