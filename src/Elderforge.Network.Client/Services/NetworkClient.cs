@@ -3,8 +3,10 @@ using Elderforge.Network.Client.Interfaces;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Encoders;
 using Elderforge.Network.Interfaces.Services;
+using Elderforge.Network.Packets.Base;
 using Elderforge.Network.Services;
 using LiteNetLib;
+using LiteNetLib.Utils;
 using Serilog;
 
 namespace Elderforge.Network.Client.Services;
@@ -21,6 +23,8 @@ public class NetworkClient : INetworkClient
     private readonly INetworkMessageFactory _networkMessageFactory;
     private readonly IMessageTypesService _messageTypesService;
 
+    private readonly NetPacketProcessor _netPacketProcessor = new();
+
 
     public NetworkClient(string host, int port, List<MessageTypeObject> messageTypes)
     {
@@ -34,12 +38,23 @@ public class NetworkClient : INetworkClient
             new ProtobufEncoder()
         );
 
+        _netPacketProcessor.SubscribeReusable<NetworkPacket, NetPeer>(OnReceivePacket);
+
         _clientListener.NetworkReceiveEvent += OnMessageReceived;
+    }
+
+    private void OnReceivePacket(NetworkPacket packet, NetPeer peer)
+    {
+        _logger.Debug("Received packet from server type: {Type}", packet.MessageType);
+
+        var message = _networkMessageFactory.ParseAsync(packet).Result;
+
+        _logger.Debug("Parsed message from server type: {Type}", message.GetType().Name);
     }
 
     private void OnMessageReceived(NetPeer peer, NetPacketReader reader, byte channel, DeliveryMethod deliveryMethod)
     {
-
+        _netPacketProcessor.ReadAllPackets(reader, peer);
     }
 
 
