@@ -10,4 +10,10 @@ public class SendMessageEvent : IElderforgeEvent
 
     public INetworkMessage Message { get; set; }
 
+    public SendMessageEvent(string sessionId, INetworkMessage message)
+    {
+        SessionId = sessionId;
+        Message = message;
+    }
+
 }

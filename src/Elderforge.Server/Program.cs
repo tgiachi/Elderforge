@@ -3,12 +3,15 @@ using Elderforge.Core.Interfaces.Services;
 using Elderforge.Core.Server.Data.Directories;
 using Elderforge.Core.Server.Events.Engine;
 using Elderforge.Core.Server.Interfaces.Services;
+using Elderforge.Core.Server.Interfaces.Services.Game;
+using Elderforge.Core.Server.Interfaces.Services.System;
 using Elderforge.Core.Server.Types;
 using Elderforge.Core.Services;
 using Elderforge.Core.Utils;
 using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Packets;
 using Elderforge.Network.Packets.Chat;
+using Elderforge.Network.Packets.Motd;
 using Elderforge.Network.Server.Data;
 using Elderforge.Network.Server.Extensions;
 using Elderforge.Network.Types;
@@ -17,6 +20,8 @@ using Elderforge.Server.Extensions;
 using Elderforge.Server.HostingService;
 using Elderforge.Server.ScriptModules;
 using Elderforge.Server.Services;
+using Elderforge.Server.Services.Game;
+using Elderforge.Server.Services.System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -104,23 +109,26 @@ public class Program
         hostBuilder.Services
             .RegisterNetworkMessage<PingMessage>(NetworkMessageType.Ping)
             .RegisterNetworkMessage<ChatMessage>(NetworkMessageType.Chat)
+            .RegisterNetworkMessage<MotdMessage>(NetworkMessageType.Motd)
             ;
 
         hostBuilder.Services.AddSingleton(directoriesConfig);
 
 
-        hostBuilder.Services
-            .AddSingleton<IEventBusService, EventBusService>()
-            .AddSingleton<IScriptEngineService, ScriptEngineService>()
-            .AddSingleton<IVariablesService, VariableService>()
-            .AddSingleton<IVersionService, VersionService>()
-            .AddSingleton<IChatService, ChatService>();
+        // hostBuilder.Services
+        //     .AddSingleton<IEventBusService, EventBusService>()
+        //     .AddSingleton<IScriptEngineService, ScriptEngineService>()
+        //     .AddSingleton<IVariablesService, VariableService>()
+        //     .AddSingleton<IVersionService, VersionService>()
+        //     .AddSingleton<IChatService, ChatService>();
 
         hostBuilder.Services
-            .AddAutoStartService<IVariablesService>(-1)
-            .AddAutoStartService<IScriptEngineService>()
-            .AddAutoStartService<IChatService>()
-            .AddAutoStartService<IVersionService>();
+            .AddAutoStartService<IEventBusService, EventBusService>()
+            .AddAutoStartService<IScriptEngineService, ScriptEngineService>()
+            .AddAutoStartService<IVariablesService, VariableService>(-1)
+            .AddAutoStartService<IVersionService, VersionService>()
+            .AddAutoStartService<IMotdService, MotdService>()
+            .AddAutoStartService<IChatService, ChatService>();
 
 
         hostBuilder.Services.AddHostedService<AutoStartHostingService>();

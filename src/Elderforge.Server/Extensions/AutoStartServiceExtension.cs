@@ -6,8 +6,11 @@ namespace Elderforge.Server.Extensions;
 
 public static class AutoStartServiceExtension
 {
-    public static IServiceCollection AddAutoStartService<TService>(this IServiceCollection services, int priority = 0)
+    public static IServiceCollection AddAutoStartService<TInterface, TService>(
+        this IServiceCollection services, int priority = 0
+    ) where TInterface : class where TService : class, TInterface
     {
-        return services.AddToRegisterTypedList(new AutoStartService(typeof(TService), priority));
+        services.AddSingleton<TInterface, TService>();
+        return services.AddToRegisterTypedList(new AutoStartService(typeof(TInterface), priority));
     }
 }

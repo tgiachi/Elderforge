@@ -5,14 +5,14 @@ using System.Text.Json;
 using Elderforge.Core.Server.Attributes.Scripts;
 using Elderforge.Core.Server.Data.Directories;
 using Elderforge.Core.Server.Data.Scripts;
-using Elderforge.Core.Server.Interfaces.Services;
+using Elderforge.Core.Server.Interfaces.Services.System;
 using Elderforge.Core.Server.Types;
 using Elderforge.Core.Server.Utils;
 using NLua;
 using NLua.Exceptions;
 using Serilog;
 
-namespace Elderforge.Server.Services;
+namespace Elderforge.Server.Services.System;
 
 public class ScriptEngineService : IScriptEngineService
 {

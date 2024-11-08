@@ -8,7 +8,7 @@ public class NetworkSessionServiceTests
     [Fact]
     public void TestNonExistSession()
     {
-        var sessionService = new NetworkSessionService<string>();
+        var sessionService = new NetworkSessionService();
 
         var session = sessionService.GetSessionObject("test");
 
@@ -18,9 +18,9 @@ public class NetworkSessionServiceTests
     [Fact]
     public void TestExistSession()
     {
-        var sessionService = new NetworkSessionService<string>();
+        var sessionService = new NetworkSessionService();
 
-        var session = new SessionObject<string>(null, "test");
+        var session = new SessionObject(null);
 
 
         sessionService.AddSession("test", session);

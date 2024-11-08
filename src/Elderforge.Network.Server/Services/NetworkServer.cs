@@ -34,7 +34,7 @@ public class NetworkServer<TSession> : INetworkServer, IEventBusListener<SendMes
 
     private readonly INetworkMessageFactory _networkMessageFactory;
 
-    private readonly INetworkSessionService<TSession> _networkSessionService;
+    private readonly INetworkSessionService _networkSessionService;
 
     private readonly CancellationTokenSource _readMessageCancellationTokenSource = new();
 
@@ -49,7 +49,7 @@ public class NetworkServer<TSession> : INetworkServer, IEventBusListener<SendMes
 
     public NetworkServer(
         IMessageDispatcherService messageDispatcherService, IMessageParserWriterService messageParserWriterService,
-        INetworkSessionService<TSession> networkSessionService, IEventBusService eventBusService,
+        INetworkSessionService networkSessionService, IEventBusService eventBusService,
         IMessageChannelService messageChannelService, INetworkMessageFactory networkMessageFactory,
         NetworkServerConfig config
     )
@@ -133,7 +133,7 @@ public class NetworkServer<TSession> : INetworkServer, IEventBusListener<SendMes
 
         var peer = request.Accept();
 
-        _networkSessionService.AddSession(peer.Id.ToString(), new SessionObject<TSession>(peer, default));
+        _networkSessionService.AddSession(peer.Id.ToString(), new SessionObject(peer));
 
         _eventBusService.PublishAsync(new ClientConnectedEvent(peer.Id.ToString()));
     }

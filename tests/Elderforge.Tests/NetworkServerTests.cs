@@ -19,7 +19,7 @@ public class NetworkServerTests
     private readonly INetworkMessageFactory _networkMessageFactory;
     private readonly IMessageDispatcherService _messageDispatcherService;
     private readonly IMessageParserWriterService _messageParserWriterService;
-    private readonly INetworkSessionService<string> _networkSessionService;
+    private readonly INetworkSessionService _networkSessionService;
     private readonly IEventBusService _eventBusService = new EventBusService();
     private readonly IMessageChannelService _messageChannelService = new MessageChannelService();
 
@@ -41,7 +41,7 @@ public class NetworkServerTests
             _messageChannelService
         );
         _messageParserWriterService = new MessageParserWriterService(_networkMessageFactory, _messageChannelService);
-        _networkSessionService = new NetworkSessionService<string>();
+        _networkSessionService = new NetworkSessionService();
     }
 
 

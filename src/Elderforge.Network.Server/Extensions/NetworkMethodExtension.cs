@@ -16,7 +16,7 @@ public static class NetworkMethodExtension
         where TSessionObject : class
     {
         return services
-                .RegisterSessionService<TSessionObject>()
+                .AddSingleton<INetworkSessionService, NetworkSessionService>()
                 .AddSingleton<IMessageChannelService, MessageChannelService>()
                 .AddSingleton<IMessageTypesService, MessageTypesService>()
                 .AddSingleton<INetworkMessageFactory, NetworkMessageFactory>()
@@ -39,12 +39,7 @@ public static class NetworkMethodExtension
     }
 
 
-    public static IServiceCollection RegisterSessionService<TSessionObject>(this IServiceCollection services)
-        where TSessionObject : class
-    {
-        return services
-            .AddSingleton<INetworkSessionService<TSessionObject>, NetworkSessionService<TSessionObject>>();
-    }
+
 
     public static IServiceCollection RegisterNetworkMessage<TMessage>(
         this IServiceCollection services, NetworkMessageType messageType

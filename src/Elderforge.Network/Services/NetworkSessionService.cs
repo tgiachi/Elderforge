@@ -3,23 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using Elderforge.Network.Data.Session;
 using Elderforge.Network.Interfaces.Services;
+using Elderforge.Network.Interfaces.Sessions;
 using Serilog;
 
 namespace Elderforge.Network.Services;
 
-public class NetworkSessionService<TSessionData> : INetworkSessionService<TSessionData> where TSessionData : class
+public class NetworkSessionService : INetworkSessionService
 {
-    private readonly ConcurrentDictionary<string, SessionObject<TSessionData>> _sessions = new();
-    private readonly ILogger _logger = Log.ForContext<NetworkSessionService<SessionObject<TSessionData>>>();
+    private readonly ConcurrentDictionary<string, ISessionObject> _sessions = new();
+    private readonly ILogger _logger = Log.ForContext<NetworkSessionService>();
 
     public List<string> GetSessionIds => _sessions.Keys.ToList();
 
-    public SessionObject<TSessionData>? GetSessionObject(string sessionId)
+    public ISessionObject? GetSessionObject(string sessionId)
     {
         return _sessions.GetValueOrDefault(sessionId);
     }
 
-    public void AddSession(string sessionId, SessionObject<TSessionData> sessionObject)
+    public void AddSession(string sessionId, ISessionObject sessionObject)
     {
         _logger.Debug("Adding session {sessionId}", sessionId);
         _sessions.TryAdd(sessionId, sessionObject);

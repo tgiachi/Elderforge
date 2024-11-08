@@ -1,4 +1,4 @@
-namespace Elderforge.Core.Server.Interfaces.Services;
+namespace Elderforge.Core.Server.Interfaces.Services.System;
 
 public interface IVersionService
 {

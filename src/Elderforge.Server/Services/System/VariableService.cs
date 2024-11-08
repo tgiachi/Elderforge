@@ -3,11 +3,10 @@ using System.Text.RegularExpressions;
 using Elderforge.Core.Interfaces.EventBus;
 using Elderforge.Core.Interfaces.Services;
 using Elderforge.Core.Server.Events.Variables;
-using Elderforge.Core.Server.Interfaces.Services;
+using Elderforge.Core.Server.Interfaces.Services.System;
 using Serilog;
 
-
-namespace Elderforge.Server.Services;
+namespace Elderforge.Server.Services.System;
 
 public class VariableService
     : IVariablesService, IEventBusListener<AddVariableEvent>, IEventBusListener<AddVariableBuilderEvent>

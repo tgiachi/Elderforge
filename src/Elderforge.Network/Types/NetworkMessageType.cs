@@ -4,5 +4,7 @@ public enum NetworkMessageType : byte
 {
     Ping,
 
-    Chat
+    Chat,
+
+    Motd,
 }

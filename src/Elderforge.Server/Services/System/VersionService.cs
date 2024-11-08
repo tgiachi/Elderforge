@@ -1,8 +1,8 @@
 using Elderforge.Core.Interfaces.Services;
 using Elderforge.Core.Server.Events.Variables;
-using Elderforge.Core.Server.Interfaces.Services;
+using Elderforge.Core.Server.Interfaces.Services.System;
 
-namespace Elderforge.Server.Services;
+namespace Elderforge.Server.Services.System;
 
 public class VersionService : IVersionService
 {

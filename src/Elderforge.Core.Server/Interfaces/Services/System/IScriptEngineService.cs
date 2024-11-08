@@ -1,7 +1,7 @@
 using Elderforge.Core.Interfaces.Services.Base;
 using Elderforge.Core.Server.Data.Scripts;
 
-namespace Elderforge.Core.Server.Interfaces.Services;
+namespace Elderforge.Core.Server.Interfaces.Services.System;
 
 public interface IScriptEngineService : IElderforgeService, IDisposable
 {
