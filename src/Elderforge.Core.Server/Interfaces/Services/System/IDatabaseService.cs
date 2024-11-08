@@ -15,7 +15,7 @@ public interface IDatabaseService : IDisposable
 
     Task<IEnumerable<TEntity>> FindAllAsync<TEntity>() where TEntity : IBaseDbEntity;
 
-    Task<IEnumerable<TEntity>> FindAsync<TEntity>(Expression<Func<TEntity, bool>> predicate) where TEntity : IBaseDbEntity;
+    Task<IEnumerable<TEntity>> QueryAsync<TEntity>(Expression<Func<TEntity, bool>> predicate) where TEntity : IBaseDbEntity;
 
     Task UpdateAsync<TEntity>(TEntity entity) where TEntity : IBaseDbEntity;
 

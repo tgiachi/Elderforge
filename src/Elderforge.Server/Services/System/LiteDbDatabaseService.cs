@@ -39,7 +39,6 @@ public class LiteDbDatabaseService : IDatabaseService
     }
 
 
-
     public async Task<TEntity> InsertAsync<TEntity>(TEntity entity) where TEntity : IBaseDbEntity
     {
         InsertAsync([entity]);
@@ -78,7 +77,7 @@ public class LiteDbDatabaseService : IDatabaseService
         return _database.GetCollection<TEntity>(GetCollectionName(typeof(TEntity))).FindAllAsync();
     }
 
-    public Task<IEnumerable<TEntity>> FindAsync<TEntity>(Expression<Func<TEntity, bool>> predicate)
+    public Task<IEnumerable<TEntity>> QueryAsync<TEntity>(Expression<Func<TEntity, bool>> predicate)
         where TEntity : IBaseDbEntity
     {
         return _database.GetCollection<TEntity>(GetCollectionName(typeof(TEntity))).FindAsync(predicate);
@@ -117,6 +116,7 @@ public class LiteDbDatabaseService : IDatabaseService
 
     public void Dispose()
     {
+        _database.CommitAsync();
         _database.Dispose();
     }
 }
