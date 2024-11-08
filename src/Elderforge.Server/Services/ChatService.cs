@@ -16,10 +16,15 @@ public class ChatService : IChatService, INetworkMessageListener<ChatMessage>
     private readonly INetworkServer _networkServer;
     private readonly IEventBusService _eventBusService;
 
-    public ChatService(INetworkServer networkServer, IEventBusService eventBusService)
+    private readonly IScriptEngineService _scriptEngineService;
+
+    public ChatService(
+        INetworkServer networkServer, IEventBusService eventBusService, IScriptEngineService scriptEngineService
+    )
     {
         _networkServer = networkServer;
         _eventBusService = eventBusService;
+        _scriptEngineService = scriptEngineService;
 
         _eventBusService.Subscribe<ClientConnectedEvent>(OnClientConnected);
         _networkServer.RegisterMessageListener(this);

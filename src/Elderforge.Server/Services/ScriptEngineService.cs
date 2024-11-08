@@ -103,7 +103,6 @@ public class ScriptEngineService : IScriptEngineService
             catch (Exception ex)
             {
                 _logger.Error("Error during initialize script module {Alias}: {Ex}", module.ClassType, ex);
-                _logger.Error("Error during initialize script module {Alias}: {Ex}", module.ClassType, ex);
             }
         }
 
@@ -277,8 +276,11 @@ public class ScriptEngineService : IScriptEngineService
 
     public Task StopAsync()
     {
-        _luaEngine.Dispose();
-
         return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        _luaEngine.Dispose();
     }
 }

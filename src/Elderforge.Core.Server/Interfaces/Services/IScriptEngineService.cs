@@ -3,7 +3,7 @@ using Elderforge.Core.Server.Data.Scripts;
 
 namespace Elderforge.Core.Server.Interfaces.Services;
 
-public interface IScriptEngineService : IElderforgeService
+public interface IScriptEngineService : IElderforgeService, IDisposable
 {
     Task ExecuteFileAsync(string file);
 

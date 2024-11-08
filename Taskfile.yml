@@ -25,6 +25,9 @@ tasks:
   test:
     cmds:
       - dotnet test
+  publish:
+    cmds:
+      - dotnet publish ./src/Elderforge.Server/Elderforge.Server.csproj -c Release   -o ./publish
   bump-alpha:
     cmds:
       - versionize --pre-release alpha
