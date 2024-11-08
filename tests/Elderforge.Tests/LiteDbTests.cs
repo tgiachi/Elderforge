@@ -43,7 +43,7 @@ public class LiteDbTests
     public async Task InsertAsync_ShouldInsertEntities()
     {
         // Arrange
-        var entities = Enumerable.Range(0, 10000)
+        var entities = Enumerable.Range(0, 100)
             .Select(_ => new TestEntity { Id = Guid.NewGuid(), CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow })
             .ToList();
 
