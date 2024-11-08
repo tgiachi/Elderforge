@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.1.0-alpha.0"></a>
+## [0.1.0-alpha.0](https://www.github.com/tgiachi/Elderforge/releases/tag/v0.1.0-alpha.0) (2024-11-08)
+
+### Features
+
+* **bootstrap.lua:** add bootstrap script to log info messages during app initialization ([8dff389](https://www.github.com/tgiachi/Elderforge/commit/8dff389647a744c7585ad0636ce4387e4aae6cbd))
+* **EngineStartedEvent.cs:** implement IElderforgeEvent interface for EngineStartedEvent ([18ec357](https://www.github.com/tgiachi/Elderforge/commit/18ec357eca13dd8aac6d0be2e326d8f84349302e))
+* **IVersionService.cs:** add IVersionService interface to define a method for getting the version string ([8672a9f](https://www.github.com/tgiachi/Elderforge/commit/8672a9f1b4d46f72e983ee72c7871c3cca586b2d))
+* **Program.cs:** register new ScriptModules (ContextVariableModule, VariableServiceModule) to enhance script functionality ([cca0c5b](https://www.github.com/tgiachi/Elderforge/commit/cca0c5b470c9281e8514db422d1f3dc40d6f89fc))
+* **server:** add MotdObject class to handle Message of the Day with lines array ([174692e](https://www.github.com/tgiachi/Elderforge/commit/174692e5ad9f69ecbab91e0748bc12c6407c6bfe))
+* **Variables:** add VariableService class to handle variables and their builders ([31369bf](https://www.github.com/tgiachi/Elderforge/commit/31369bf5d483ccd2558d363f0f58db2d017a41f1))
+
 <a name="0.0.1"></a>
 ## [0.0.1](https://www.github.com/tgiachi/Elderforge/releases/tag/v0.0.1) (2024-11-08)
 

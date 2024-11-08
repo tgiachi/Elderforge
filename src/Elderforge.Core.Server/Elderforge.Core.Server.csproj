@@ -4,17 +4,17 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <Version>0.0.1</Version>
+        <Version>0.1.0-alpha.0</Version>
     </PropertyGroup>
 
 
     <ItemGroup>
-        <ProjectReference Include="..\Elderforge.Core\Elderforge.Core.csproj"/>
+        <ProjectReference Include="..\Elderforge.Core\Elderforge.Core.csproj" />
         <ProjectReference Include="..\Elderforge.Network\Elderforge.Network.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="NLua" Version="1.7.3"/>
+        <PackageReference Include="NLua" Version="1.7.3" />
     </ItemGroup>
   
 
