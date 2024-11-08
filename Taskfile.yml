@@ -28,6 +28,12 @@ tasks:
   publish:
     cmds:
       - dotnet publish ./src/Elderforge.Server/Elderforge.Server.csproj -c Release   -o ./publish
+  publish-unity:
+    cmds:
+      - dotnet publish ./src/Elderforge.Network.Client/Elderforge.Network.Client.csproj -c Release   -o ./publish_unity
+    deps:
+      - clean
+      - restore
   bump-alpha:
     cmds:
       - versionize --pre-release alpha
