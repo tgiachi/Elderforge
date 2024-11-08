@@ -1,6 +1,7 @@
 ﻿using CommandLine;
 using Elderforge.Core.Interfaces.Services;
 using Elderforge.Core.Server.Data.Directories;
+using Elderforge.Core.Server.Data.Internal;
 using Elderforge.Core.Server.Events.Engine;
 using Elderforge.Core.Server.Interfaces.Services;
 using Elderforge.Core.Server.Interfaces.Services.Game;
@@ -126,6 +127,8 @@ public class Program
 
         if (options.Value.DatabaseType == DatabaseType.LiteDb)
         {
+            hostBuilder.Services.AddSingleton(new List<DbEntityTypeData>());
+
             hostBuilder.Services.AddAutoStartService<IDatabaseService, LiteDbDatabaseService>();
         }
 

@@ -1,4 +1,5 @@
 using Elderforge.Core.Server.Data.Directories;
+using Elderforge.Core.Server.Data.Internal;
 using Elderforge.Server.Data;
 using Elderforge.Server.Services.System;
 using Elderforge.Tests.Data;
@@ -23,7 +24,8 @@ public class LiteDbTests
             new ElderforgeServerOptions()
             {
                 DatabaseFileName = "test.db"
-            }
+            },
+            [new(typeof(TestEntity))]
         );
 
         // Act
@@ -50,7 +52,8 @@ public class LiteDbTests
             new ElderforgeServerOptions()
             {
                 DatabaseFileName = "test.db"
-            }
+            },
+            [new(typeof(TestEntity))]
         );
 
         // Act
