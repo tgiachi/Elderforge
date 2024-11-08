@@ -42,6 +42,6 @@ public class EventBusService : IEventBusService
     public void Subscribe<TEvent>(IEventBusListener<TEvent> listener) where TEvent : class
     {
         var subject = (ISubject<TEvent>)_subjects.GetOrAdd(typeof(TEvent), _ => new Subject<TEvent>());
-        subject.AsObservable().Subscribe(async e => await listener.OnMessageAsync(e));
+        subject.AsObservable().Subscribe(async e => await listener.OnEventAsync(e));
     }
 }

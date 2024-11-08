@@ -41,7 +41,7 @@ public class MessageDispatcherService : IMessageDispatcherService
         _networkMessageFactory = networkMessageFactory;
         _messageChannelService = messageChannelService;
 
-        _dispatchIncomingMessagesTask = Task.Run(DispatchIncomingMessages);
+        _dispatchIncomingMessagesTask = DispatchIncomingMessages();
     }
 
     private async Task DispatchIncomingMessages()

@@ -1,8 +1,10 @@
 using System.Threading.Channels;
+using Elderforge.Core.Interfaces.EventBus;
 using Elderforge.Core.Interfaces.Services;
 using Elderforge.Core.Server.Events;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Data.Session;
+using Elderforge.Network.Events;
 using Elderforge.Network.Interfaces.Listeners;
 using Elderforge.Network.Interfaces.Messages;
 using Elderforge.Network.Interfaces.Services;
@@ -13,7 +15,7 @@ using Serilog;
 
 namespace Elderforge.Network.Server.Services;
 
-public class NetworkServer<TSession> : INetworkServer where TSession : class
+public class NetworkServer<TSession> : INetworkServer, IEventBusListener<SendMessageEvent> where TSession : class
 {
     public bool IsRunning { get; private set; }
 
@@ -38,7 +40,10 @@ public class NetworkServer<TSession> : INetworkServer where TSession : class
 
     private readonly Task _poolEventTask;
 
+    private readonly Task _writeMessageTask;
+
     private readonly EventBasedNetListener _serverListener = new();
+
 
     private readonly NetManager _netServer;
 
@@ -64,6 +69,8 @@ public class NetworkServer<TSession> : INetworkServer where TSession : class
         _netServer = new NetManager(_serverListener);
 
         _poolEventTask = ServerPoolEvents();
+
+        _writeMessageTask = WriteMessageChannel();
     }
 
     private async Task ServerPoolEvents()
@@ -80,18 +87,6 @@ public class NetworkServer<TSession> : INetworkServer where TSession : class
             await Task.Delay(15);
         }
     }
-
-    // private async Task ReadMessageChannel()
-    // {
-    //     _logger.Information("Starting read message channel");
-    //     while (!_readMessageCancellationTokenSource.Token.IsCancellationRequested)
-    //     {
-    //         await foreach (var session in _messageParserWriterService.SessionMessagesReader.ReadAllAsync())
-    //         {
-    //             _messageDispatcherService.DispatchMessage(session.SessionId, session.Packet);
-    //         }
-    //     }
-    // }
 
     private async Task WriteMessageChannel()
     {
@@ -206,5 +201,10 @@ public class NetworkServer<TSession> : INetworkServer where TSession : class
         _messageDispatcherService.Dispose();
         _readMessageCancellationTokenSource.Dispose();
         _poolEventTask.Dispose();
+    }
+
+    public async Task OnEventAsync(SendMessageEvent message)
+    {
+        await SendMessageAsync(new SessionNetworkMessage(message.SessionId, message.Message));
     }
 }
