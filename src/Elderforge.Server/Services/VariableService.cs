@@ -9,18 +9,13 @@ using Serilog;
 
 namespace Elderforge.Server.Services;
 
-public partial class VariableService
+public class VariableService
     : IVariablesService, IEventBusListener<AddVariableEvent>, IEventBusListener<AddVariableBuilderEvent>
 {
-    [GeneratedRegex(@"\{([^}]+)\}")] // example "Hello {name}, how are you? -> Hello John, how are you?"
-    private static partial Regex TokenRegex();
+    private static Regex TokenRegex => new(@"\{([^}]+)\}");
 
     private readonly ILogger _logger = Log.ForContext<VariableService>();
-
-    private readonly Regex _tokenRegex = TokenRegex();
-
     private readonly Dictionary<string, Func<object>> _variableBuilder = new();
-
     private readonly Dictionary<string, object> _variables = new();
 
     public VariableService(IEventBusService eventBusService)
@@ -43,7 +38,7 @@ public partial class VariableService
 
     public string TranslateText(string text)
     {
-        var matches = _tokenRegex.Matches(text);
+        var matches = TokenRegex.Matches(text);
         var result = new StringBuilder(text);
 
         foreach (Match match in matches)

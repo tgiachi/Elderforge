@@ -85,7 +85,10 @@ class Program
             )
             .CreateLogger();
 
-        hostBuilder.Services.RegisterScriptModule<LoggerModule>();
+        hostBuilder.Services
+            .RegisterScriptModule<LoggerModule>()
+            .RegisterScriptModule<ContextVariableModule>()
+            .RegisterScriptModule<VariableServiceModule>();
 
         hostBuilder.Services.AddSingleton(JsonUtils.GetDefaultJsonSettings());
 
