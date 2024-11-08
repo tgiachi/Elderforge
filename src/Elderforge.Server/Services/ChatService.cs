@@ -1,5 +1,6 @@
 using Elderforge.Core.Interfaces.Services;
 using Elderforge.Core.Server.Events;
+using Elderforge.Core.Server.Events.Network;
 using Elderforge.Core.Server.Interfaces.Services;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Interfaces.Listeners;

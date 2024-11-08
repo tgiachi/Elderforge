@@ -1,14 +1,11 @@
-﻿using System.Globalization;
-using CommandLine;
-using Elderforge.Core.Extensions;
+﻿using CommandLine;
 using Elderforge.Core.Interfaces.Services;
-using Elderforge.Core.Server.Data;
 using Elderforge.Core.Server.Data.Directories;
+using Elderforge.Core.Server.Events.Engine;
 using Elderforge.Core.Server.Interfaces.Services;
 using Elderforge.Core.Server.Types;
 using Elderforge.Core.Services;
 using Elderforge.Core.Utils;
-using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Packets;
 using Elderforge.Network.Packets.Chat;
@@ -24,10 +21,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using Serilog.Formatting.Compact;
 
 namespace Elderforge.Server;
 
-class Program
+public class Program
 {
     private static async Task Main(string[] args)
     {
@@ -79,18 +77,23 @@ class Program
         Log.Logger = loggerConfiguration
             .WriteTo.Console()
             .WriteTo.File(
+                new CompactJsonFormatter(),
                 Path.Combine(directoriesConfig[DirectoryType.Logs], "elderforge_server_.log"),
-                rollingInterval: RollingInterval.Day,
-                formatProvider: CultureInfo.InvariantCulture
+                rollingInterval: RollingInterval.Day
             )
             .CreateLogger();
+
+        Log.Information("Root directory: {RootDirectory}", options.Value.RootDirectory);
 
         hostBuilder.Services
             .RegisterScriptModule<LoggerModule>()
             .RegisterScriptModule<ContextVariableModule>()
-            .RegisterScriptModule<VariableServiceModule>();
+            .RegisterScriptModule<VariableServiceModule>()
+            .RegisterScriptModule<ScriptModule>()
+            ;
 
-        hostBuilder.Services.AddSingleton(JsonUtils.GetDefaultJsonSettings());
+        hostBuilder.Services
+            .AddSingleton(JsonUtils.GetDefaultJsonSettings());
 
         hostBuilder.Services
             .RegisterNetworkServer<ElderforgeSession>()
@@ -117,8 +120,7 @@ class Program
             .AddAutoStartService<IVariablesService>(-1)
             .AddAutoStartService<IScriptEngineService>()
             .AddAutoStartService<IChatService>()
-            .AddAutoStartService<IVersionService>()
-            .AddAutoStartService<INetworkServer>();
+            .AddAutoStartService<IVersionService>();
 
 
         hostBuilder.Services.AddHostedService<AutoStartHostingService>();
@@ -128,6 +130,25 @@ class Program
 
         await host.StartAsync();
 
-        await host.WaitForShutdownAsync();
+        var networkServer = host.Services.GetRequiredService<INetworkServer>();
+        var scriptEngineService = host.Services.GetRequiredService<IScriptEngineService>();
+        var eventBusService = host.Services.GetRequiredService<IEventBusService>();
+
+        var canStart = await scriptEngineService.BootstrapAsync();
+
+        if (canStart)
+        {
+            await networkServer.StartAsync();
+
+            await eventBusService.PublishAsync(new EngineStartedEvent());
+
+            await host.WaitForShutdownAsync();
+        }
+        else
+        {
+            await host.StopAsync();
+
+            Environment.Exit(1);
+        }
     }
 }

@@ -66,12 +66,6 @@ public class ScriptEngineService : IScriptEngineService
                 await ExecuteFileAsync(script);
             }
         }
-
-
-        if (ContextVariables.TryGetValue("bootstrap", out object? value) && value is LuaFunction bootstrap)
-        {
-            bootstrap.Call();
-        }
     }
 
     private Task ScanScriptModulesAsync()
@@ -186,11 +180,41 @@ public class ScriptEngineService : IScriptEngineService
             return default;
         }
 
+        if (ctxVar is LuaFunction luaFunction)
+        {
+            return (TVar)(object)luaFunction;
+        }
+
         var json = JsonSerializer.Serialize(ScriptUtils.LuaTableToDictionary((LuaTable)ctxVar), _jsonSerializerOptions);
 
         return JsonSerializer.Deserialize<TVar>(json, _jsonSerializerOptions);
     }
 
+    public bool ExecuteContextVariable(string name, params object[] args)
+    {
+        if (ContextVariables.TryGetValue(name, out var ctxVar) && ctxVar is LuaFunction luaFunction)
+        {
+            luaFunction.Call(args);
+            return true;
+        }
+
+        _logger.Error("Variable {Name} not found", name);
+        return false;
+    }
+
+    public Task<bool> BootstrapAsync()
+    {
+        if (ExecuteContextVariable("bootstrap"))
+        {
+            return Task.FromResult(true);
+        }
+
+        _logger.Error(
+            "Bootstrap function not found, you should define a function callback 'on_bootstrap' in your scripts"
+        );
+
+        return Task.FromResult(false);
+    }
 
     private static Delegate CreateLuaEngineDelegate(object obj, MethodInfo method)
     {

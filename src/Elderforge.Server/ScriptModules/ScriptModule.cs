@@ -1,55 +1,31 @@
-using System.Text;
-using Eldergrove.Engine.Core.Attributes.Scripts;
-using Eldergrove.Engine.Core.Data.Internal;
-using Eldergrove.Engine.Core.Interfaces.Services;
+using Elderforge.Core.Server.Attributes.Scripts;
+using Elderforge.Core.Server.Data.Directories;
+using Elderforge.Core.Server.Interfaces.Services;
 using NLua;
 
-
-namespace Eldergrove.Engine.Core.ScriptsModules;
+namespace Elderforge.Server.ScriptModules;
 
 [ScriptModule]
 public class ScriptModule
 {
     private readonly IScriptEngineService _scriptEngineService;
 
-    private readonly DirectoryConfig _directoryConfig;
-    private readonly IDataLoaderService _dataLoaderService;
+    private readonly DirectoriesConfig _directoriesConfig;
 
     public ScriptModule(
-        IScriptEngineService scriptEngineService, IDataLoaderService dataLoaderService, DirectoryConfig directoryConfig
+        IScriptEngineService scriptEngineService, DirectoriesConfig directoryConfig
     )
     {
         _scriptEngineService = scriptEngineService;
-        _dataLoaderService = dataLoaderService;
-        _directoryConfig = directoryConfig;
-    }
-
-    [ScriptFunction("add_ctx")]
-    public void AddContextVariable(string name, object value)
-    {
-        _scriptEngineService.AddContextVariable(name, value);
+        _directoriesConfig = directoryConfig;
     }
 
 
-    [ScriptFunction("load_json", "Load json file")]
-    public void LoadJson(string path)
-    {
-        _dataLoaderService.LoadData(Path.Combine(_directoryConfig.RootDirectory, path));
-    }
-
-    [ScriptFunction("on_bootstrap")]
+    [ScriptFunction("on_bootstrap", "Called when the server is bootstrapping")]
     public void RegisterBootstrap(LuaFunction function)
     {
         _scriptEngineService.AddContextVariable("bootstrap", function);
     }
-
-
-    [ScriptFunction("game_config", "Set game config")]
-    public void SetGameConfig(object value)
-    {
-        _scriptEngineService.AddContextVariable("game_config", value);
-    }
-
 
     [ScriptFunction("gen_lua_def", "Generate lua definitions")]
     public string GenerateLuaDefinitions()

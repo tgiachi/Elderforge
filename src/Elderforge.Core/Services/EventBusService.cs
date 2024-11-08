@@ -15,6 +15,7 @@ public class EventBusService : IEventBusService
 
     public async Task PublishAsync<TEvent>(TEvent eventItem) where TEvent : class
     {
+        _logger.Debug("Publishing event: {Event}", eventItem);
         if (_subjects.TryGetValue(typeof(TEvent), out var subject))
         {
             var typedSubject = (ISubject<TEvent>)subject;

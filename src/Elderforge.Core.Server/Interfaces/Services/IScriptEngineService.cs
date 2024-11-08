@@ -18,4 +18,8 @@ public interface IScriptEngineService : IElderforgeService, IDisposable
     void AddContextVariable(string name, object value);
 
     TVar? GetContextVariable<TVar>(string name, bool throwIfNotFound = true) where TVar : class;
+
+    bool ExecuteContextVariable(string name, params object[] args);
+
+    Task<bool> BootstrapAsync();
 }

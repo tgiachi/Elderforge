@@ -1,7 +1,7 @@
-using System.Threading.Channels;
 using Elderforge.Core.Interfaces.EventBus;
 using Elderforge.Core.Interfaces.Services;
 using Elderforge.Core.Server.Events;
+using Elderforge.Core.Server.Events.Network;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Data.Session;
 using Elderforge.Network.Events;
@@ -200,6 +200,7 @@ public class NetworkServer<TSession> : INetworkServer, IEventBusListener<SendMes
     {
         _messageDispatcherService.Dispose();
         _readMessageCancellationTokenSource.Dispose();
+        _writeMessageTask.Dispose();
         _poolEventTask.Dispose();
     }
 
