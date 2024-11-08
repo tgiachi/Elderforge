@@ -21,6 +21,7 @@ public class NetworkServerTests
     private readonly IMessageParserWriterService _messageParserWriterService;
     private readonly INetworkSessionService<string> _networkSessionService;
     private readonly IEventBusService _eventBusService = new EventBusService();
+    private readonly IMessageChannelService _messageChannelService = new MessageChannelService();
 
     private readonly NetPacketProcessor _netPacketProcessor = new();
 
@@ -34,8 +35,12 @@ public class NetworkServerTests
             new ProtobufEncoder()
         );
 
-        _messageDispatcherService = new MessageDispatcherService(messageTypesService, _networkMessageFactory);
-        _messageParserWriterService = new MessageParserWriterService(_networkMessageFactory);
+        _messageDispatcherService = new MessageDispatcherService(
+            messageTypesService,
+            _networkMessageFactory,
+            _messageChannelService
+        );
+        _messageParserWriterService = new MessageParserWriterService(_networkMessageFactory, _messageChannelService);
         _networkSessionService = new NetworkSessionService<string>();
     }
 
@@ -48,6 +53,8 @@ public class NetworkServerTests
             _messageParserWriterService,
             _networkSessionService,
             _eventBusService,
+            _messageChannelService,
+            _networkMessageFactory,
             new NetworkServerConfig
             {
                 Port = 5000
@@ -76,6 +83,8 @@ public class NetworkServerTests
             _messageParserWriterService,
             _networkSessionService,
             _eventBusService,
+            _messageChannelService,
+            _networkMessageFactory,
             new NetworkServerConfig
             {
                 Port = 5000
@@ -120,7 +129,6 @@ public class NetworkServerTests
         }
 
         Assert.True(amount >= 0);
-
 
         client.Stop();
 

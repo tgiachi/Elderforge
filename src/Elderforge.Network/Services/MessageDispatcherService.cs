@@ -22,30 +22,24 @@ public class MessageDispatcherService : IMessageDispatcherService
     private readonly IMessageTypesService _messageTypesService;
     private readonly INetworkMessageFactory _networkMessageFactory;
 
+
+    private readonly IMessageChannelService _messageChannelService;
+
     private readonly Task _dispatchIncomingMessagesTask;
-
-    private readonly Channel<SessionNetworkPacket> _incomingMessages;
-
-    private ChannelWriter<SessionNetworkPacket>? _outgoingMessages;
 
     private readonly CancellationTokenSource _incomingMessagesCancellationTokenSource = new();
 
     private readonly ConcurrentDictionary<NetworkMessageType, List<ListenerResult>> _handlers = new();
 
-    public MessageDispatcherService(IMessageTypesService messageTypesService, INetworkMessageFactory networkMessageFactory)
+    public MessageDispatcherService(
+        IMessageTypesService messageTypesService, INetworkMessageFactory networkMessageFactory,
+        IMessageChannelService messageChannelService
+    )
     {
         _messageTypesService = messageTypesService;
 
         _networkMessageFactory = networkMessageFactory;
-
-        _incomingMessages = Channel.CreateUnbounded<SessionNetworkPacket>(
-            new UnboundedChannelOptions()
-            {
-                SingleReader = false,
-                SingleWriter = true,
-                AllowSynchronousContinuations = false
-            }
-        );
+        _messageChannelService = messageChannelService;
 
         _dispatchIncomingMessagesTask = Task.Run(DispatchIncomingMessages);
     }
@@ -54,7 +48,7 @@ public class MessageDispatcherService : IMessageDispatcherService
     {
         while (!_incomingMessagesCancellationTokenSource.Token.IsCancellationRequested)
         {
-            await foreach (var message in _incomingMessages.Reader.ReadAllAsync(
+            await foreach (var message in _messageChannelService.IncomingReaderChannel.ReadAllAsync(
                                _incomingMessagesCancellationTokenSource.Token
                            ))
             {
@@ -118,26 +112,13 @@ public class MessageDispatcherService : IMessageDispatcherService
 
         foreach (var sessionNetworkMessage in messageToSend)
         {
-            _outgoingMessages?.TryWrite(
-                new SessionNetworkPacket(
-                    sessionNetworkMessage.SessionId,
-                    await _networkMessageFactory.SerializeAsync(sessionNetworkMessage.Packet)
-                )
-            );
+            await _messageChannelService.OutgoingWriterChannel.WriteAsync(sessionNetworkMessage);
         }
     }
-
-    public void SetOutgoingMessagesChannel(ChannelWriter<SessionNetworkPacket> outgoingMessages)
-    {
-        _outgoingMessages = outgoingMessages;
-    }
-
-    public ChannelWriter<SessionNetworkPacket> GetOutgoingMessagesChannel() => _incomingMessages.Writer;
 
     public void Dispose()
     {
         _dispatchIncomingMessagesTask.Wait();
-        _incomingMessages.Writer.Complete();
         _incomingMessagesCancellationTokenSource.Cancel();
         _incomingMessagesCancellationTokenSource.Dispose();
     }

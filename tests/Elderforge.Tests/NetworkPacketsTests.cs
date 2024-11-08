@@ -61,10 +61,12 @@ public class NetworkPacketsTests : IDisposable
     [Fact]
     public async Task TestMessageDispatcherWithDispatchMessage()
     {
+        using var channelService = new MessageChannelService();
         var factory = new NetworkMessageFactory(_messageTypesService, new ProtobufDecoder(), new ProtobufEncoder());
         var messageDispatcherService = new MessageDispatcherService(
             _messageTypesService,
-            factory
+            factory,
+            channelService
         );
 
         messageDispatcherService.RegisterMessageListener<PingMessage>(
@@ -84,8 +86,9 @@ public class NetworkPacketsTests : IDisposable
     public async Task TestMessageDispatcherWithChannelWriter()
     {
         var factory = new NetworkMessageFactory(_messageTypesService, new ProtobufDecoder(), new ProtobufEncoder());
+        using var channelService = new MessageChannelService();
 
-        var messageDispatcherService = new MessageDispatcherService(_messageTypesService, factory);
+        var messageDispatcherService = new MessageDispatcherService(_messageTypesService, factory, channelService);
 
         messageDispatcherService.RegisterMessageListener<PingMessage>(
             async (s, message) =>
@@ -100,7 +103,7 @@ public class NetworkPacketsTests : IDisposable
         var packet = await factory.SerializeAsync(pingMessage);
 
 
-        messageDispatcherService.GetOutgoingMessagesChannel().TryWrite(new SessionNetworkPacket(string.Empty, packet));
+        channelService.IncomingWriterChannel.TryWrite(new SessionNetworkPacket(string.Empty, packet));
     }
 
     public void Dispose()

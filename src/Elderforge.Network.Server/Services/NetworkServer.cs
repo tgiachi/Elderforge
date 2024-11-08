@@ -22,8 +22,7 @@ public class NetworkServer<TSession> : INetworkServer where TSession : class
 
     private readonly IMessageDispatcherService _messageDispatcherService;
 
-    private readonly Channel<SessionNetworkPacket>
-        _outgoingMessagesChannel = Channel.CreateUnbounded<SessionNetworkPacket>();
+    private readonly IMessageChannelService _messageChannelService;
 
     private readonly NetworkServerConfig _config;
 
@@ -31,15 +30,13 @@ public class NetworkServer<TSession> : INetworkServer where TSession : class
 
     private readonly IMessageParserWriterService _messageParserWriterService;
 
+    private readonly INetworkMessageFactory _networkMessageFactory;
+
     private readonly INetworkSessionService<TSession> _networkSessionService;
 
     private readonly CancellationTokenSource _readMessageCancellationTokenSource = new();
 
     private readonly Task _poolEventTask;
-
-    private readonly Task _readMessageChannelTask;
-
-    private readonly Task _outputMessageChannelTask;
 
     private readonly EventBasedNetListener _serverListener = new();
 
@@ -47,10 +44,14 @@ public class NetworkServer<TSession> : INetworkServer where TSession : class
 
     public NetworkServer(
         IMessageDispatcherService messageDispatcherService, IMessageParserWriterService messageParserWriterService,
-        INetworkSessionService<TSession> networkSessionService, IEventBusService eventBusService, NetworkServerConfig config
+        INetworkSessionService<TSession> networkSessionService, IEventBusService eventBusService,
+        IMessageChannelService messageChannelService, INetworkMessageFactory networkMessageFactory,
+        NetworkServerConfig config
     )
     {
         _config = config;
+        _networkMessageFactory = networkMessageFactory;
+        _messageChannelService = messageChannelService;
         _eventBusService = eventBusService;
         _messageDispatcherService = messageDispatcherService;
         _messageParserWriterService = messageParserWriterService;
@@ -60,13 +61,9 @@ public class NetworkServer<TSession> : INetworkServer where TSession : class
         _serverListener.PeerDisconnectedEvent += OnPeerDisconnection;
         _serverListener.NetworkReceiveEvent += OnNetworkEvent;
 
-        _messageDispatcherService.SetOutgoingMessagesChannel(_outgoingMessagesChannel);
-
         _netServer = new NetManager(_serverListener);
 
         _poolEventTask = ServerPoolEvents();
-        _readMessageChannelTask = ReadMessageChannel();
-        _outputMessageChannelTask = WriteMessageChannel();
     }
 
     private async Task ServerPoolEvents()
@@ -84,30 +81,38 @@ public class NetworkServer<TSession> : INetworkServer where TSession : class
         }
     }
 
-    private async Task ReadMessageChannel()
-    {
-        _logger.Information("Starting read message channel");
-        while (!_readMessageCancellationTokenSource.Token.IsCancellationRequested)
-        {
-            await foreach (var session in _messageParserWriterService.SessionMessagesReader.ReadAllAsync())
-            {
-                _messageDispatcherService.DispatchMessage(session.SessionId, session.Packet);
-            }
-        }
-    }
+    // private async Task ReadMessageChannel()
+    // {
+    //     _logger.Information("Starting read message channel");
+    //     while (!_readMessageCancellationTokenSource.Token.IsCancellationRequested)
+    //     {
+    //         await foreach (var session in _messageParserWriterService.SessionMessagesReader.ReadAllAsync())
+    //         {
+    //             _messageDispatcherService.DispatchMessage(session.SessionId, session.Packet);
+    //         }
+    //     }
+    // }
 
     private async Task WriteMessageChannel()
     {
         _logger.Information("Starting write message channel");
         while (!_readMessageCancellationTokenSource.Token.IsCancellationRequested)
         {
-            await foreach (var message in _outgoingMessagesChannel.Reader.ReadAllAsync())
+            await foreach (var packet in _messageChannelService.OutgoingReaderChannel.ReadAllAsync())
             {
-                var session = _networkSessionService.GetSessionObject(message.SessionId);
+                if (string.IsNullOrEmpty(packet.SessionId))
+                {
+                    await BroadcastMessageAsync(packet.Packet);
+                    continue;
+                }
+
+                var session = _networkSessionService.GetSessionObject(packet.SessionId);
+                var message = await _networkMessageFactory.SerializeAsync(packet.Packet);
+
                 await _messageParserWriterService.WriteMessageAsync(
                     session.Peer,
                     session.Writer,
-                    (NetworkPacket)message.Packet
+                    (NetworkPacket)message
                 );
             }
         }
@@ -174,12 +179,32 @@ public class NetworkServer<TSession> : INetworkServer where TSession : class
         _messageDispatcherService.RegisterMessageListener(listener);
     }
 
+    public async ValueTask BroadcastMessageAsync(INetworkMessage message)
+    {
+        foreach (var sessionId in _networkSessionService.GetSessionIds)
+        {
+            await SendMessageAsync(new SessionNetworkMessage(sessionId, message));
+        }
+    }
+
+    public async ValueTask SendMessagesAsync(IEnumerable<SessionNetworkMessage> messages)
+    {
+        foreach (var messageToSend in messages)
+        {
+            _messageChannelService.OutgoingWriterChannel.WriteAsync(messageToSend);
+        }
+    }
+
+    public ValueTask SendMessageAsync(SessionNetworkMessage messages)
+    {
+        return SendMessagesAsync(new List<SessionNetworkMessage> { messages });
+    }
+
+
     public void Dispose()
     {
         _messageDispatcherService.Dispose();
         _readMessageCancellationTokenSource.Dispose();
         _poolEventTask.Dispose();
-        _readMessageChannelTask.Dispose();
-        _outputMessageChannelTask.Dispose();
     }
 }

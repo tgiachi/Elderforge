@@ -17,6 +17,7 @@ public static class NetworkMethodExtension
     {
         return services
                 .RegisterSessionService<TSessionObject>()
+                .AddSingleton<IMessageChannelService, MessageChannelService>()
                 .AddSingleton<IMessageTypesService, MessageTypesService>()
                 .AddSingleton<INetworkMessageFactory, NetworkMessageFactory>()
                 .AddSingleton<IMessageParserWriterService, MessageParserWriterService>()

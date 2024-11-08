@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using Elderforge.Network.Data.Session;
 using Elderforge.Network.Interfaces.Services;
 using Serilog;
@@ -9,7 +10,9 @@ namespace Elderforge.Network.Services;
 public class NetworkSessionService<TSessionData> : INetworkSessionService<TSessionData> where TSessionData : class
 {
     private readonly ConcurrentDictionary<string, SessionObject<TSessionData>> _sessions = new();
-    private readonly ILogger _logger = Log.ForContext<NetworkSessionService< SessionObject<TSessionData>>>();
+    private readonly ILogger _logger = Log.ForContext<NetworkSessionService<SessionObject<TSessionData>>>();
+
+    public List<string> GetSessionIds => _sessions.Keys.ToList();
 
     public SessionObject<TSessionData>? GetSessionObject(string sessionId)
     {
