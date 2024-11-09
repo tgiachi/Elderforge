@@ -96,6 +96,7 @@ public class Program
             .RegisterScriptModule<ContextVariableModule>()
             .RegisterScriptModule<VariableServiceModule>()
             .RegisterScriptModule<ScriptModule>()
+            .RegisterScriptModule<ElderforgeModule>()
             ;
 
         hostBuilder.Services

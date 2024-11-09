@@ -204,7 +204,7 @@ public class NetworkServerTests
         while (count < maxMessages)
         {
             networkClient.PoolEvents();
-            await Task.Delay(100);
+            await Task.Delay(10);
             count++;
         }
     }
