@@ -19,6 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\src\Elderforge.Network.Client\Elderforge.Network.Client.csproj" />
       <ProjectReference Include="..\..\src\Elderforge.Network.Server\Elderforge.Network.Server.csproj" />
       <ProjectReference Include="..\..\src\Elderforge.Network\Elderforge.Network.csproj" />
       <ProjectReference Include="..\..\src\Elderforge.Server\Elderforge.Server.csproj" />
