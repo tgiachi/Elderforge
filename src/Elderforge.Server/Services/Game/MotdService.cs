@@ -14,9 +14,7 @@ public class MotdService : AbstractGameService, IMotdService
     private const string MotdContextVariable = "motd";
 
     private readonly ILogger _logger = Log.Logger.ForContext<MotdService>();
-
     private readonly IScriptEngineService _scriptEngineService;
-
     private readonly IVariablesService _variablesService;
 
 
