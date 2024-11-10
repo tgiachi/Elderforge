@@ -4,6 +4,7 @@ using System.Reactive.Linq;
 using Elderforge.Core.Server.Data.Config;
 using Elderforge.Core.Server.Interfaces.Scheduler;
 using Elderforge.Core.Server.Interfaces.Services.System;
+using Elderforge.Core.Server.Types;
 using Elderforge.Core.Utils;
 using Serilog;
 
@@ -12,13 +13,13 @@ namespace Elderforge.Server.Services.System;
 public class SchedulerService : ISchedulerService
 {
     private readonly ILogger _logger = Log.Logger.ForContext<SchedulerService>();
-    private readonly ConcurrentQueue<IGameAction> _actionQueue = new ConcurrentQueue<IGameAction>();
+    private readonly ConcurrentQueue<IGameAction> _actionQueue = new();
 
     public long CurrentTick { get; private set; }
 
     private int _currentMaxActionsPerTick;
 
-    private readonly SemaphoreSlim _tickLock = new SemaphoreSlim(1, 1);
+    private readonly SemaphoreSlim _tickLock = new(1, 1);
 
     private readonly SchedulerServiceConfig _config;
 
@@ -41,11 +42,6 @@ public class SchedulerService : ISchedulerService
     private async Task OnTickAsync()
     {
         await _tickLock.WaitAsync();
-        // if (!Monitor.TryEnter(_tickLock))
-        // {
-        //     _logger.Warning("Tick is already running, skipping this tick {currentTick}", _currentTick);
-        //     return;
-        // }
 
         try
         {
@@ -70,12 +66,22 @@ public class SchedulerService : ISchedulerService
                 {
                     try
                     {
-                        await action.ExecuteAsync();
+                        var result = await action.ExecuteAsync();
+
+                        if (result.ResultType == GameActionResultType.Progress ||
+                            result.ResultType == GameActionResultType.Replace)
+                        {
+                            _actionQueue.Enqueue(action);
+                        }
+
+
                         Interlocked.Increment(ref successfullyProcessedActions);
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Error processing action: {ex.Message}");
+                        _logger.Error(ex, "Error processing action {action}, re queue ", action);
+                        // requeue action
+                        _actionQueue.Enqueue(action);
                     }
                 }
             );
@@ -118,17 +124,9 @@ public class SchedulerService : ISchedulerService
                     _currentMaxActionsPerTick
                 );
             }
-
-
-            // if (!_actionQueue.IsEmpty)
-            // {
-            //     _logger.Warning("Action queue is not empty, remaining {remainingActions}", _actionQueue.Count);
-            // }
         }
         finally
         {
-            // Monitor.Exit(_tickLock);
-
             _tickLock.Release();
 
 
