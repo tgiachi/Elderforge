@@ -14,6 +14,8 @@ public class DirectoriesConfig
         Init();
     }
 
+    public string Root => _rootDirectory;
+
 
     public string this[DirectoryType directoryType] => GetPath(directoryType);
 

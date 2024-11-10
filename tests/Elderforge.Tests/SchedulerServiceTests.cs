@@ -1,6 +1,7 @@
 using System.Numerics;
 using Elderforge.Core.Server.Data.Config;
 using Elderforge.Core.Server.Interfaces.Scheduler;
+using Elderforge.Core.Services;
 using Elderforge.Server.Services.System;
 using Elderforge.Tests.Data;
 using Serilog;
@@ -20,12 +21,13 @@ public class SchedulerServiceTests
     [Fact]
     public async Task StressTestSchedulerService_ShouldProcessAllActions()
     {
+        var eventBus = new EventBusService();
         // Arrange
         var initialMaxActionsPerTick = 50;
         var numTasks = 8;
         var config = new SchedulerServiceConfig(initialMaxActionsPerTick, initialMaxActionsPerTick, numTasks);
 
-        var scheduler = new SchedulerService(config);
+        var scheduler = new SchedulerService(config, eventBus);
         var totalActions = 10000;
         var actions = new List<IGameAction>();
 

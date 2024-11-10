@@ -1,7 +1,10 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Reactive.Linq;
+using Elderforge.Core.Interfaces.EventBus;
+using Elderforge.Core.Interfaces.Services;
 using Elderforge.Core.Server.Data.Config;
+using Elderforge.Core.Server.Events.Scheduler;
 using Elderforge.Core.Server.Interfaces.Scheduler;
 using Elderforge.Core.Server.Interfaces.Services.System;
 using Elderforge.Core.Server.Types;
@@ -10,7 +13,7 @@ using Serilog;
 
 namespace Elderforge.Server.Services.System;
 
-public class SchedulerService : ISchedulerService
+public class SchedulerService : ISchedulerService, IEventBusListener<EnqueueGameActionEvent>
 {
     private readonly ILogger _logger = Log.Logger.ForContext<SchedulerService>();
     private readonly ConcurrentQueue<IGameAction> _actionQueue = new();
@@ -31,9 +34,10 @@ public class SchedulerService : ISchedulerService
 
     private IDisposable _tickSubscription;
 
-    public SchedulerService(SchedulerServiceConfig config)
+    public SchedulerService(SchedulerServiceConfig config, IEventBusService eventBusService)
     {
         _config = config;
+        eventBusService.Subscribe(this);
 
         _currentMaxActionsPerTick = _config.InitialMaxActionPerTick;
 
@@ -169,6 +173,13 @@ public class SchedulerService : ISchedulerService
     public Task StopAsync()
     {
         _tickSubscription?.Dispose();
+
+        return Task.CompletedTask;
+    }
+
+    public Task OnEventAsync(EnqueueGameActionEvent message)
+    {
+        EnqueueAction(message.GameAction);
 
         return Task.CompletedTask;
     }

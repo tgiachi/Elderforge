@@ -121,6 +121,8 @@ public class Program
             .AddAutoStartService<IEventBusService, EventBusService>()
             .AddAutoStartService<IScriptEngineService, ScriptEngineService>()
             .AddAutoStartService<IVariablesService, VariableService>(-1)
+            .AddAutoStartService<IDiagnosticService, DiagnosticService>()
+            .AddAutoStartService<ISchedulerService, SchedulerService>()
             .AddAutoStartService<IVersionService, VersionService>()
             .AddAutoStartService<IMotdService, MotdService>()
             .AddAutoStartService<IChatService, ChatService>();
