@@ -45,9 +45,21 @@ public class SchedulerServiceTests
         }
 
 
-        while (scheduler.CurrentTick <= 50)
+        while (scheduler.CurrentTick <= 200)
         {
-            await Task.Delay(30);
+            foreach (var _ in Enumerable.Range(0, Random.Shared.Next(200, 700)+ 1))
+            {
+                scheduler.EnqueueAction(
+                    new MoveAction
+                    {
+                        PlayerId = $"Player{Random.Shared.Next(0, totalActions)}",
+                        TargetPosition = new Vector2(Random.Shared.Next(0, 100), Random.Shared.Next(0, 100)),
+                        Priority = Random.Shared.Next(0, 10)
+                    }
+                );
+            }
+
+            await Task.Delay(initialMaxActionsPerTick);
         }
 
         // Assert
