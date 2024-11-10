@@ -34,6 +34,10 @@ public class SchedulerService : ISchedulerService, IEventBusListener<EnqueueGame
 
     private IDisposable _tickSubscription;
 
+    private int _printCounter;
+
+    private int _printInterval = 100;
+
     public SchedulerService(SchedulerServiceConfig config, IEventBusService eventBusService)
     {
         _config = config;
@@ -109,14 +113,18 @@ public class SchedulerService : ISchedulerService, IEventBusListener<EnqueueGame
             var endTime = Stopwatch.GetTimestamp();
             _lastElapsedMs = StopwatchUtils.GetElapsedMilliseconds(startTime, endTime);
 
-            _logger.Debug(
-                "Tick {currentTick} processed {processedActions} actions in {ElapsedMs}ms, {successfullyProcessedActions} successfully, remaining {remainingActions}",
-                CurrentTick,
-                processedActions,
-                _lastElapsedMs,
-                successfullyProcessedActions,
-                _actionQueue.Count + remainingActionsCount
-            );
+            if (_printCounter++ % _printInterval == 0)
+            {
+                _logger.Debug(
+                    "Tick {currentTick} processed {processedActions} actions in {ElapsedMs}ms, {successfullyProcessedActions} successfully, remaining {remainingActions}",
+                    CurrentTick,
+                    processedActions,
+                    _lastElapsedMs,
+                    successfullyProcessedActions,
+                    _actionQueue.Count + remainingActionsCount
+                );
+            }
+
 
             var oldMaxActionsPerTick = _currentMaxActionsPerTick;
 

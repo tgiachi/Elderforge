@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using Elderforge.Core.Interfaces.Services;
+using Elderforge.Core.Server.Data.Config;
 using Elderforge.Core.Server.Data.Directories;
 using Elderforge.Core.Server.Data.Internal;
 using Elderforge.Core.Server.Events.Engine;
@@ -115,6 +116,7 @@ public class Program
             ;
 
         hostBuilder.Services.AddSingleton(directoriesConfig);
+        hostBuilder.Services.AddSingleton(new SchedulerServiceConfig(100, 50, 4));
 
 
         hostBuilder.Services
