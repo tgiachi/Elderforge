@@ -4,7 +4,9 @@ using System.Reactive.Linq;
 using Elderforge.Core.Interfaces.EventBus;
 using Elderforge.Core.Interfaces.Services;
 using Elderforge.Core.Server.Data.Config;
+using Elderforge.Core.Server.Data.Internal;
 using Elderforge.Core.Server.Events.Scheduler;
+using Elderforge.Core.Server.GameActions;
 using Elderforge.Core.Server.Interfaces.Scheduler;
 using Elderforge.Core.Server.Interfaces.Services.System;
 using Elderforge.Core.Server.Types;
@@ -13,14 +15,19 @@ using Serilog;
 
 namespace Elderforge.Server.Services.System;
 
-public class SchedulerService : ISchedulerService, IEventBusListener<EnqueueGameActionEvent>
+public class SchedulerService
+    : ISchedulerService, IEventBusListener<EnqueueGameActionEvent>, IEventBusListener<AddSchedulerJobEvent>
 {
     private readonly ILogger _logger = Log.Logger.ForContext<SchedulerService>();
     private readonly ConcurrentQueue<IGameAction> _actionQueue = new();
 
+    private readonly List<SchedulerJobData> _schedulerJobs = new();
+
     private double _lastElapsedMs;
 
+
     public int ActionsInQueue => _actionQueue.Count;
+
 
     public long CurrentTick { get; private set; }
 
@@ -34,6 +41,8 @@ public class SchedulerService : ISchedulerService, IEventBusListener<EnqueueGame
 
     private IDisposable _tickSubscription;
 
+    private IDisposable _schedulerJobSubscription;
+
     private int _printCounter;
 
     private int _printInterval = 100;
@@ -41,7 +50,8 @@ public class SchedulerService : ISchedulerService, IEventBusListener<EnqueueGame
     public SchedulerService(SchedulerServiceConfig config, IEventBusService eventBusService)
     {
         _config = config;
-        eventBusService.Subscribe(this);
+        eventBusService.Subscribe<EnqueueGameActionEvent>(this);
+        eventBusService.Subscribe<AddSchedulerJobEvent>(this);
 
         _currentMaxActionsPerTick = _config.InitialMaxActionPerTick;
 
@@ -175,12 +185,44 @@ public class SchedulerService : ISchedulerService, IEventBusListener<EnqueueGame
             .Throttle(_ => Observable.FromAsync(OnTickAsync))
             .Subscribe();
 
+
+        _schedulerJobSubscription = Observable.Interval(TimeSpan.FromMilliseconds(1000))
+            .Subscribe(_ => OnSchedulerJob());
+
         return Task.CompletedTask;
+    }
+
+    public void AddSchedulerJob(string name, int totalSeconds, Func<Task> action)
+    {
+        _schedulerJobs.Add(
+            new SchedulerJobData
+            {
+                Name = name,
+                TotalSeconds = totalSeconds,
+                Action = action
+            }
+        );
+    }
+
+    private void OnSchedulerJob()
+    {
+        foreach (var job in _schedulerJobs)
+        {
+            job.CurrentSeconds++;
+
+            if (job.CurrentSeconds >= job.TotalSeconds)
+            {
+                job.CurrentSeconds = 0;
+                _logger.Debug("Executing scheduler job {job}", job.Name);
+                EnqueueAction(new ScheduledGameAction(job.Action));
+            }
+        }
     }
 
     public Task StopAsync()
     {
         _tickSubscription?.Dispose();
+        _schedulerJobSubscription?.Dispose();
 
         return Task.CompletedTask;
     }
@@ -188,6 +230,13 @@ public class SchedulerService : ISchedulerService, IEventBusListener<EnqueueGame
     public Task OnEventAsync(EnqueueGameActionEvent message)
     {
         EnqueueAction(message.GameAction);
+
+        return Task.CompletedTask;
+    }
+
+    public Task OnEventAsync(AddSchedulerJobEvent message)
+    {
+        AddSchedulerJob(message.Name, message.TotalSeconds, message.Action);
 
         return Task.CompletedTask;
     }

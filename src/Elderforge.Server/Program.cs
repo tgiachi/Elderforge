@@ -121,10 +121,10 @@ public class Program
 
         hostBuilder.Services
             .AddAutoStartService<IEventBusService, EventBusService>()
+            .AddAutoStartService<ISchedulerService, SchedulerService>(-1)
             .AddAutoStartService<IScriptEngineService, ScriptEngineService>()
             .AddAutoStartService<IVariablesService, VariableService>(-1)
             .AddAutoStartService<IDiagnosticService, DiagnosticService>()
-            .AddAutoStartService<ISchedulerService, SchedulerService>()
             .AddAutoStartService<IVersionService, VersionService>()
             .AddAutoStartService<IMotdService, MotdService>()
             .AddAutoStartService<IChatService, ChatService>();

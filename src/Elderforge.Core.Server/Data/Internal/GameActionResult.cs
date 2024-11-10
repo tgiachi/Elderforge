@@ -8,4 +8,10 @@ public class GameActionResult
     public GameActionResultType ResultType { get; set; }
 
     public IGameAction Action { get; set; }
+
+
+    public static GameActionResult Success => new GameActionResult
+    {
+        ResultType = GameActionResultType.Success
+    };
 }
