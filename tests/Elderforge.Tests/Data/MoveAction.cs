@@ -8,16 +8,19 @@ namespace Elderforge.Tests.Data;
 
 public class MoveAction : IGameAction
 {
+    private double _elapsedMilliseconds;
     public int Priority { get; set; }
     public string PlayerId { get; set; }
     public Vector2 TargetPosition { get; set; }
 
-    public async Task<GameActionResult> ExecuteAsync()
+    public async Task<GameActionResult> ExecuteAsync(double elapsedMilliseconds)
     {
+        _elapsedMilliseconds += elapsedMilliseconds;
         await Task.Run(
             () =>
             {
-                //Log.Logger.Information($"Player {PlayerId} moves to {TargetPosition}");
+                // var timespan = TimeSpan.FromMilliseconds(_elapsedMilliseconds);
+                //Log.Logger.Debug($"Player {PlayerId} moved to {TargetPosition} at {timespan}");
             }
         );
 

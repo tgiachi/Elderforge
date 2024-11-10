@@ -15,6 +15,10 @@ public class SchedulerService : ISchedulerService
     private readonly ILogger _logger = Log.Logger.ForContext<SchedulerService>();
     private readonly ConcurrentQueue<IGameAction> _actionQueue = new();
 
+    private double _lastElapsedMs;
+
+    public int ActionsInQueue => _actionQueue.Count;
+
     public long CurrentTick { get; private set; }
 
     private int _currentMaxActionsPerTick;
@@ -66,7 +70,7 @@ public class SchedulerService : ISchedulerService
                 {
                     try
                     {
-                        var result = await action.ExecuteAsync();
+                        var result = await action.ExecuteAsync(_lastElapsedMs);
 
                         if (result.ResultType == GameActionResultType.Progress ||
                             result.ResultType == GameActionResultType.Replace)
@@ -99,13 +103,13 @@ public class SchedulerService : ISchedulerService
             }
 
             var endTime = Stopwatch.GetTimestamp();
-            var elapsedMs = StopwatchUtils.GetElapsedMilliseconds(startTime, endTime);
+            _lastElapsedMs = StopwatchUtils.GetElapsedMilliseconds(startTime, endTime);
 
             _logger.Debug(
                 "Tick {currentTick} processed {processedActions} actions in {ElapsedMs}ms, {successfullyProcessedActions} successfully, remaining {remainingActions}",
                 CurrentTick,
                 processedActions,
-                elapsedMs,
+                _lastElapsedMs,
                 successfullyProcessedActions,
                 _actionQueue.Count + remainingActionsCount
             );
@@ -135,6 +139,7 @@ public class SchedulerService : ISchedulerService
                 CurrentTick = 0;
             }
 
+
             CurrentTick++;
         }
     }
@@ -144,6 +149,7 @@ public class SchedulerService : ISchedulerService
     {
         _actionQueue.Enqueue(action);
     }
+
 
     public Task StartAsync()
     {

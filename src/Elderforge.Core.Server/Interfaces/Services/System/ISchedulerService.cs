@@ -7,4 +7,6 @@ public interface ISchedulerService : IElderforgeService
 {
     long CurrentTick { get; }
     void EnqueueAction(IGameAction action);
+
+    int ActionsInQueue { get; }
 }

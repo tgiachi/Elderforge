@@ -4,7 +4,7 @@ namespace Elderforge.Core.Server.Interfaces.Scheduler;
 
 public interface IGameAction
 {
-    Task<GameActionResult> ExecuteAsync();
+    Task<GameActionResult> ExecuteAsync(double elapsedMilliseconds);
     int Priority { get; }
 
 

@@ -45,9 +45,9 @@ public class SchedulerServiceTests
         }
 
 
-        while (scheduler.CurrentTick <= 200)
+        while (scheduler.ActionsInQueue > 0)
         {
-            foreach (var _ in Enumerable.Range(0, Random.Shared.Next(200, 700)+ 1))
+            foreach (var _ in Enumerable.Range(0, Random.Shared.Next(200, 700) + 1))
             {
                 scheduler.EnqueueAction(
                     new MoveAction
