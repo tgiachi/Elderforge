@@ -33,7 +33,7 @@ public class SchedulerService
 
     private int _currentMaxActionsPerTick;
 
-    private readonly SemaphoreSlim _tickLock = new(1, 1);
+    private readonly SemaphoreSlim _tickLock = new(1);
 
     private readonly SchedulerServiceConfig _config;
 
@@ -45,7 +45,7 @@ public class SchedulerService
 
     private int _printCounter;
 
-    private int _printInterval = 100;
+    private const int _printInterval = 100;
 
     public SchedulerService(SchedulerServiceConfig config, IEventBusService eventBusService)
     {
