@@ -18,6 +18,10 @@ public class DiagnosticService
 
     private readonly string _pidFileName;
 
+    private int _printCounter;
+
+    private int _printInterval = 120;
+
     public DiagnosticService(IEventBusService eventBusService, DirectoriesConfig directoriesConfig)
     {
         _eventBusService = eventBusService;
@@ -29,7 +33,7 @@ public class DiagnosticService
         _eventBusService.Subscribe<EngineStartedEvent>(this);
         _eventBusService.Subscribe<EngineShuttingDownEvent>(this);
 
-        await _eventBusService.PublishAsync(new AddSchedulerJobEvent("PrintDiagnosticInfo", 1, PrintDiagnosticInfoAsync));
+        await _eventBusService.PublishAsync(new AddSchedulerJobEvent("PrintDiagnosticInfo", 60, PrintDiagnosticInfoAsync));
     }
 
     public Task StopAsync()
@@ -56,7 +60,14 @@ public class DiagnosticService
             currentProcess.Id
         );
 
-       // GC.Collect(2, GCCollectionMode.Optimized);
+        _printCounter++;
+
+        if (_printCounter % _printInterval == 0)
+        {
+            _logger.Information("GC Memory: {Memory}", GC.GetTotalMemory(false).Bytes());
+            _printCounter = 0;
+        }
+
 
         return Task.CompletedTask;
     }
