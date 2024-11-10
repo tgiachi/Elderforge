@@ -12,11 +12,11 @@ public class SchedulerService : ISchedulerService
     private readonly ILogger _logger = Log.Logger.ForContext<SchedulerService>();
     private readonly ConcurrentQueue<IGameAction> _actionQueue = new ConcurrentQueue<IGameAction>();
 
-    private long _currentTick = 0;
+    public long CurrentTick { get; private set; }
 
     private int _currentMaxActionsPerTick;
 
-    private readonly object _tickLock = new();
+    private readonly SemaphoreSlim _tickLock = new SemaphoreSlim(1, 1);
 
     private readonly SchedulerServiceConfig _config;
 
@@ -38,11 +38,12 @@ public class SchedulerService : ISchedulerService
 
     private async Task OnTickAsync()
     {
-        if (!Monitor.TryEnter(_tickLock))
-        {
-            _logger.Warning("Tick is already running, skipping this tick {currentTick}", _currentTick);
-            return;
-        }
+        await _tickLock.WaitAsync();
+        // if (!Monitor.TryEnter(_tickLock))
+        // {
+        //     _logger.Warning("Tick is already running, skipping this tick {currentTick}", _currentTick);
+        //     return;
+        // }
 
         try
         {
@@ -90,34 +91,48 @@ public class SchedulerService : ISchedulerService
 
             _logger.Debug(
                 "Tick {currentTick} processed {processedActions} actions, {successfullyProcessedActions} successfully, remaining {remainingActions}",
-                _currentTick,
+                CurrentTick,
                 processedActions,
                 successfullyProcessedActions,
-                remainingActionsCount
+                _actionQueue.Count + remainingActionsCount
             );
+
+            var oldMaxActionsPerTick = _currentMaxActionsPerTick;
 
             _currentMaxActionsPerTick = successfullyProcessedActions < _currentMaxActionsPerTick
                 ? Math.Max(_config.InitialMaxActionPerTick / 2, 1)
                 : _currentMaxActionsPerTick + 10;
 
-
-            if (!_actionQueue.IsEmpty)
+            if (oldMaxActionsPerTick != _currentMaxActionsPerTick)
             {
-                _logger.Warning("Action queue is not empty, remaining {remainingActions}", _actionQueue.Count);
+                _logger.Debug(
+                    "Max actions per tick changed from {oldMaxActionsPerTick} to {newMaxActionsPerTick}",
+                    oldMaxActionsPerTick,
+                    _currentMaxActionsPerTick
+                );
             }
+
+
+            // if (!_actionQueue.IsEmpty)
+            // {
+            //     _logger.Warning("Action queue is not empty, remaining {remainingActions}", _actionQueue.Count);
+            // }
         }
         finally
         {
-            Monitor.Exit(_tickLock);
+            // Monitor.Exit(_tickLock);
 
-            if (_currentTick + 1 <= 1_000_000)
+            _tickLock.Release();
+
+            if (CurrentTick + 1 >= 1_000_000)
             {
-                _currentTick = 0;
+                CurrentTick = 0;
             }
 
-            _currentTick++;
+            CurrentTick++;
         }
     }
+
 
     public void EnqueueAction(IGameAction action)
     {

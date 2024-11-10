@@ -3,16 +3,25 @@ using Elderforge.Core.Server.Data.Config;
 using Elderforge.Core.Server.Interfaces.Scheduler;
 using Elderforge.Server.Services.System;
 using Elderforge.Tests.Data;
+using Serilog;
 
 namespace Elderforge.Tests;
 
 public class SchedulerServiceTests
 {
+    public SchedulerServiceTests()
+    {
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .WriteTo.Console()
+            .CreateLogger();
+    }
+
     [Fact]
     public async Task StressTestSchedulerService_ShouldProcessAllActions()
     {
         // Arrange
-        var initialMaxActionsPerTick = 1000;
+        var initialMaxActionsPerTick = 30;
         var numTasks = 8;
         var config = new SchedulerServiceConfig(initialMaxActionsPerTick, 30, numTasks);
 
@@ -36,8 +45,10 @@ public class SchedulerServiceTests
         }
 
 
-        // Allow some time for processing
-        await Task.Delay(5000);
+        while (scheduler.CurrentTick <= 50)
+        {
+            await Task.Delay(30);
+        }
 
         // Assert
         // Ideally, we would have a mechanism to track processed actions to validate

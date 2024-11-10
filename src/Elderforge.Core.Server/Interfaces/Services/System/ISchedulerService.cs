@@ -5,5 +5,6 @@ namespace Elderforge.Core.Server.Interfaces.Services.System;
 
 public interface ISchedulerService : IElderforgeService
 {
+    long CurrentTick { get; }
     void EnqueueAction(IGameAction action);
 }
