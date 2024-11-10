@@ -1,8 +1,10 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Reactive.Linq;
 using Elderforge.Core.Server.Data.Config;
 using Elderforge.Core.Server.Interfaces.Scheduler;
 using Elderforge.Core.Server.Interfaces.Services.System;
+using Elderforge.Core.Utils;
 using Serilog;
 
 namespace Elderforge.Server.Services.System;
@@ -47,6 +49,7 @@ public class SchedulerService : ISchedulerService
 
         try
         {
+            var startTime = Stopwatch.GetTimestamp();
             var actionsBatch = new List<IGameAction>();
 
             var processedActions = 0;
@@ -89,10 +92,14 @@ public class SchedulerService : ISchedulerService
                 remainingActionsCount = remainingActions.Count;
             }
 
+            var endTime = Stopwatch.GetTimestamp();
+            var elapsedMs = StopwatchUtils.GetElapsedMilliseconds(startTime, endTime);
+
             _logger.Debug(
-                "Tick {currentTick} processed {processedActions} actions, {successfullyProcessedActions} successfully, remaining {remainingActions}",
+                "Tick {currentTick} processed {processedActions} actions in {ElapsedMs}ms, {successfullyProcessedActions} successfully, remaining {remainingActions}",
                 CurrentTick,
                 processedActions,
+                elapsedMs,
                 successfullyProcessedActions,
                 _actionQueue.Count + remainingActionsCount
             );
@@ -123,6 +130,7 @@ public class SchedulerService : ISchedulerService
             // Monitor.Exit(_tickLock);
 
             _tickLock.Release();
+
 
             if (CurrentTick + 1 >= 1_000_000)
             {

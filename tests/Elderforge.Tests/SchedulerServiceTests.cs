@@ -21,9 +21,9 @@ public class SchedulerServiceTests
     public async Task StressTestSchedulerService_ShouldProcessAllActions()
     {
         // Arrange
-        var initialMaxActionsPerTick = 30;
+        var initialMaxActionsPerTick = 50;
         var numTasks = 8;
-        var config = new SchedulerServiceConfig(initialMaxActionsPerTick, 30, numTasks);
+        var config = new SchedulerServiceConfig(initialMaxActionsPerTick, initialMaxActionsPerTick, numTasks);
 
         var scheduler = new SchedulerService(config);
         var totalActions = 10000;
