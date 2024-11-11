@@ -22,6 +22,13 @@ public class NetworkSessionService : INetworkSessionService
 
     public void AddSession(string sessionId, ISessionObject sessionObject)
     {
+
+        if (_sessions.ContainsKey(sessionId))
+        {
+            _logger.Warning("Session {sessionId} already exists", sessionId);
+
+            _sessions.TryRemove(sessionId, out _);
+        }
         _logger.Debug("Adding session {sessionId}", sessionId);
         _sessions.TryAdd(sessionId, sessionObject);
     }

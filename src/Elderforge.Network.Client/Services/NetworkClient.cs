@@ -17,6 +17,8 @@ namespace Elderforge.Network.Client.Services;
 
 public class NetworkClient : INetworkClient
 {
+    public event INetworkClient.MessageReceivedEventHandler? MessageReceived;
+
     private readonly ILogger _logger = Log.Logger.ForContext<NetworkClient>();
     private readonly EventBasedNetListener _clientListener = new();
 
@@ -58,6 +60,8 @@ public class NetworkClient : INetworkClient
 
         _logger.Debug("Parsed message from server type: {Type}", message.GetType().Name);
 
+        MessageReceived?.Invoke(packet.MessageType, message);
+
         _messageSubject.OnNext(message);
     }
 
@@ -88,6 +92,8 @@ public class NetworkClient : INetworkClient
     {
         return _messageSubject.OfType<T>();
     }
+
+
 
 
     public void PoolEvents()

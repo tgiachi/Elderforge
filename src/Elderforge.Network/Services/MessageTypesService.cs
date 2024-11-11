@@ -40,7 +40,10 @@ public class MessageTypesService : IMessageTypesService
         return type;
     }
 
-    public NetworkMessageType GetMessageType(Type type) => _messageTypes.FirstOrDefault(x => x.Value == type).Key;
+    public NetworkMessageType GetMessageType(Type type)
+    {
+        return _messageTypes.FirstOrDefault(x => x.Value == type).Key;
+    }
 
     public void RegisterMessageType(NetworkMessageType messageType, Type type)
     {

@@ -1,10 +1,14 @@
 using System;
 using Elderforge.Network.Interfaces.Messages;
+using Elderforge.Network.Types;
 
 namespace Elderforge.Network.Client.Interfaces;
 
 public interface INetworkClient
 {
+    delegate void MessageReceivedEventHandler(NetworkMessageType messageType, INetworkMessage message);
+    event MessageReceivedEventHandler MessageReceived;
+
     void PoolEvents();
 
     void Connect();

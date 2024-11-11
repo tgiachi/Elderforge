@@ -27,20 +27,18 @@ class Program
             eventArgs.Cancel = true;
             Console.WriteLine("Exiting...");
             _cancellationTokenSource.Cancel();
+            Environment.Exit(0);
         };
 
 
         var networkClient = new NetworkClient("127.0.0.1", 5000, messageTypes);
 
 
-        networkClient.SubscribeToMessage<VersionMessage>()
-            .Subscribe(
-                message =>
-                {
-                    Console.WriteLine("VersionMessage: " + message.Version);
+        networkClient.MessageReceived += (messageType, message) =>
+        {
+            Console.WriteLine($"Received message of type {messageType}: {message}");
 
-                }
-            );
+        };
 
         networkClient.Connect();
 
