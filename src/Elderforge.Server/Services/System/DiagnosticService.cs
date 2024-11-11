@@ -50,7 +50,7 @@ public class DiagnosticService
 
     private Task PrintDiagnosticInfoAsync()
     {
-        var currentProcess = Process.GetCurrentProcess();
+        using var currentProcess = Process.GetCurrentProcess();
 
         _logger.Information(
             "Memory usage private: {Private} Paged: {Paged} Total Threads: {Threads} PID: {Pid}",

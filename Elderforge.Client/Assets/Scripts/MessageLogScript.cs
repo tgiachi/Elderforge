@@ -12,7 +12,12 @@ public class MessageLogScript : MonoBehaviour
     void Start()
     {
         Debug.Log("MessageLogScript Start");
-        InstanceHolder.EventBusService.Subscribe((LoggerEvent e) => { messageLog.text += e.Message + "\n"; });
+        InstanceHolder.EventBusService.Subscribe(
+            (LoggerEvent e) =>
+            {
+                messageLog.SetText(messageLog.text + "\n" + e.Message);
+            }
+        );
     }
 
     // Update is called once per frame
