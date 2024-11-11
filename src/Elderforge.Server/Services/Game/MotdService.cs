@@ -5,6 +5,7 @@ using Elderforge.Core.Server.Interfaces.Services.Game;
 using Elderforge.Core.Server.Interfaces.Services.Game.Base;
 using Elderforge.Core.Server.Interfaces.Services.System;
 using Elderforge.Network.Packets.Motd;
+using Elderforge.Network.Packets.System;
 using Serilog;
 
 namespace Elderforge.Server.Services.Game;
@@ -17,13 +18,17 @@ public class MotdService : AbstractGameService, IMotdService
     private readonly IScriptEngineService _scriptEngineService;
     private readonly IVariablesService _variablesService;
 
+    private readonly IVersionService _versionService;
+
 
     public MotdService(
-        IEventBusService eventBusService, IScriptEngineService scriptEngineService, IVariablesService variablesService
+        IEventBusService eventBusService, IScriptEngineService scriptEngineService, IVariablesService variablesService,
+        IVersionService versionService
     ) : base(eventBusService)
     {
         _scriptEngineService = scriptEngineService;
         _variablesService = variablesService;
+        _versionService = versionService;
 
         SubscribeEvent<ClientConnectedEvent>(OnClientConnected);
     }
@@ -39,6 +44,8 @@ public class MotdService : AbstractGameService, IMotdService
             _logger.Warning("No MOTD object found in script engine context, sending default MOTD");
             motd = new MotdObject(["Welcome to Elderforge!"]);
         }
+
+        SendNetworkMessage(obj.SessionId, new VersionMessage(_versionService.GetVersion()));
 
         SendNetworkMessage(
             obj.SessionId,

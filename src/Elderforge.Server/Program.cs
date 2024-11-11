@@ -14,6 +14,7 @@ using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Packets;
 using Elderforge.Network.Packets.Chat;
 using Elderforge.Network.Packets.Motd;
+using Elderforge.Network.Packets.System;
 using Elderforge.Network.Server.Data;
 using Elderforge.Network.Server.Extensions;
 using Elderforge.Network.Types;
@@ -113,6 +114,7 @@ public class Program
             .RegisterNetworkMessage<PingMessage>(NetworkMessageType.Ping)
             .RegisterNetworkMessage<ChatMessage>(NetworkMessageType.Chat)
             .RegisterNetworkMessage<MotdMessage>(NetworkMessageType.Motd)
+            .RegisterNetworkMessage<VersionMessage>(NetworkMessageType.Version)
             ;
 
         hostBuilder.Services.AddSingleton(directoriesConfig);
