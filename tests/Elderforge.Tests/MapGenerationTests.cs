@@ -1,6 +1,5 @@
 using Elderforge.Core.Server.Data.Directories;
 using Elderforge.Server.Services.System;
-using ProtoBuf;
 using Serilog;
 
 namespace Elderforge.Tests;
