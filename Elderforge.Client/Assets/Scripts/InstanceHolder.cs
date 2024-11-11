@@ -5,6 +5,7 @@ using Elderforge.Network.Client.Interfaces;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Packets;
 using Elderforge.Network.Packets.Motd;
+using Elderforge.Network.Packets.System;
 using Elderforge.Network.Types;
 
 public class InstanceHolder
@@ -14,6 +15,7 @@ public class InstanceHolder
     {
         new MessageTypeObject(NetworkMessageType.Ping, typeof(PingMessage)),
         new MessageTypeObject(NetworkMessageType.Motd, typeof(MotdMessage)),
+        new MessageTypeObject(NetworkMessageType.Version, typeof(VersionMessage))
     };
     public static INetworkClient NetworkClient { get; set; }
 

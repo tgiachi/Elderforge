@@ -66,6 +66,8 @@ public class NetworkServer : INetworkServer, IEventBusListener<SendMessageEvent>
         _serverListener.PeerDisconnectedEvent += OnPeerDisconnection;
         _serverListener.NetworkReceiveEvent += OnNetworkEvent;
 
+        _eventBusService.Subscribe(this);
+
         _netServer = new NetManager(_serverListener);
 
         _poolEventTask = ServerPoolEvents();

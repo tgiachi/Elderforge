@@ -268,7 +268,7 @@ GameObject:
   - component: {fileID: 231581633}
   - component: {fileID: 231581632}
   m_Layer: 0
-  m_Name: Text
+  m_Name: PortInput
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -791,7 +791,7 @@ GameObject:
   - component: {fileID: 766218157}
   - component: {fileID: 766218158}
   m_Layer: 0
-  m_Name: Text Area
+  m_Name: ServerInputBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -843,6 +843,7 @@ GameObject:
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
+  - component: {fileID: 963194230}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -937,6 +938,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebd6bfbd9c67f469691e1fcfffe5edd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &963194230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3666b3a7e9db04dd5a9fa3c022347c6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serverInput: {fileID: 1304109556}
+  portInput: {fileID: 231581632}
+  connectButton: {fileID: 381943024}
 --- !u!1 &1078677994
 GameObject:
   m_ObjectHideFlags: 0
@@ -1017,7 +1033,7 @@ GameObject:
   - component: {fileID: 1304109557}
   - component: {fileID: 1304109556}
   m_Layer: 0
-  m_Name: Text
+  m_Name: ServerInput
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1470,7 +1486,7 @@ GameObject:
   - component: {fileID: 1690463769}
   - component: {fileID: 1690463770}
   m_Layer: 0
-  m_Name: Text Area
+  m_Name: PortInputBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
