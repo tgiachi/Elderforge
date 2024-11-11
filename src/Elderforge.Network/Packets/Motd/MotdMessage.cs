@@ -12,4 +12,8 @@ public class MotdMessage : INetworkMessage
     {
         Lines = lines;
     }
+
+    public MotdMessage()
+    {
+    }
 }
