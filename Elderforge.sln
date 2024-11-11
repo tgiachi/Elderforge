@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elderforge.Core.Server", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elderforge.Network.Client", "src\Elderforge.Network.Client\Elderforge.Network.Client.csproj", "{E33F5A7E-E3B3-497D-9430-578BEF5F04AD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elderforge.Shared", "src\Elderforge.Shared\Elderforge.Shared.csproj", "{B5981B76-57F6-4E63-9E48-974366E5E6A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,5 +56,9 @@ Global
 		{E33F5A7E-E3B3-497D-9430-578BEF5F04AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E33F5A7E-E3B3-497D-9430-578BEF5F04AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E33F5A7E-E3B3-497D-9430-578BEF5F04AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5981B76-57F6-4E63-9E48-974366E5E6A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5981B76-57F6-4E63-9E48-974366E5E6A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5981B76-57F6-4E63-9E48-974366E5E6A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5981B76-57F6-4E63-9E48-974366E5E6A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
