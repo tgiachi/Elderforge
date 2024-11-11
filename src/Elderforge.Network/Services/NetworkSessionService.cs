@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Elderforge.Network.Data.Session;
 using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Interfaces.Sessions;
 using Serilog;

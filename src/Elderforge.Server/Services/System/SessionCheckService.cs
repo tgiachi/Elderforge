@@ -39,7 +39,7 @@ public class SessionCheckService : ISessionCheckService, INetworkMessageListener
 
     private async Task OnSessionCheck()
     {
-        _logger.Debug("Checking session alive");
+        _logger.Debug("Checking session is alive");
         await _eventBusService.PublishAsync(new SendMessageEvent(string.Empty, new PingMessage()));
 
         var expiredSessions = _networkSessionService.GetExpiredSessions(TimeSpan.FromSeconds(10));

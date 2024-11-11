@@ -25,9 +25,7 @@ public class SchedulerService
 
     private double _lastElapsedMs;
 
-
     public int ActionsInQueue => _actionQueue.Count;
-
 
     public long CurrentTick { get; private set; }
 
