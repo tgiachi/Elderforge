@@ -5,15 +5,16 @@ namespace Elderforge.Core.Server.Serialization.Map;
 [ProtoContract]
 public class ChunkSerializable
 {
-    public int X { get; }
+    [ProtoMember(1)] public int X { get; }
 
-    public int Z { get; }
 
-    public BlockSerializable[,,] Blocks { get; }
+    [ProtoMember(2)] public int Z { get; }
 
-    public int ChunkSize { get; }
+    [ProtoMember(3)] public BlockSerializable[,,] Blocks { get; }
 
-    public int ChunkHeight { get; }
+    [ProtoMember(4)] public int ChunkSize { get; }
+
+    [ProtoMember(5)] public int ChunkHeight { get; }
 
     public ChunkSerializable(int x, int z, int chunkSize, int chunkHeight)
     {
