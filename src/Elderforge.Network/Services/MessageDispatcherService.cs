@@ -95,7 +95,7 @@ public class MessageDispatcherService : IMessageDispatcherService
 
     public async void DispatchMessage<TMessage>(string sessionId, TMessage message) where TMessage : class, INetworkMessage
     {
-        var messageType = _messageTypesService.GetMessageType(typeof(TMessage));
+        var messageType = _messageTypesService.GetMessageType(message.GetType());
 
         if (!_handlers.TryGetValue(messageType, out var handlers))
         {
