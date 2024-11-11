@@ -15,6 +15,8 @@ public class ConnectToServerScript : MonoBehaviour
     public TextMeshProUGUI portInput;
 
 
+    private bool IsConnected = false;
+
     public Button connectButton;
 
     public void ConnectToServer()
@@ -31,6 +33,8 @@ public class ConnectToServerScript : MonoBehaviour
 
             Debug.Log("Connecting to server");
             InstanceHolder.NetworkClient.Connect();
+
+            IsConnected = true;
 
         }
         catch (Exception e)
@@ -64,6 +68,12 @@ public class ConnectToServerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (IsConnected)
+        {
+
+            InstanceHolder.NetworkClient.PoolEvents();
+        }
+
     }
 
     public void OnClick()
