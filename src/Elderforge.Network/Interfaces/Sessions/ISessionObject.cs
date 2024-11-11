@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using LiteNetLib;
 using LiteNetLib.Utils;
@@ -11,6 +12,8 @@ public interface ISessionObject
     NetDataWriter Writer { get; }
 
     Dictionary<string, object> Data { get; }
+
+    DateTime LastActive { get; set; }
 
     TDataObject GetDataObject<TDataObject>(string key, bool throwIfNowExist) where TDataObject : class;
 }

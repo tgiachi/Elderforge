@@ -20,14 +20,14 @@ public class NetworkMessageFactory : INetworkMessageFactory
 
     private readonly INetworkMessageEncoder _encoder;
 
-    public NetworkMessageFactory(IMessageTypesService messageTypesService, INetworkMessageDecoder decoder, INetworkMessageEncoder encoder)
+    public NetworkMessageFactory(
+        IMessageTypesService messageTypesService, INetworkMessageDecoder decoder, INetworkMessageEncoder encoder
+    )
     {
         _messageTypesService = messageTypesService;
         _decoder = decoder;
         _encoder = encoder;
     }
-
-
 
 
     public async Task<INetworkPacket> SerializeAsync<T>(T message) where T : class

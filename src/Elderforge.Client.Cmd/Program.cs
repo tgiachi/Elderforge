@@ -20,7 +20,8 @@ class Program
         {
             new(NetworkMessageType.Ping, typeof(PingMessage)),
             new(NetworkMessageType.Motd, typeof(MotdMessage)),
-            new(NetworkMessageType.Version, typeof(VersionMessage))
+            new(NetworkMessageType.Version, typeof(VersionMessage)),
+            new(NetworkMessageType.Pong, typeof(PongMessage)),
         };
         Console.CancelKeyPress += (sender, eventArgs) =>
         {
@@ -33,27 +34,35 @@ class Program
 
         var networkClient = new NetworkClient("127.0.0.1", 5000, messageTypes);
 
+        networkClient.SubscribeToMessage<PingMessage>()
+            .Subscribe(
+                pingMessage =>
+                {
+                    Console.WriteLine("Received ping message");
+                    networkClient.SendMessage(new PongMessage());
+                }
+            );
+
 
         networkClient.MessageReceived += (messageType, message) =>
         {
             Console.WriteLine($"Received message of type {messageType}: {message}");
-
         };
 
         networkClient.Connect();
 
 
-
-        _poolEventTask = Task.Run(() =>
-        {
-            while (!_cancellationTokenSource.Token.IsCancellationRequested)
+        _poolEventTask = Task.Run(
+            () =>
             {
-                networkClient.PoolEvents();
-                Thread.Sleep(30);
-            }
-        }, _cancellationTokenSource.Token);
-
-
+                while (!_cancellationTokenSource.Token.IsCancellationRequested)
+                {
+                    networkClient.PoolEvents();
+                    Thread.Sleep(30);
+                }
+            },
+            _cancellationTokenSource.Token
+        );
 
 
         while (true)

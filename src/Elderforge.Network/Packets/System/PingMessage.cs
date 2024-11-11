@@ -2,7 +2,7 @@ using System;
 using Elderforge.Network.Interfaces.Messages;
 using ProtoBuf;
 
-namespace Elderforge.Network.Packets;
+namespace Elderforge.Network.Packets.System;
 
 [ProtoContract]
 public class PingMessage : INetworkMessage

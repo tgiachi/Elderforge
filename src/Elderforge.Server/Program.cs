@@ -112,6 +112,7 @@ public class Program
 
         hostBuilder.Services
             .RegisterNetworkMessage<PingMessage>(NetworkMessageType.Ping)
+            .RegisterNetworkMessage<PongMessage>(NetworkMessageType.Pong)
             .RegisterNetworkMessage<ChatMessage>(NetworkMessageType.Chat)
             .RegisterNetworkMessage<MotdMessage>(NetworkMessageType.Motd)
             .RegisterNetworkMessage<VersionMessage>(NetworkMessageType.Version)
@@ -129,6 +130,7 @@ public class Program
             .AddAutoStartService<IDiagnosticService, DiagnosticService>()
             .AddAutoStartService<IVersionService, VersionService>()
             .AddAutoStartService<IMapGenerationService, MapGenerationService>(100)
+            .AddAutoStartService<ISessionCheckService, SessionCheckService>()
             .AddAutoStartService<IMotdService, MotdService>()
             .AddAutoStartService<IChatService, ChatService>();
 
