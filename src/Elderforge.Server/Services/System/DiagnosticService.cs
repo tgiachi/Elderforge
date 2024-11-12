@@ -33,7 +33,7 @@ public class DiagnosticService
         _eventBusService.Subscribe<EngineStartedEvent>(this);
         _eventBusService.Subscribe<EngineShuttingDownEvent>(this);
 
-        await _eventBusService.PublishAsync(new AddSchedulerJobEvent("PrintDiagnosticInfo", 60, PrintDiagnosticInfoAsync));
+        await _eventBusService.PublishAsync(new AddSchedulerJobEvent("PrintDiagnosticInfo", TimeSpan.FromMinutes(1), PrintDiagnosticInfoAsync));
     }
 
     public Task StopAsync()

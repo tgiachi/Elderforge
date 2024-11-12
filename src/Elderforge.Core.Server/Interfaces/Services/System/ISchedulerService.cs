@@ -9,5 +9,5 @@ public interface ISchedulerService : IElderforgeService
     void EnqueueAction(IGameAction action);
     int ActionsInQueue { get; }
 
-    void AddSchedulerJob(string name, int totalSeconds, Func<Task> action);
+    void AddSchedulerJob(string name, TimeSpan totalSpan, Func<Task> action);
 }

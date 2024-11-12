@@ -22,6 +22,8 @@ public class SessionCheckService : ISessionCheckService, INetworkMessageListener
 
     private readonly IEventBusService _eventBusService;
 
+    private readonly int _sessionTimeoutSeconds = 10;
+
     public SessionCheckService(
         ISchedulerService schedulerService, IEventBusService eventBusService, INetworkServer networkServer,
         INetworkSessionService networkSessionService
@@ -34,7 +36,11 @@ public class SessionCheckService : ISessionCheckService, INetworkMessageListener
 
         _networkServer.RegisterMessageListener<PongMessage>(this);
 
-        _schedulerService.AddSchedulerJob("check_session_alive", 5, OnSessionCheck);
+        _schedulerService.AddSchedulerJob(
+            "check_session_alive",
+            TimeSpan.FromSeconds(_sessionTimeoutSeconds),
+            OnSessionCheck
+        );
     }
 
     private async Task OnSessionCheck()

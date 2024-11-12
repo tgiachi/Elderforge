@@ -4,6 +4,6 @@ public class SchedulerJobData
 {
     public string Name { get; set; }
     public Func<Task> Action { get; set; }
-    public int TotalSeconds { get; set; }
-    public int CurrentSeconds { get; set; }
+    public double TotalMs { get; set; }
+    public double CurrentMs { get; set; }
 }

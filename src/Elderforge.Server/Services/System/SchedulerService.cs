@@ -45,6 +45,8 @@ public class SchedulerService
 
     private const int _printInterval = 100;
 
+    private const int _schedulerJobInterval = 100;
+
     public SchedulerService(SchedulerServiceConfig config, IEventBusService eventBusService)
     {
         _config = config;
@@ -184,19 +186,19 @@ public class SchedulerService
             .Subscribe();
 
 
-        _schedulerJobSubscription = Observable.Interval(TimeSpan.FromMilliseconds(1000))
+        _schedulerJobSubscription = Observable.Interval(TimeSpan.FromMilliseconds(_schedulerJobInterval))
             .Subscribe(_ => OnSchedulerJob());
 
         return Task.CompletedTask;
     }
 
-    public void AddSchedulerJob(string name, int totalSeconds, Func<Task> action)
+    public void AddSchedulerJob(string name, TimeSpan totalMs, Func<Task> action)
     {
         _schedulerJobs.Add(
             new SchedulerJobData
             {
                 Name = name,
-                TotalSeconds = totalSeconds,
+                TotalMs = totalMs.TotalMilliseconds,
                 Action = action
             }
         );
@@ -206,11 +208,11 @@ public class SchedulerService
     {
         foreach (var job in _schedulerJobs)
         {
-            job.CurrentSeconds++;
+            job.CurrentMs += _schedulerJobInterval;
 
-            if (job.CurrentSeconds >= job.TotalSeconds)
+            if (job.CurrentMs >= job.TotalMs)
             {
-                job.CurrentSeconds = 0;
+                job.CurrentMs = 0;
                 _logger.Debug("Executing scheduler job {job}", job.Name);
                 EnqueueAction(new ScheduledGameAction(job.Action));
             }
@@ -234,7 +236,7 @@ public class SchedulerService
 
     public Task OnEventAsync(AddSchedulerJobEvent message)
     {
-        AddSchedulerJob(message.Name, message.TotalSeconds, message.Action);
+        AddSchedulerJob(message.Name, message.TotalSpan, message.Action);
 
         return Task.CompletedTask;
     }
