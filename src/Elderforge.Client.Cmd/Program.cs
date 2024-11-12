@@ -4,6 +4,7 @@ using Elderforge.Network.Packets;
 using Elderforge.Network.Packets.Motd;
 using Elderforge.Network.Packets.System;
 using Elderforge.Network.Types;
+using Serilog;
 
 
 namespace Elderforge.Client.Cmd;
@@ -16,6 +17,10 @@ class Program
 
     static void Main(string[] args)
     {
+        var logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .CreateLogger();
+
         var messageTypes = new List<MessageTypeObject>()
         {
             new(NetworkMessageType.Ping, typeof(PingMessage)),
@@ -26,7 +31,7 @@ class Program
         Console.CancelKeyPress += (sender, eventArgs) =>
         {
             eventArgs.Cancel = true;
-            Console.WriteLine("Exiting...");
+            logger.Information("Exiting...");
             _cancellationTokenSource.Cancel();
             Environment.Exit(0);
         };
@@ -38,15 +43,26 @@ class Program
             .Subscribe(
                 pingMessage =>
                 {
-                    Console.WriteLine("Received ping message");
+                    logger.Information("Received ping message, sending pong message");
                     networkClient.SendMessage(new PongMessage());
+                }
+            );
+
+        networkClient.SubscribeToMessage<MotdMessage>()
+            .Subscribe(
+                motdMessage =>
+                {
+                    foreach (var motdLine in motdMessage.Lines)
+                    {
+                        logger.Information("MOTD: {motdLine}", motdLine);
+                    }
                 }
             );
 
 
         networkClient.MessageReceived += (messageType, message) =>
         {
-            Console.WriteLine($"Received message of type {messageType}: {message}");
+            logger.Information("Received message of type {messageType}: {Message}", messageType, message);
         };
 
         networkClient.Connect();

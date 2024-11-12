@@ -34,9 +34,11 @@ tasks:
       - dotnet publish ./src/Elderforge.Server/Elderforge.Server.csproj -c Release   -o ./publish
   publish-unity:
     cmds:
-      - rm -rf "{{.UNITY_ASSETS_DIR}}/*"
-      - dotnet publish ./src/Elderforge.Network.Client/Elderforge.Network.Client.csproj -c Release   -o {{.UNITY_ASSETS_DIR}}
-      - rm -rf "{{.UNITY_ASSETS_DIR}}/*.json"
+      - cmd: rm -rf {{.UNITY_ASSETS_DIR}}/*
+        platforms: [ linux, darwin ]
+      - dotnet publish ./src/Elderforge.Network.Client/Elderforge.Network.Client.csproj -c Release -o {{.UNITY_ASSETS_DIR}}
+      - cmd: rm -rf {{.UNITY_ASSETS_DIR}}/*.json
+        platforms: [ linux, darwin ]
     deps:
       - clean
       - restore

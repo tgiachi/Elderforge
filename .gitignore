@@ -13,7 +13,7 @@
 *.user
 *.userosscache
 *.sln.docstates
-
+*/**/*.dll
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
@@ -567,3 +567,4 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+*.dll

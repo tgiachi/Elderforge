@@ -194,6 +194,7 @@ public class SchedulerService
 
     public void AddSchedulerJob(string name, TimeSpan totalMs, Func<Task> action)
     {
+        _logger.Debug("Adding scheduler job {name} with total ms {totalMs}", name, totalMs.TotalMilliseconds);
         _schedulerJobs.Add(
             new SchedulerJobData
             {

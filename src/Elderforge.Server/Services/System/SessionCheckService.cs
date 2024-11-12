@@ -16,27 +16,23 @@ public class SessionCheckService : ISessionCheckService, INetworkMessageListener
 
     private readonly INetworkSessionService _networkSessionService;
 
-    private readonly ISchedulerService _schedulerService;
-
-    private readonly INetworkServer _networkServer;
 
     private readonly IEventBusService _eventBusService;
 
-    private readonly int _sessionTimeoutSeconds = 10;
+    private const int _sessionTimeoutSeconds = 10;
 
     public SessionCheckService(
         ISchedulerService schedulerService, IEventBusService eventBusService, INetworkServer networkServer,
         INetworkSessionService networkSessionService
     )
     {
-        _schedulerService = schedulerService;
         _eventBusService = eventBusService;
-        _networkServer = networkServer;
+
         _networkSessionService = networkSessionService;
 
-        _networkServer.RegisterMessageListener<PongMessage>(this);
+        networkServer.RegisterMessageListener<PongMessage>(this);
 
-        _schedulerService.AddSchedulerJob(
+        schedulerService.AddSchedulerJob(
             "check_session_alive",
             TimeSpan.FromSeconds(_sessionTimeoutSeconds),
             OnSessionCheck
