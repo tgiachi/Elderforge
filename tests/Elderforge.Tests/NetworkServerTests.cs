@@ -145,8 +145,6 @@ public class NetworkServerTests
 
 
         var networkClient = new NetworkClient(
-            "localhost",
-            5000,
             new List<MessageTypeObject>
             {
                 new MessageTypeObject(NetworkMessageType.Ping, typeof(PingMessage))
@@ -196,7 +194,7 @@ public class NetworkServerTests
 
         networkServer.StartAsync();
 
-        networkClient.Connect();
+        networkClient.Connect("localhost", 5000);
 
         networkClient.SendMessage(new PingMessage());
 

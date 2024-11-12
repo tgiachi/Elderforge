@@ -37,7 +37,7 @@ class Program
         };
 
 
-        var networkClient = new NetworkClient("127.0.0.1", 5000, messageTypes);
+        var networkClient = new NetworkClient(messageTypes);
 
         networkClient.SubscribeToMessage<PingMessage>()
             .Subscribe(
@@ -65,7 +65,7 @@ class Program
             logger.Information("Received message of type {messageType}: {Message}", messageType, message);
         };
 
-        networkClient.Connect();
+        networkClient.Connect("127.0.0.1", 5000);
 
 
         _poolEventTask = Task.Run(

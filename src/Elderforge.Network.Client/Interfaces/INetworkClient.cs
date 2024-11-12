@@ -11,7 +11,7 @@ public interface INetworkClient
 
     void PoolEvents();
 
-    void Connect();
+    void Connect(string host, int port);
 
     void SendMessage<T>(T message) where T : class, INetworkMessage;
 

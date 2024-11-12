@@ -25,8 +25,7 @@ public class NetworkClient : INetworkClient
     private readonly Subject<INetworkMessage> _messageSubject = new();
 
     private readonly NetManager _netManager;
-    private readonly string _host;
-    private readonly int _port;
+
 
     private readonly INetworkMessageFactory _networkMessageFactory;
     private readonly IMessageTypesService _messageTypesService;
@@ -35,10 +34,8 @@ public class NetworkClient : INetworkClient
 
     private readonly NetDataWriter writer = new();
 
-    public NetworkClient(string host, int port, List<MessageTypeObject> messageTypes)
+    public NetworkClient(List<MessageTypeObject> messageTypes)
     {
-        _host = host;
-        _port = port;
         _netManager = new NetManager(_clientListener);
         _messageTypesService = new MessageTypesService(messageTypes);
         _networkMessageFactory = new NetworkMessageFactory(
@@ -71,10 +68,10 @@ public class NetworkClient : INetworkClient
     }
 
 
-    public void Connect()
+    public void Connect(string host, int port)
     {
         _netManager.Start();
-        _netManager.Connect(_host, _port, string.Empty);
+        _netManager.Connect(host, port, string.Empty);
     }
 
     public void SendMessage<T>(T message) where T : class, INetworkMessage
@@ -92,8 +89,6 @@ public class NetworkClient : INetworkClient
     {
         return _messageSubject.OfType<T>();
     }
-
-
 
 
     public void PoolEvents()
