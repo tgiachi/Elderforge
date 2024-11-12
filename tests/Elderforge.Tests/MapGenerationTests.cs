@@ -1,4 +1,5 @@
 using Elderforge.Core.Server.Data.Directories;
+using Elderforge.Core.Services;
 using Elderforge.Server.Services.System;
 using Serilog;
 
@@ -17,7 +18,10 @@ public class MapGenerationTests
     [Fact]
     public async Task TestGenerateMapAsync()
     {
-        var mapGenerationService = new MapGenerationService(new DirectoriesConfig(Path.GetTempPath()));
+        var mapGenerationService = new MapGenerationService(
+            new DirectoriesConfig(Path.GetTempPath()),
+            new EventBusService()
+        );
 
         var chunks = await mapGenerationService.GenerateMapAsync(128, 128);
 
@@ -27,7 +31,10 @@ public class MapGenerationTests
     [Fact]
     public async Task TestGenerateMapSerializableAsync()
     {
-        var mapGenerationService = new MapGenerationService(new DirectoriesConfig(Path.GetTempPath()));
+        var mapGenerationService = new MapGenerationService(
+            new DirectoriesConfig(Path.GetTempPath()),
+            new EventBusService()
+        );
 
         var chunks = await mapGenerationService.GenerateMapAsync(128, 128);
 

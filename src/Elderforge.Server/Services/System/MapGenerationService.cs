@@ -1,6 +1,9 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using Elderforge.Core.Interfaces.EventBus;
+using Elderforge.Core.Interfaces.Services;
 using Elderforge.Core.Server.Data.Directories;
+using Elderforge.Core.Server.Events.Engine;
 using Elderforge.Core.Server.Extensions;
 using Elderforge.Core.Server.Interfaces.Services.System;
 using Elderforge.Core.Server.Serialization.Map;
@@ -9,31 +12,32 @@ using Elderforge.Core.Utils;
 using Elderforge.Shared.Blocks;
 using Elderforge.Shared.Chunks;
 using Elderforge.Shared.Types;
+using Humanizer;
 using Serilog;
 
 namespace Elderforge.Server.Services.System;
 
-public class MapGenerationService : IMapGenerationService
+public class MapGenerationService : IMapGenerationService, IEventBusListener<EngineStartedEvent>
 {
     private readonly ILogger _logger = Log.Logger.ForContext<MapGenerationService>();
 
     private readonly string _mapsDirectory;
 
-    private readonly int chunkSize = 16;
-    private readonly int chunkHeight = 1024;
+    private const int chunkSize = 16;
+    private const int chunkHeight = 1024;
 
     private readonly ConcurrentDictionary<(int, int), ChunkEntity> chunkCache = new();
 
-
-    public MapGenerationService(DirectoriesConfig directoriesConfig)
+    public MapGenerationService(DirectoriesConfig directoriesConfig, IEventBusService eventBusService)
     {
         _mapsDirectory = directoriesConfig[DirectoryType.Maps];
+        eventBusService.Subscribe(this);
     }
 
     private static float Generate(int x, int z, int seed)
     {
         Random random = new Random(x * 73856093 ^ z * 19349663 ^ seed);
-        return (float)random.NextDouble(); // Placeholder: Replace with actual Perlin Noise implementation
+        return (float)random.NextDouble(); // TODO: Replace with actual Perlin Noise implementation
     }
 
     private ChunkEntity GenerateStaticChunk(int chunkX, int chunkZ, int seed)
@@ -122,9 +126,9 @@ public class MapGenerationService : IMapGenerationService
 
 
         _logger.Information(
-            "Generated {ChunkCount} chunks in: {ElapsedMs}",
+            "Generated {ChunkCount} chunks in: {ElapsedMs}ms",
             chunkCache.Count,
-            StopwatchUtils.GetElapsedMilliseconds(startTime, endTime)
+            StopwatchUtils.GetElapsedMilliseconds(startTime, endTime).Milliseconds()
         );
 
         return chunkCache.Values.ToList();
@@ -140,5 +144,20 @@ public class MapGenerationService : IMapGenerationService
         };
 
         return Task.FromResult(map);
+    }
+
+    public async Task OnEventAsync(EngineStartedEvent message)
+    {
+        await GenerateMapAsync(128, 128);
+
+        // unload all chunks after generation
+
+        var firstChunk = chunkCache.First();
+
+        chunkCache.Clear();
+
+        chunkCache[firstChunk.Key] = firstChunk.Value;
+
+        GC.Collect();
     }
 }
