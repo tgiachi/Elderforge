@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.1.0-alpha.2"></a>
+## [0.1.0-alpha.2](https://www.github.com/tgiachi/Elderforge/releases/tag/v0.1.0-alpha.2) (2024-11-12)
+
+### Features
+
+* **client:** add .gitignore and IDE configuration files for better project management ([d2fa945](https://www.github.com/tgiachi/Elderforge/commit/d2fa94581aec6bf98a28ff43a02f36889e1c9326))
+* **client:** added default asset resources ([4d28b0e](https://www.github.com/tgiachi/Elderforge/commit/4d28b0ec0ac635a936f43c31f050234512019c9f))
+* **client:** initialize Unity project with essential files and settings ([3a84779](https://www.github.com/tgiachi/Elderforge/commit/3a8477969048fcc6eae551ae2668c4b7a10f94f8))
+* **ConnectToServerScript:** add connection status tracking and event pooling for connected state ([806271e](https://www.github.com/tgiachi/Elderforge/commit/806271ed4cddc3a104d2eeb660bc0049a726df1c))
+* **ConnectToServerScript:** add script to connect to server with UI inputs for server and port ([601ad5c](https://www.github.com/tgiachi/Elderforge/commit/601ad5cc1605916743bc782dac8f6f373d09cc1a))
+* **Elderforge.Client.Cmd:** add new project file for Elderforge.Client.Cmd to support command line interface functionality ([8f7a84e](https://www.github.com/tgiachi/Elderforge/commit/8f7a84ee40f5c12ab63f90d7a88c1f570d72cae6))
+* **Elderforge.Entities:** add new project file for Elderforge.Entities with .NET 9.0 target framework and project reference to Elderforge.Core.Server ([a8a55d8](https://www.github.com/tgiachi/Elderforge/commit/a8a55d8487bfb55884aa4b7bd1953d01b938519b))
+* **LoginScene:** add new login scene with background image and UI elements to enhance user experience ([52a31d9](https://www.github.com/tgiachi/Elderforge/commit/52a31d91943d037e4e44e0daf9b0af1b1a2d54a0))
+* **LoginScene:** rename UI elements for clarity and consistency in naming conventions ([d0506bb](https://www.github.com/tgiachi/Elderforge/commit/d0506bbcb15ca636e6dd4b2b750fd812549ab954))
+* **NetworkClient:** implement MessageReceived event to handle incoming messages more effectively ([edcf562](https://www.github.com/tgiachi/Elderforge/commit/edcf56211c1c1066f031514fd80a3de43ede7c71))
+* **noise:** add implicit noise modules for various operations and types to enhance noise generation capabilities ([8d3c9c9](https://www.github.com/tgiachi/Elderforge/commit/8d3c9c95ba05fdfd45660b40b77b26f3a4cbce7a))
+* **Program.cs:** add PongMessage registration to NetworkMessageFactory ([09ccdbd](https://www.github.com/tgiachi/Elderforge/commit/09ccdbd14023dd8cc660c7dbbcbe5f396c662a74))
+* **SerializableExtension:** add extension methods for BlockEntity and ChunkEntity to support serialization ([1dd643b](https://www.github.com/tgiachi/Elderforge/commit/1dd643b28d22a85932e45ebb62a82bc8b4877105))
+* **solution:** add Elderforge.Shared project to the solution for shared code management ([ca9940e](https://www.github.com/tgiachi/Elderforge/commit/ca9940e9d8a80599e723a2ece383b2fffd85abf4))
+* **vscode:** add VSCode configuration files for better development experience ([6c99b3f](https://www.github.com/tgiachi/Elderforge/commit/6c99b3ff3b61c8dfe249bcc25820134a0da43866))
+
+### Bug Fixes
+
+* **ProjectVersion.txt:** update Unity Editor version to 2022.3.52f1 and revision hash ([b546d4b](https://www.github.com/tgiachi/Elderforge/commit/b546d4ba0914d5b6da51c0b347992dc6af0f7dba))
+
 <a name="0.1.0-alpha.1"></a>
 ## [0.1.0-alpha.1](https://www.github.com/tgiachi/Elderforge/releases/tag/v0.1.0-alpha.1) (2024-11-10)
 

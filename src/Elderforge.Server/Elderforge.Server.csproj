@@ -6,7 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-        <Version>0.1.0-alpha.1</Version>
+        <Version>0.1.0-alpha.2</Version>
         <!--        <PublishSingleFile>True</PublishSingleFile>-->
         <!--        <SelfConteined>True</SelfConteined>-->
     </PropertyGroup>
