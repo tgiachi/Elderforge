@@ -33,6 +33,20 @@ public class ElderforgeInstanceHolder
     public static void Initialize(LoggerConfiguration configuration)
     {
         _instance = new ElderforgeInstanceHolder(configuration);
+
+
+        NetworkClient.MessageReceived += (messageType, message) =>
+        {
+            Log.Logger.Debug("Received message of type {MessageType}", messageType);
+        };
+        NetworkClient.SubscribeToMessage<PingMessage>()
+            .Subscribe(
+                message =>
+                {
+                    Log.Logger.Debug("Received ping message, sending pong message");
+                    NetworkClient.SendMessage(new PongMessage());
+                }
+            );
     }
 
 

@@ -9,6 +9,10 @@ public interface INetworkClient
     delegate void MessageReceivedEventHandler(NetworkMessageType messageType, INetworkMessage message);
     event MessageReceivedEventHandler MessageReceived;
 
+    event EventHandler Connected;
+
+    bool IsConnected { get; }
+
     void PoolEvents();
 
     void Connect(string host, int port);

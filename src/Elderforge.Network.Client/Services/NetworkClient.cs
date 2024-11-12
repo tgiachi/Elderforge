@@ -18,6 +18,10 @@ namespace Elderforge.Network.Client.Services;
 public class NetworkClient : INetworkClient
 {
     public event INetworkClient.MessageReceivedEventHandler? MessageReceived;
+    public event EventHandler? Connected;
+
+    public bool IsConnected { get; private set; }
+
 
     private readonly ILogger _logger = Log.Logger.ForContext<NetworkClient>();
     private readonly EventBasedNetListener _clientListener = new();
@@ -25,6 +29,8 @@ public class NetworkClient : INetworkClient
     private readonly Subject<INetworkMessage> _messageSubject = new();
 
     private readonly NetManager _netManager;
+
+    private bool _connected;
 
 
     private readonly INetworkMessageFactory _networkMessageFactory;
@@ -53,6 +59,13 @@ public class NetworkClient : INetworkClient
     {
         _logger.Debug("Received packet from server type: {Type}", packet.MessageType);
 
+        if (!_connected)
+        {
+            _connected = true;
+            IsConnected = true;
+            Connected?.Invoke(this, EventArgs.Empty);
+        }
+
         var message = _networkMessageFactory.ParseAsync(packet).Result;
 
         _logger.Debug("Parsed message from server type: {Type}", message.GetType().Name);
@@ -72,6 +85,8 @@ public class NetworkClient : INetworkClient
     {
         _netManager.Start();
         _netManager.Connect(host, port, string.Empty);
+
+        IsConnected = true;
     }
 
     public void SendMessage<T>(T message) where T : class, INetworkMessage

@@ -21,13 +21,7 @@ class Program
             .WriteTo.Console()
             .CreateLogger();
 
-        var messageTypes = new List<MessageTypeObject>()
-        {
-            new(NetworkMessageType.Ping, typeof(PingMessage)),
-            new(NetworkMessageType.Motd, typeof(MotdMessage)),
-            new(NetworkMessageType.Version, typeof(VersionMessage)),
-            new(NetworkMessageType.Pong, typeof(PongMessage)),
-        };
+
         Console.CancelKeyPress += (sender, eventArgs) =>
         {
             eventArgs.Cancel = true;
@@ -37,7 +31,7 @@ class Program
         };
 
 
-        var networkClient = new NetworkClient(messageTypes);
+        var networkClient = new NetworkClient(ElderforgeInstanceHolder.MessageTypes);
 
         networkClient.SubscribeToMessage<PingMessage>()
             .Subscribe(
@@ -57,6 +51,11 @@ class Program
                         logger.Information("MOTD: {motdLine}", motdLine);
                     }
                 }
+            );
+
+        networkClient.SubscribeToMessage<VersionMessage>()
+            .Subscribe(
+                versionMessage => { logger.Information("Server version: {version}", versionMessage.Version); }
             );
 
 

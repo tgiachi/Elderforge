@@ -6,8 +6,7 @@ namespace Elderforge.Network.Packets.System;
 [ProtoContract]
 public class VersionMessage : INetworkMessage
 {
-    public string Version { get; set; }
-
+    [ProtoMember(1)] public string Version { get; set; }
 
     public VersionMessage(string version)
     {
@@ -16,6 +15,5 @@ public class VersionMessage : INetworkMessage
 
     public VersionMessage()
     {
-
     }
 }

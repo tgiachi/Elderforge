@@ -10,9 +10,9 @@ namespace Assets.Scripts
         // Start is called before the first frame update
         void Start()
         {
-            ElderforgeInstanceHolder.Initialize(new LoggerConfiguration().WriteTo.UnityDebug());
-
-
+            ElderforgeInstanceHolder.Initialize(new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.UnityDebug());
         }
 
 
