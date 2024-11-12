@@ -15,4 +15,6 @@ public interface INetworkSessionService
     void UpdateLastActive(string sessionId);
 
     IEnumerable<ISessionObject> GetExpiredSessions(TimeSpan expirationTime);
+
+    int SessionCount { get; }
 }

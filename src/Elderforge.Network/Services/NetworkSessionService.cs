@@ -10,6 +10,8 @@ namespace Elderforge.Network.Services;
 
 public class NetworkSessionService : INetworkSessionService
 {
+    public int SessionCount => _sessions.Count;
+
     private readonly ConcurrentDictionary<string, ISessionObject> _sessions = new();
     private readonly ILogger _logger = Log.ForContext<NetworkSessionService>();
 

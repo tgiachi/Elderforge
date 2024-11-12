@@ -41,6 +41,11 @@ public class SessionCheckService : ISessionCheckService, INetworkMessageListener
 
     private async Task OnSessionCheck()
     {
+        if (_networkSessionService.SessionCount == 0)
+        {
+            return;
+        }
+
         _logger.Debug("Checking session is alive");
         await _eventBusService.PublishAsync(new SendMessageEvent(string.Empty, new PingMessage()));
 
