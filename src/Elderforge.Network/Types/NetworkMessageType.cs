@@ -7,4 +7,6 @@ public enum NetworkMessageType : byte
     Pong,
     Chat,
     Motd,
+    MotdRequest,
+    ServerReady,
 }

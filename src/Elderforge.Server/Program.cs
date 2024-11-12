@@ -10,6 +10,7 @@ using Elderforge.Core.Server.Interfaces.Services.System;
 using Elderforge.Core.Server.Types;
 using Elderforge.Core.Services;
 using Elderforge.Core.Utils;
+using Elderforge.Network.Client.Services;
 using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Packets;
 using Elderforge.Network.Packets.Chat;
@@ -110,13 +111,10 @@ public class Program
             .RegisterProtobufDecoder();
 
 
-        hostBuilder.Services
-            .RegisterNetworkMessage<PingMessage>(NetworkMessageType.Ping)
-            .RegisterNetworkMessage<PongMessage>(NetworkMessageType.Pong)
-            .RegisterNetworkMessage<ChatMessage>(NetworkMessageType.Chat)
-            .RegisterNetworkMessage<MotdMessage>(NetworkMessageType.Motd)
-            .RegisterNetworkMessage<VersionMessage>(NetworkMessageType.Version)
-            ;
+        ElderforgeInstanceHolder.MessageTypes.ForEach(
+            s => { hostBuilder.Services.RegisterNetworkMessage(s.Type, s.MessageType); }
+        );
+
 
         hostBuilder.Services.AddSingleton(directoriesConfig);
         hostBuilder.Services.AddSingleton(new SchedulerServiceConfig(100, 50, 4));

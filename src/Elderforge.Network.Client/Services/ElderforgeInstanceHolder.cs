@@ -23,8 +23,11 @@ public class ElderforgeInstanceHolder
     [
         new(NetworkMessageType.Ping, typeof(PingMessage)),
         new(NetworkMessageType.Motd, typeof(MotdMessage)),
+        new(NetworkMessageType.MotdRequest, typeof(MotdRequestMessage)),
+
         new(NetworkMessageType.Version, typeof(VersionMessage)),
-        new(NetworkMessageType.Pong, typeof(PongMessage))
+        new(NetworkMessageType.Pong, typeof(PongMessage)),
+        new(NetworkMessageType.ServerReady, typeof(ServerReadyMessage)),
     ];
 
     public IEventBusService EventBusService { get; } = new EventBusService();

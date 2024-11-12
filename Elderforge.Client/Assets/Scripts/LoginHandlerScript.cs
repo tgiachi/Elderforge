@@ -6,6 +6,7 @@ using Elderforge.Network.Packets.System;
 using Serilog;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using ILogger = UnityEngine.ILogger;
 
@@ -40,6 +41,14 @@ public class LoginHandlerScript : MonoBehaviour
                 message =>
                 {
                     versionText.text = "v" + message.Version;
+                }
+            );
+
+        ElderforgeInstanceHolder.NetworkClient.SubscribeToMessage<ServerReadyMessage>()
+            .Subscribe(
+                message =>
+                {
+                    SceneManager.LoadScene("WorldScene");
                 }
             );
 
