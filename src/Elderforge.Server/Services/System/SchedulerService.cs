@@ -84,7 +84,7 @@ public class SchedulerService
             await Parallel.ForEachAsync(
                 sortedActions,
                 _parallelOptions,
-                async (action, c) =>
+                async (action, _) =>
                 {
                     try
                     {
@@ -222,8 +222,8 @@ public class SchedulerService
 
     public Task StopAsync()
     {
-        _tickSubscription?.Dispose();
-        _schedulerJobSubscription?.Dispose();
+        _tickSubscription.Dispose();
+        _schedulerJobSubscription.Dispose();
 
         return Task.CompletedTask;
     }
