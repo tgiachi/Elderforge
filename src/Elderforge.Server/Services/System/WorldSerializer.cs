@@ -11,10 +11,11 @@ namespace Elderforge.Server.Services.System;
 
 public class WorldSerializer
 {
-    public static void SaveWorld(string filePath, IWorldGeneratorService worldGen, IProgress<float> progress = null)
+    public static void SaveWorld(string filePath, string name,  IWorldGeneratorService worldGen, IProgress<float> progress = null)
     {
         var serializableWorld = new SerializableWorld
         {
+            Name = name,
             WorldSeed = worldGen.WorldSeed,
             WorldSize = new SerializableVector3Int(worldGen.GetWorldSize()),
             Chunks = new List<SerializableChunkEntity>()
@@ -66,7 +67,7 @@ public class WorldSerializer
 
 
     public static void SaveCompressedWorld(
-        string filePath, IWorldGeneratorService worldGen, IProgress<float> progress = null
+        string filePath,  string name, IWorldGeneratorService worldGen, IProgress<float> progress = null
     )
     {
         using var file = File.Create(filePath);

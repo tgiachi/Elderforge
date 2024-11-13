@@ -1,37 +1,49 @@
+using System.Diagnostics;
 using System.Numerics;
 using Elderforge.Core.Interfaces.EventBus;
 using Elderforge.Core.Interfaces.Services;
 using Elderforge.Core.Numerics;
 using Elderforge.Core.Server.Data.Config;
+using Elderforge.Core.Server.Data.Directories;
 using Elderforge.Core.Server.Data.Internal;
 using Elderforge.Core.Server.Events.Engine;
+using Elderforge.Core.Server.Events.World;
 using Elderforge.Core.Server.Interfaces.Services.System;
 using Elderforge.Core.Server.Interfaces.World;
+using Elderforge.Core.Server.Types;
+using Elderforge.Core.Utils;
 using Elderforge.Shared.Chunks;
-
 using Elderforge.Shared.Types;
+using RandomString4Net;
 using Serilog;
 
 namespace Elderforge.Server.Services.System;
 
 public class WorldGeneratorService : IWorldGeneratorService, IEventBusListener<EngineStartedEvent>
 {
-
     private readonly ILogger _logger = Log.ForContext<WorldGeneratorService>();
 
     private readonly Dictionary<Vector3Int, ChunkEntity> chunks = new();
 
+    private readonly string _mapDirectory;
 
     private readonly ITerrainGenerator _terrainGenerator;
 
     private readonly WorldDimensions _worldDimensions;
 
+    private readonly IEventBusService _eventBusService;
+
     public int WorldSeed { get; }
 
 
-    public WorldGeneratorService(WorldGeneratorConfig config, ITerrainGenerator terrainGenerator, IEventBusService eventBusService)
+    public WorldGeneratorService(
+        WorldGeneratorConfig config, ITerrainGenerator terrainGenerator, IEventBusService eventBusService,
+        DirectoriesConfig directoriesConfig
+    )
     {
+        _mapDirectory = directoriesConfig[DirectoryType.Maps];
         _terrainGenerator = terrainGenerator;
+        _eventBusService = eventBusService;
         WorldSeed = config.Seed;
 
         _worldDimensions = new WorldDimensions(config.WorldSize.X, config.WorldSize.Y, config.WorldSize.Z);
@@ -39,10 +51,45 @@ public class WorldGeneratorService : IWorldGeneratorService, IEventBusListener<E
         eventBusService.Subscribe(this);
     }
 
-    public Task OnEventAsync(EngineStartedEvent message)
+    public async Task OnEventAsync(EngineStartedEvent message)
     {
-        return Task.CompletedTask;
+        var name = RandomString.GetString(Types.ALPHABET_MIXEDCASE);
+
+        await GenerateWorldAsync(name);
     }
+
+    private async Task GenerateWorldAsync(string name)
+    {
+        var startTime = Stopwatch.GetTimestamp();
+        _logger.Information(
+            "Generating world with seed {Seed} size: {X}x{Y}x{Z}",
+            WorldSeed,
+            _worldDimensions.Width,
+            _worldDimensions.Height,
+            _worldDimensions.Depth
+        );
+
+        await GenerateWorldAsync(
+            new Progress<float>(
+                f => { _logger.Debug("Generating world: {Progress:P}", f); }
+            )
+        );
+
+        var endTime = Stopwatch.GetTimestamp();
+
+        _logger.Information("World generated in {Time} ms", StopwatchUtils.GetElapsedMilliseconds(startTime, endTime));
+
+        await _eventBusService.PublishAsync(new WorldCreatedEvent());
+
+        var fileName = Path.Combine(_mapDirectory, $"{name}.map.gz");
+
+        WorldSerializer.SaveCompressedWorld(fileName, name, this);
+
+        _logger.Information("World saved to {FileName}", fileName);
+
+        await _eventBusService.PublishAsync(new WorldSavedEvent(fileName));
+    }
+
 
     public ChunkEntity GenerateChunk(Vector3Int position)
     {
@@ -142,7 +189,6 @@ public class WorldGeneratorService : IWorldGeneratorService, IEventBusListener<E
     }
 
 
-
     public bool IsPositionInBounds(Vector3Int worldPosition)
     {
         return worldPosition.X >= 0 && worldPosition.X < _worldDimensions.Width &&
@@ -175,14 +221,9 @@ public class WorldGeneratorService : IWorldGeneratorService, IEventBusListener<E
         }
     }
 
-    public void SaveWorld(string filePath, IProgress<float> progress = null)
-    {
-        WorldSerializer.SaveWorld(filePath, this, progress);
-    }
 
     public Task StartAsync()
     {
-
         return Task.CompletedTask;
     }
 
@@ -190,6 +231,4 @@ public class WorldGeneratorService : IWorldGeneratorService, IEventBusListener<E
     {
         return Task.CompletedTask;
     }
-
-
 }

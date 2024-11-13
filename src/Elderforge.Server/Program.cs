@@ -7,6 +7,7 @@ using Elderforge.Core.Server.Events.Engine;
 using Elderforge.Core.Server.Interfaces.Services;
 using Elderforge.Core.Server.Interfaces.Services.Game;
 using Elderforge.Core.Server.Interfaces.Services.System;
+using Elderforge.Core.Server.Interfaces.World;
 using Elderforge.Core.Server.Types;
 using Elderforge.Core.Services;
 using Elderforge.Core.Utils;
@@ -26,6 +27,7 @@ using Elderforge.Server.ScriptModules;
 using Elderforge.Server.Services;
 using Elderforge.Server.Services.Game;
 using Elderforge.Server.Services.System;
+using Elderforge.Server.WorldGenerators;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -117,7 +119,11 @@ public class Program
 
 
         hostBuilder.Services.AddSingleton(directoriesConfig);
-        hostBuilder.Services.AddSingleton(new SchedulerServiceConfig(100, 50, 4));
+        hostBuilder.Services
+            .AddSingleton(new SchedulerServiceConfig(100, 50, 4))
+            .AddSingleton(new WorldGeneratorConfig(64))
+            .AddSingleton<ITerrainGenerator, BasicTerrainGenerator>()
+            ;
 
 
         hostBuilder.Services

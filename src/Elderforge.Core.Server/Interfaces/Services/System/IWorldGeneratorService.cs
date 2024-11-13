@@ -1,7 +1,5 @@
 using Elderforge.Core.Numerics;
 using Elderforge.Shared.Chunks;
-
-
 using Elderforge.Shared.Types;
 
 namespace Elderforge.Core.Server.Interfaces.Services.System;
@@ -30,6 +28,4 @@ public interface IWorldGeneratorService
     bool IsPositionInBounds(Vector3Int worldPosition);
     Vector3Int GetWorldSize();
     IEnumerable<Vector3Int> GetAllChunkPositions();
-
-    void SaveWorld(string filePath, IProgress<float> progress = null);
 }

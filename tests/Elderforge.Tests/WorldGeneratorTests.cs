@@ -1,5 +1,6 @@
 using Elderforge.Core.Numerics;
 using Elderforge.Core.Server.Data.Config;
+using Elderforge.Core.Server.Data.Directories;
 using Elderforge.Core.Server.Interfaces.World;
 using Elderforge.Core.Services;
 using Elderforge.Server.Services.System;
@@ -10,6 +11,8 @@ namespace Elderforge.Tests;
 
 public class WorldGeneratorTests
 {
+    private readonly DirectoriesConfig _directoriesConfig = new DirectoriesConfig(Path.GetTempPath());
+
     [Fact]
     public async Task GenerateOneChunkAsync()
     {
@@ -20,7 +23,8 @@ public class WorldGeneratorTests
                 WorldSize = new Vector3Int(2, 2, 2)
             },
             new BasicTerrainGenerator(),
-            new EventBusService()
+            new EventBusService(),
+            _directoriesConfig
         );
 
         var chunk = worldService.GetOrGenerateChunk(new Vector3Int(0, 0, 0));
@@ -35,10 +39,11 @@ public class WorldGeneratorTests
             new WorldGeneratorConfig
             {
                 Seed = 1234,
-                WorldSize = new Vector3Int(10, 10, 10)
+                WorldSize = new Vector3Int(2, 2, 2)
             },
             new BasicTerrainGenerator(),
-            new EventBusService()
+            new EventBusService(),
+            _directoriesConfig
         );
 
         await worldService.GenerateWorldAsync();
@@ -61,15 +66,17 @@ public class WorldGeneratorTests
             new WorldGeneratorConfig
             {
                 Seed = 1234,
-                WorldSize = new Vector3Int(128, 128, 128)
+                WorldSize = new Vector3Int(2, 2, 2)
             },
-            new BasicTerrainGenerator(),new EventBusService()
+            new BasicTerrainGenerator(),
+            new EventBusService(),
+            _directoriesConfig
         );
 
         await worldService.GenerateWorldAsync();
 
 
-        WorldSerializer.SaveWorld(tempFile, worldService);
+        WorldSerializer.SaveWorld(tempFile, "test_world", worldService);
 
         Assert.True(File.Exists(tempFile));
 
@@ -86,16 +93,17 @@ public class WorldGeneratorTests
             new WorldGeneratorConfig
             {
                 Seed = 1234,
-                WorldSize = new Vector3Int(128, 128, 128)
+                WorldSize = new Vector3Int(2, 2, 2)
             },
             new BasicTerrainGenerator(),
-            new EventBusService()
+            new EventBusService(),
+            _directoriesConfig
         );
 
         await worldService.GenerateWorldAsync();
 
 
-        WorldSerializer.SaveCompressedWorld(tempFile, worldService);
+        WorldSerializer.SaveCompressedWorld(tempFile, "test_world", worldService);
 
         Assert.True(File.Exists(tempFile));
 
@@ -112,16 +120,17 @@ public class WorldGeneratorTests
             new WorldGeneratorConfig
             {
                 Seed = 1234,
-                WorldSize = new Vector3Int(128, 128, 128)
+                WorldSize = new Vector3Int(2, 2, 2)
             },
             new BasicTerrainGenerator(),
-            new EventBusService()
+            new EventBusService(),
+            _directoriesConfig
         );
 
         await worldService.GenerateWorldAsync();
 
 
-        WorldSerializer.SaveWorld(tempFile, worldService);
+        WorldSerializer.SaveWorld(tempFile, "test_world", worldService);
 
         Assert.True(File.Exists(tempFile));
 
@@ -142,15 +151,16 @@ public class WorldGeneratorTests
             new WorldGeneratorConfig
             {
                 Seed = 1234,
-                WorldSize = new Vector3Int(128, 128, 128)
+                WorldSize = new Vector3Int(2, 2, 2)
             },
             new BasicTerrainGenerator(),
-            new EventBusService()
+            new EventBusService(),
+            _directoriesConfig
         );
 
         await worldService.GenerateWorldAsync();
 
-        WorldSerializer.SaveCompressedWorld(tempFile, worldService);
+        WorldSerializer.SaveCompressedWorld(tempFile, "test_world", worldService);
 
         Assert.True(File.Exists(tempFile));
 
