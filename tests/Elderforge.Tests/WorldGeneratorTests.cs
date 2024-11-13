@@ -1,6 +1,7 @@
 using Elderforge.Core.Numerics;
 using Elderforge.Core.Server.Data.Config;
 using Elderforge.Core.Server.Interfaces.World;
+using Elderforge.Core.Services;
 using Elderforge.Server.Services.System;
 using Elderforge.Shared.Chunks;
 using Elderforge.Shared.Types;
@@ -12,27 +13,33 @@ public class WorldGeneratorTests
     [Fact]
     public async Task GenerateOneChunkAsync()
     {
-
-        var worldService = new WorldGeneratorService(new WorldGeneratorConfig
-        {
-            Seed = 1234,
-            WorldSize = new Vector3Int(2, 2, 2)
-        }, new BasicTerrainGenerator());
+        var worldService = new WorldGeneratorService(
+            new WorldGeneratorConfig
+            {
+                Seed = 1234,
+                WorldSize = new Vector3Int(2, 2, 2)
+            },
+            new BasicTerrainGenerator(),
+            new EventBusService()
+        );
 
         var chunk = worldService.GetOrGenerateChunk(new Vector3Int(0, 0, 0));
 
         Assert.NotNull(chunk);
-
     }
 
     [Fact]
     public async Task GenerateWorldAsync()
     {
-        var worldService = new WorldGeneratorService(new WorldGeneratorConfig
-        {
-            Seed = 1234,
-            WorldSize = new Vector3Int(10, 10, 10)
-        }, new BasicTerrainGenerator());
+        var worldService = new WorldGeneratorService(
+            new WorldGeneratorConfig
+            {
+                Seed = 1234,
+                WorldSize = new Vector3Int(10, 10, 10)
+            },
+            new BasicTerrainGenerator(),
+            new EventBusService()
+        );
 
         await worldService.GenerateWorldAsync();
 
@@ -43,21 +50,21 @@ public class WorldGeneratorTests
         var block = chunk.GetBlock(0, 0, 0);
 
         Assert.NotNull(block);
-
-
     }
 
     [Fact]
     public async Task GenerateBigWorldAndSave()
     {
-
         var tempFile = Path.GetTempFileName();
 
-        var worldService = new WorldGeneratorService(new WorldGeneratorConfig
-        {
-            Seed = 1234,
-            WorldSize = new Vector3Int(128, 128, 128)
-        }, new BasicTerrainGenerator());
+        var worldService = new WorldGeneratorService(
+            new WorldGeneratorConfig
+            {
+                Seed = 1234,
+                WorldSize = new Vector3Int(128, 128, 128)
+            },
+            new BasicTerrainGenerator(),new EventBusService()
+        );
 
         await worldService.GenerateWorldAsync();
 
@@ -67,22 +74,23 @@ public class WorldGeneratorTests
         Assert.True(File.Exists(tempFile));
 
 
-
         File.Delete(tempFile);
-
     }
 
     [Fact]
     public async Task GenerateBigWorldAndSaveCompressed()
     {
-
         var tempFile = Path.GetTempFileName();
 
-        var worldService = new WorldGeneratorService(new WorldGeneratorConfig
-        {
-            Seed = 1234,
-            WorldSize = new Vector3Int(128, 128, 128)
-        }, new BasicTerrainGenerator());
+        var worldService = new WorldGeneratorService(
+            new WorldGeneratorConfig
+            {
+                Seed = 1234,
+                WorldSize = new Vector3Int(128, 128, 128)
+            },
+            new BasicTerrainGenerator(),
+            new EventBusService()
+        );
 
         await worldService.GenerateWorldAsync();
 
@@ -93,20 +101,22 @@ public class WorldGeneratorTests
 
 
         File.Delete(tempFile);
-
     }
 
     [Fact]
     public async Task GenerateBigWorldAndSaveAndLoad()
     {
-
         var tempFile = Path.GetTempFileName();
 
-        var worldService = new WorldGeneratorService(new WorldGeneratorConfig
-        {
-            Seed = 1234,
-            WorldSize = new Vector3Int(128, 128, 128)
-        }, new BasicTerrainGenerator());
+        var worldService = new WorldGeneratorService(
+            new WorldGeneratorConfig
+            {
+                Seed = 1234,
+                WorldSize = new Vector3Int(128, 128, 128)
+            },
+            new BasicTerrainGenerator(),
+            new EventBusService()
+        );
 
         await worldService.GenerateWorldAsync();
 
@@ -121,13 +131,11 @@ public class WorldGeneratorTests
         Assert.NotNull(loadedChunks);
 
         File.Delete(tempFile);
-
     }
 
     [Fact]
     public async Task GenerateBigWorldAndSaveCompressedAndLoad()
     {
-
         var tempFile = Path.GetTempFileName();
 
         var worldService = new WorldGeneratorService(
@@ -136,7 +144,8 @@ public class WorldGeneratorTests
                 Seed = 1234,
                 WorldSize = new Vector3Int(128, 128, 128)
             },
-            new BasicTerrainGenerator()
+            new BasicTerrainGenerator(),
+            new EventBusService()
         );
 
         await worldService.GenerateWorldAsync();
@@ -150,7 +159,6 @@ public class WorldGeneratorTests
         Assert.NotNull(loadedChunks);
 
         File.Delete(tempFile);
-
     }
 }
 
@@ -158,7 +166,6 @@ internal class BasicTerrainGenerator : ITerrainGenerator
 {
     public void GenerateChunk(ChunkEntity chunk, int worldSeed)
     {
-
         var chunkSeed = worldSeed +
                         chunk.Position.X * 73856093 +
                         chunk.Position.Y * 19349663 +

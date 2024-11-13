@@ -128,6 +128,7 @@ public class Program
             .AddAutoStartService<IDiagnosticService, DiagnosticService>()
             .AddAutoStartService<IVersionService, VersionService>()
             .AddAutoStartService<ISessionCheckService, SessionCheckService>()
+            .AddAutoStartService<IWorldGeneratorService, WorldGeneratorService>()
             .AddAutoStartService<IMotdService, MotdService>()
             .AddAutoStartService<IChatService, ChatService>();
 

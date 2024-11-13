@@ -1,17 +1,27 @@
+using System.Numerics;
+using Elderforge.Core.Interfaces.EventBus;
+using Elderforge.Core.Interfaces.Services;
 using Elderforge.Core.Numerics;
 using Elderforge.Core.Server.Data.Config;
 using Elderforge.Core.Server.Data.Internal;
+using Elderforge.Core.Server.Events.Engine;
 using Elderforge.Core.Server.Interfaces.Services.System;
 using Elderforge.Core.Server.Interfaces.World;
 using Elderforge.Shared.Chunks;
 
 using Elderforge.Shared.Types;
+using Serilog;
 
 namespace Elderforge.Server.Services.System;
 
-public class WorldGeneratorService : IWorldGeneratorService
+public class WorldGeneratorService : IWorldGeneratorService, IEventBusListener<EngineStartedEvent>
 {
+
+    private readonly ILogger _logger = Log.ForContext<WorldGeneratorService>();
+
     private readonly Dictionary<Vector3Int, ChunkEntity> chunks = new();
+
+
     private readonly ITerrainGenerator _terrainGenerator;
 
     private readonly WorldDimensions _worldDimensions;
@@ -19,12 +29,19 @@ public class WorldGeneratorService : IWorldGeneratorService
     public int WorldSeed { get; }
 
 
-    public WorldGeneratorService(WorldGeneratorConfig config, ITerrainGenerator terrainGenerator)
+    public WorldGeneratorService(WorldGeneratorConfig config, ITerrainGenerator terrainGenerator, IEventBusService eventBusService)
     {
         _terrainGenerator = terrainGenerator;
         WorldSeed = config.Seed;
 
         _worldDimensions = new WorldDimensions(config.WorldSize.X, config.WorldSize.Y, config.WorldSize.Z);
+
+        eventBusService.Subscribe(this);
+    }
+
+    public Task OnEventAsync(EngineStartedEvent message)
+    {
+        return Task.CompletedTask;
     }
 
     public ChunkEntity GenerateChunk(Vector3Int position)
@@ -160,6 +177,19 @@ public class WorldGeneratorService : IWorldGeneratorService
 
     public void SaveWorld(string filePath, IProgress<float> progress = null)
     {
-        throw new NotImplementedException();
+        WorldSerializer.SaveWorld(filePath, this, progress);
     }
+
+    public Task StartAsync()
+    {
+
+        return Task.CompletedTask;
+    }
+
+    public Task StopAsync()
+    {
+        return Task.CompletedTask;
+    }
+
+
 }
