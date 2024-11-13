@@ -1,10 +1,12 @@
 using Elderforge.Core.Interfaces.Services;
 using Elderforge.Core.Services;
+using Elderforge.Network.Client.Services;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Encoders;
 using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Packets;
 using Elderforge.Network.Packets.Base;
+using Elderforge.Network.Packets.System;
 using Elderforge.Network.Server.Data;
 using Elderforge.Network.Server.Services;
 using Elderforge.Network.Services;
@@ -48,7 +50,7 @@ public class NetworkServerTests
     [Fact]
     public async Task TestNetworkServer()
     {
-        var networkServer = new NetworkServer<string>(
+        var networkServer = new NetworkServer(
             _messageDispatcherService,
             _messageParserWriterService,
             _networkSessionService,
@@ -71,14 +73,14 @@ public class NetworkServerTests
     }
 
     [Fact]
-    public async Task TestNetworkServerWithClient()
+    public async Task TestNetworkServerWithRawClient()
     {
         const int maxMessages = 100;
         var amount = 0;
 
         var clientListener = new EventBasedNetListener();
 
-        var networkServer = new NetworkServer<string>(
+        var networkServer = new NetworkServer(
             _messageDispatcherService,
             _messageParserWriterService,
             _networkSessionService,
@@ -133,5 +135,76 @@ public class NetworkServerTests
         client.Stop();
 
         networkServer.StopAsync();
+    }
+
+    [Fact]
+    public async Task TestNetworkServerWithClient()
+    {
+        const int maxMessages = 100;
+        var amount = 0;
+
+
+        var networkClient = new NetworkClient(
+            new List<MessageTypeObject>
+            {
+                new MessageTypeObject(NetworkMessageType.Ping, typeof(PingMessage))
+            }
+        );
+
+
+        networkClient.SubscribeToMessage<PingMessage>()
+            .Subscribe(
+                message =>
+                {
+                    Assert.NotNull(message);
+                    Interlocked.Add(ref amount, 1);
+                }
+            );
+
+
+        var networkServer = new NetworkServer(
+            _messageDispatcherService,
+            _messageParserWriterService,
+            _networkSessionService,
+            _eventBusService,
+            _messageChannelService,
+            _networkMessageFactory,
+            new NetworkServerConfig
+            {
+                Port = 5000
+            }
+        );
+
+
+        networkServer.RegisterMessageListener(
+            async (string session, PingMessage message) =>
+            {
+                Assert.NotNull(message);
+                Assert.NotNull(session);
+
+                Interlocked.Add(ref amount, 1);
+
+                return new[]
+                {
+                    new SessionNetworkMessage(session, message), new SessionNetworkMessage(session, message),
+                    new SessionNetworkMessage(session, message), new SessionNetworkMessage(session, message)
+                };
+            }
+        );
+
+        networkServer.StartAsync();
+
+        networkClient.Connect("localhost", 5000);
+
+        networkClient.SendMessage(new PingMessage());
+
+        var count = 0;
+
+        while (count < maxMessages)
+        {
+            networkClient.PoolEvents();
+            await Task.Delay(10);
+            count++;
+        }
     }
 }

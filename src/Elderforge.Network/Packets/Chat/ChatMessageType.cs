@@ -4,6 +4,5 @@ public enum ChatMessageType
 {
     Public,
     Private,
-    System,
-    Motd
+    System
 }

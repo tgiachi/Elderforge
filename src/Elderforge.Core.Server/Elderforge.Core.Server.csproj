@@ -4,17 +4,25 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <Version>0.1.0-alpha.0</Version>
+        <Version>0.1.0-alpha.3</Version>
     </PropertyGroup>
 
 
     <ItemGroup>
         <ProjectReference Include="..\Elderforge.Core\Elderforge.Core.csproj" />
         <ProjectReference Include="..\Elderforge.Network\Elderforge.Network.csproj" />
+        <ProjectReference Include="..\Elderforge.Shared\Elderforge.Shared.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+        <PackageReference Include="Humanizer.Core" Version="2.14.1" />
         <PackageReference Include="NLua" Version="1.7.3" />
+        <PackageReference Include="protobuf-net" Version="3.2.45" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Serialization\" />
     </ItemGroup>
   
 

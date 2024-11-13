@@ -15,7 +15,10 @@ public class MessageTypesService : IMessageTypesService
 {
     private readonly ILogger _logger = Log.ForContext<MessageTypesService>();
 
-    private ReadOnlyDictionary<NetworkMessageType, Type> _messageTypes = new(new Dictionary<NetworkMessageType, Type>());
+    private readonly Dictionary<NetworkMessageType, Type> _messageTypes = new(new Dictionary<NetworkMessageType, Type>());
+
+    private readonly Dictionary<Type, NetworkMessageType> _messageTypesReverse =
+        new(new Dictionary<Type, NetworkMessageType>());
 
     public MessageTypesService(List<MessageTypeObject>? messageTypes = null)
     {
@@ -40,7 +43,17 @@ public class MessageTypesService : IMessageTypesService
         return type;
     }
 
-    public NetworkMessageType GetMessageType(Type type) => _messageTypes.FirstOrDefault(x => x.Value == type).Key;
+    public NetworkMessageType GetMessageType(Type type)
+    {
+        return _messageTypes.FirstOrDefault(x => x.Value == type).Key;
+    }
+
+    public NetworkMessageType GetMessageType<T>() where T : class
+    {
+        var messageType = _messageTypes.First(x => x.Value == typeof(T)).Key;
+
+        return messageType;
+    }
 
     public void RegisterMessageType(NetworkMessageType messageType, Type type)
     {
@@ -59,8 +72,7 @@ public class MessageTypesService : IMessageTypesService
 
         _logger.Debug("Registered message type {messageType} with type {type}", messageType, type.Name);
 
-        var dictionary = new Dictionary<NetworkMessageType, Type>(_messageTypes) { { messageType, type } };
-
-        _messageTypes = new ReadOnlyDictionary<NetworkMessageType, Type>(dictionary);
+        _messageTypes.Add(messageType, type);
+        _messageTypesReverse.Add(type, messageType);
     }
 }

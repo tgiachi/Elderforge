@@ -11,7 +11,7 @@ namespace Elderforge.Network.Encoders;
 
 public class ProtobufEncoder : INetworkMessageEncoder
 {
-    public INetworkPacket Encode<TMessage>(TMessage message, NetworkMessageType messageType) where TMessage : INetworkMessage
+    public INetworkPacket Encode<TMessage>(TMessage message, NetworkMessageType messageType) where TMessage : class
     {
         using var memoryStream = new MemoryStream();
 

@@ -9,7 +9,7 @@ namespace Elderforge.Network.Interfaces.Services;
 
 public interface INetworkMessageFactory
 {
-    Task<INetworkPacket> SerializeAsync<T>(T message) where T : class, INetworkMessage;
+    Task<INetworkPacket> SerializeAsync<T>(T message) where T : class;
 
     Task<INetworkMessage> ParseAsync(INetworkPacket packet);
 }

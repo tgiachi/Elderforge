@@ -6,5 +6,6 @@ public enum DirectoryType
     Database,
     Scripts,
     ScriptModules,
+    Maps,
     Logs,
 }

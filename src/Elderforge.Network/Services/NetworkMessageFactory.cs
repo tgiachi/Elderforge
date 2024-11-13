@@ -20,7 +20,9 @@ public class NetworkMessageFactory : INetworkMessageFactory
 
     private readonly INetworkMessageEncoder _encoder;
 
-    public NetworkMessageFactory(IMessageTypesService messageTypesService, INetworkMessageDecoder decoder, INetworkMessageEncoder encoder)
+    public NetworkMessageFactory(
+        IMessageTypesService messageTypesService, INetworkMessageDecoder decoder, INetworkMessageEncoder encoder
+    )
     {
         _messageTypesService = messageTypesService;
         _decoder = decoder;
@@ -28,9 +30,7 @@ public class NetworkMessageFactory : INetworkMessageFactory
     }
 
 
-
-
-    public async Task<INetworkPacket> SerializeAsync<T>(T message) where T : class, INetworkMessage
+    public async Task<INetworkPacket> SerializeAsync<T>(T message) where T : class
     {
         if (_encoder == null)
         {
@@ -41,13 +41,13 @@ public class NetworkMessageFactory : INetworkMessageFactory
         var startTime = Stopwatch.GetTimestamp();
 
 
-        var encodedNetworkPacket = _encoder.Encode(message, _messageTypesService.GetMessageType(typeof(T)));
+        var encodedNetworkPacket = _encoder.Encode(message, _messageTypesService.GetMessageType(message.GetType()));
 
         var endTime = Stopwatch.GetTimestamp();
 
         _logger.Debug(
             "Encoding message of type {messageType} took {time}ms",
-            typeof(T).Name,
+            message.GetType().Name,
             StopwatchUtils.GetElapsedMilliseconds(startTime, endTime)
         );
 

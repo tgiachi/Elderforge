@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Elderforge.Network.Interfaces.Sessions;
 using LiteNetLib;
@@ -9,14 +10,16 @@ public class SessionObject : ISessionObject
 {
     public NetPeer Peer { get; }
     public Dictionary<string, object> Data { get; }
-
     public NetDataWriter Writer { get; }
+
+    public DateTime LastActive { get; set; }
 
     public SessionObject(NetPeer peer)
     {
         Peer = peer;
         Data = new Dictionary<string, object>();
         Writer = new NetDataWriter();
+        LastActive = DateTime.UtcNow;
     }
 
     public TDataObject GetDataObject<TDataObject>(string key, bool throwIfNowExist) where TDataObject : class

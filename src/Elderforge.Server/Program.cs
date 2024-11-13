@@ -1,6 +1,8 @@
 ﻿using CommandLine;
 using Elderforge.Core.Interfaces.Services;
+using Elderforge.Core.Server.Data.Config;
 using Elderforge.Core.Server.Data.Directories;
+using Elderforge.Core.Server.Data.Internal;
 using Elderforge.Core.Server.Events.Engine;
 using Elderforge.Core.Server.Interfaces.Services;
 using Elderforge.Core.Server.Interfaces.Services.Game;
@@ -8,10 +10,12 @@ using Elderforge.Core.Server.Interfaces.Services.System;
 using Elderforge.Core.Server.Types;
 using Elderforge.Core.Services;
 using Elderforge.Core.Utils;
+using Elderforge.Network.Client.Services;
 using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Packets;
 using Elderforge.Network.Packets.Chat;
 using Elderforge.Network.Packets.Motd;
+using Elderforge.Network.Packets.System;
 using Elderforge.Network.Server.Data;
 using Elderforge.Network.Server.Extensions;
 using Elderforge.Network.Types;
@@ -95,6 +99,7 @@ public class Program
             .RegisterScriptModule<ContextVariableModule>()
             .RegisterScriptModule<VariableServiceModule>()
             .RegisterScriptModule<ScriptModule>()
+            .RegisterScriptModule<ElderforgeModule>()
             ;
 
         hostBuilder.Services
@@ -106,30 +111,36 @@ public class Program
             .RegisterProtobufDecoder();
 
 
-        hostBuilder.Services
-            .RegisterNetworkMessage<PingMessage>(NetworkMessageType.Ping)
-            .RegisterNetworkMessage<ChatMessage>(NetworkMessageType.Chat)
-            .RegisterNetworkMessage<MotdMessage>(NetworkMessageType.Motd)
-            ;
+        ElderforgeInstanceHolder.MessageTypes.ForEach(
+            s => { hostBuilder.Services.RegisterNetworkMessage(s.Type, s.MessageType); }
+        );
+
 
         hostBuilder.Services.AddSingleton(directoriesConfig);
+        hostBuilder.Services.AddSingleton(new SchedulerServiceConfig(100, 50, 4));
 
-
-        // hostBuilder.Services
-        //     .AddSingleton<IEventBusService, EventBusService>()
-        //     .AddSingleton<IScriptEngineService, ScriptEngineService>()
-        //     .AddSingleton<IVariablesService, VariableService>()
-        //     .AddSingleton<IVersionService, VersionService>()
-        //     .AddSingleton<IChatService, ChatService>();
 
         hostBuilder.Services
             .AddAutoStartService<IEventBusService, EventBusService>()
+            .AddAutoStartService<ISchedulerService, SchedulerService>(-1)
             .AddAutoStartService<IScriptEngineService, ScriptEngineService>()
             .AddAutoStartService<IVariablesService, VariableService>(-1)
+            .AddAutoStartService<IDiagnosticService, DiagnosticService>()
             .AddAutoStartService<IVersionService, VersionService>()
+            .AddAutoStartService<ISessionCheckService, SessionCheckService>()
             .AddAutoStartService<IMotdService, MotdService>()
             .AddAutoStartService<IChatService, ChatService>();
 
+
+        if (options.Value.DatabaseType == DatabaseType.LiteDb)
+        {
+            hostBuilder.Services.AddSingleton(new List<DbEntityTypeData>());
+
+            hostBuilder.Services.AddAutoStartService<IDatabaseService, LiteDbDatabaseService>();
+        }
+
+
+        hostBuilder.Services.AddSingleton(options.Value);
 
         hostBuilder.Services.AddHostedService<AutoStartHostingService>();
 

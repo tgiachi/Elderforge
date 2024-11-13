@@ -1,5 +1,9 @@
 version: 3
 
+env:
+  DOTNET_CLI_TELEMETRY_OUTPUT: 1
+  UNITY_ASSETS_DIR: ./Elderforge.Client/Assets/Elderforge.Client
+
 tasks:
   default:
     cmds:
@@ -28,7 +32,18 @@ tasks:
   publish:
     cmds:
       - dotnet publish ./src/Elderforge.Server/Elderforge.Server.csproj -c Release   -o ./publish
+  publish-unity:
+    cmds:
+      - cmd: rm -rf {{.UNITY_ASSETS_DIR}}/*
+        platforms: [ linux, darwin ]
+      - dotnet publish ./src/Elderforge.Network.Client/Elderforge.Network.Client.csproj -c Release -o {{.UNITY_ASSETS_DIR}}
+      - cmd: rm -rf {{.UNITY_ASSETS_DIR}}/*.json
+        platforms: [ linux, darwin ]
+    deps:
+      - clean
+      - restore
   bump-alpha:
     cmds:
       - versionize --pre-release alpha
       - git push --follow-tags origin
+

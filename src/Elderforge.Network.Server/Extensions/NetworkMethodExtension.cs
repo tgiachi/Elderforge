@@ -22,7 +22,7 @@ public static class NetworkMethodExtension
                 .AddSingleton<INetworkMessageFactory, NetworkMessageFactory>()
                 .AddSingleton<IMessageParserWriterService, MessageParserWriterService>()
                 .AddSingleton<IMessageDispatcherService, MessageDispatcherService>()
-                .AddSingleton<INetworkServer, NetworkServer<TSessionObject>>()
+                .AddSingleton<INetworkServer, NetworkServer>()
             ;
     }
 
@@ -39,7 +39,12 @@ public static class NetworkMethodExtension
     }
 
 
-
+    public static IServiceCollection RegisterNetworkMessage(
+        this IServiceCollection services, Type TypeOfMessage, NetworkMessageType messageType
+    )
+    {
+        return services.AddToRegisterTypedList(new MessageTypeObject(messageType, TypeOfMessage));
+    }
 
     public static IServiceCollection RegisterNetworkMessage<TMessage>(
         this IServiceCollection services, NetworkMessageType messageType

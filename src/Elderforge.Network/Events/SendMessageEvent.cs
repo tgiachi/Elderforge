@@ -5,7 +5,6 @@ namespace Elderforge.Network.Events;
 
 public class SendMessageEvent : IElderforgeEvent
 {
-
     public string SessionId { get; set; }
 
     public INetworkMessage Message { get; set; }
@@ -16,4 +15,9 @@ public class SendMessageEvent : IElderforgeEvent
         Message = message;
     }
 
+
+    public override string ToString()
+    {
+        return $"SessionId: {(SessionId == string.Empty ? "Broadcast" : SessionId)}, Message: {Message.GetType().Name}";
+    }
 }
