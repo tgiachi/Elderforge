@@ -1,5 +1,4 @@
 using Elderforge.Core.Numerics;
-
 using Elderforge.Shared.Types;
 
 namespace Elderforge.Shared.Blocks;
@@ -13,5 +12,10 @@ public class BlockEntity
     {
         Type = type;
         Position = position;
+    }
+
+    public override string ToString()
+    {
+        return $"BlockEntity: Type: {Type}, Position: {Position}";
     }
 }

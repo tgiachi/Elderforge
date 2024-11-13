@@ -22,7 +22,7 @@ public readonly struct Vector3Int : IEquatable<Vector3Int>
         Z = z;
     }
 
-     public static Vector3Int operator +(Vector3Int a, Vector3Int b) =>
+    public static Vector3Int operator +(Vector3Int a, Vector3Int b) =>
         new(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
 
     public static Vector3Int operator -(Vector3Int a, Vector3Int b) =>
