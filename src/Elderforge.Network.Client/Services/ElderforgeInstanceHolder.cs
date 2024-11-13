@@ -29,6 +29,7 @@ public class ElderforgeInstanceHolder
         new(NetworkMessageType.Version, typeof(VersionMessage)),
         new(NetworkMessageType.Pong, typeof(PongMessage)),
         new(NetworkMessageType.ServerReady, typeof(ServerReadyMessage)),
+
         new(NetworkMessageType.WorldChunkRequest, typeof(WorldChunkRequestMessage)),
         new(NetworkMessageType.WorldChunkResponse, typeof(WorldChunkResponseMessage)),
     ];
