@@ -1,3 +1,4 @@
+using System;
 using Elderforge.Network.Interfaces.Messages;
 using ProtoBuf;
 
@@ -10,6 +11,7 @@ public class PongMessage : INetworkMessage
 
     public PongMessage()
     {
+        Timestamp = DateTime.UtcNow.Ticks;
     }
 
     public PongMessage(long timestamp)

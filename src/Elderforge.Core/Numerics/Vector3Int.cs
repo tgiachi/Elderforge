@@ -95,7 +95,10 @@ public readonly struct Vector3Int : IEquatable<Vector3Int>
         return new Vector3Int(Math.Abs(X), Math.Abs(Y), Math.Abs(Z));
     }
 
-    public override string ToString() => $"({X}, {Y}, {Z})";
+    public override string ToString()
+    {
+        return $"({X}, {Y}, {Z})";
+    }
 
     public string ToString(string format) =>
         $"({X.ToString(format)}, {Y.ToString(format)}, {Z.ToString(format)})";

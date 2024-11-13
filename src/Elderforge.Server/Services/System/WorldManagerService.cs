@@ -13,14 +13,11 @@ public class WorldManagerService : IWorldManagerService, INetworkMessageListener
 
     private readonly IWorldGeneratorService _worldGeneratorService;
 
-    private readonly INetworkServer _networkServer;
-
     public WorldManagerService(IWorldGeneratorService worldGeneratorService, INetworkServer networkServer)
     {
         _worldGeneratorService = worldGeneratorService;
-        _networkServer = networkServer;
 
-        _networkServer.RegisterMessageListener(this);
+        networkServer.RegisterMessageListener(this);
     }
 
     public Task StartAsync()

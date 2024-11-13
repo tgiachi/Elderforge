@@ -21,7 +21,7 @@ public class SchedulerService
     private readonly ILogger _logger = Log.Logger.ForContext<SchedulerService>();
     private readonly ConcurrentQueue<IGameAction> _actionQueue = new();
 
-    private readonly List<SchedulerJobData> _schedulerJobs = new();
+    private readonly List<SchedulerJobData> _schedulerJobs = [];
 
     private double _lastElapsedMs;
 

@@ -136,6 +136,7 @@ public class Program
             .AddAutoStartService<ISessionCheckService, SessionCheckService>()
             .AddAutoStartService<IWorldGeneratorService, WorldGeneratorService>()
             .AddAutoStartService<IWorldManagerService, WorldManagerService>()
+            .AddAutoStartService<IGameCommandService, GameCommandService>()
             .AddAutoStartService<IMotdService, MotdService>()
             .AddAutoStartService<IChatService, ChatService>();
 

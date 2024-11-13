@@ -2,7 +2,7 @@ using System.Text;
 
 namespace Elderforge.Core.Utils;
 
-public class StringUtils
+public static class StringUtils
 {
     public static string ToSnakeCase(string text)
     {
