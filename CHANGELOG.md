@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.1.0-alpha.3"></a>
+## [0.1.0-alpha.3](https://www.github.com/tgiachi/Elderforge/releases/tag/v0.1.0-alpha.3) (2024-11-13)
+
+### Features
+
+* add new SimpleMaterial.mat with material properties for a basic material ([b248e2d](https://www.github.com/tgiachi/Elderforge/commit/b248e2ddcf17d716a2dd88d926897bacbcc5792b))
+* add world generation and serialization services to enhance game world management ([a0670b5](https://www.github.com/tgiachi/Elderforge/commit/a0670b5f045e0ad31d896cd0bf133e1e65cbaed0))
+* added pid to ignore ([09b3722](https://www.github.com/tgiachi/Elderforge/commit/09b3722780fcc980ab8bdedc6ffbbea8e7eebc92))
+* login works! ([a281b0d](https://www.github.com/tgiachi/Elderforge/commit/a281b0dcca3f15de2476e0766869a8a6cca80029))
+* **client:** Added unity project ([0b7abec](https://www.github.com/tgiachi/Elderforge/commit/0b7abecf8c7d75a2e80702373ef3d19bb0c07c0b))
+* **LoginScene:** adjust anchored position in LoginScene to improve UI layout ([733fd0f](https://www.github.com/tgiachi/Elderforge/commit/733fd0fac16702c57ad6455d3de70c0db4abc832))
+* **MapGenerationService.cs:** add support for event bus integration to listen for EngineStartedEvent and generate map on event trigger ([8646a04](https://www.github.com/tgiachi/Elderforge/commit/8646a044b07274ea38bd9a2e8bdb0196e07f6e47))
+* **Vector3Int:** adjust operator method formatting for consistency ([04530cc](https://www.github.com/tgiachi/Elderforge/commit/04530cc25c64dfebff7563c9759ab9d0f87ba151))
+* **workflows:** add .NET test workflow for CI to automate testing process on push to main branch ([2c3f705](https://www.github.com/tgiachi/Elderforge/commit/2c3f705f65d52ee998bf2b42c1a8a68c15a9857f))
+* **WorldScene.unity:** add PlayerBody GameObject with CharacterController component and FPSKeyboardController script for player movement ([a377af9](https://www.github.com/tgiachi/Elderforge/commit/a377af95beaa0b290a50b131548cf3793d2f31e4))
+
+### Bug Fixes
+
+* **client:** removed unity project ([36d453b](https://www.github.com/tgiachi/Elderforge/commit/36d453b4bb423e6140d9b4dcf213aa523a0f90a1))
+
 <a name="0.1.0-alpha.2"></a>
 ## [0.1.0-alpha.2](https://www.github.com/tgiachi/Elderforge/releases/tag/v0.1.0-alpha.2) (2024-11-12)
 
