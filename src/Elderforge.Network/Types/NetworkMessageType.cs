@@ -9,4 +9,7 @@ public enum NetworkMessageType : byte
     Motd,
     MotdRequest,
     ServerReady,
+
+    WorldChunkRequest,
+    WorldChunkResponse,
 }

@@ -6,6 +6,7 @@ using Elderforge.Network.Client.Interfaces;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Packets.Motd;
 using Elderforge.Network.Packets.System;
+using Elderforge.Network.Packets.World;
 using Elderforge.Network.Types;
 using Serilog;
 
@@ -28,6 +29,8 @@ public class ElderforgeInstanceHolder
         new(NetworkMessageType.Version, typeof(VersionMessage)),
         new(NetworkMessageType.Pong, typeof(PongMessage)),
         new(NetworkMessageType.ServerReady, typeof(ServerReadyMessage)),
+        new(NetworkMessageType.WorldChunkRequest, typeof(WorldChunkRequestMessage)),
+        new(NetworkMessageType.WorldChunkResponse, typeof(WorldChunkResponseMessage)),
     ];
 
     public IEventBusService EventBusService { get; } = new EventBusService();
