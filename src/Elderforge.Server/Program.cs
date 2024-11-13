@@ -135,6 +135,7 @@ public class Program
             .AddAutoStartService<IVersionService, VersionService>()
             .AddAutoStartService<ISessionCheckService, SessionCheckService>()
             .AddAutoStartService<IWorldGeneratorService, WorldGeneratorService>()
+            .AddAutoStartService<IWorldManagerService, WorldManagerService>()
             .AddAutoStartService<IMotdService, MotdService>()
             .AddAutoStartService<IChatService, ChatService>();
 

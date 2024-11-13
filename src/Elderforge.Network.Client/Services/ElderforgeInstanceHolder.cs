@@ -4,6 +4,7 @@ using Elderforge.Core.Interfaces.Services;
 using Elderforge.Core.Services;
 using Elderforge.Network.Client.Interfaces;
 using Elderforge.Network.Data.Internal;
+using Elderforge.Network.Packets.Chat;
 using Elderforge.Network.Packets.Motd;
 using Elderforge.Network.Packets.System;
 using Elderforge.Network.Packets.World;
@@ -23,12 +24,16 @@ public class ElderforgeInstanceHolder
     public static List<MessageTypeObject> MessageTypes =>
     [
         new(NetworkMessageType.Ping, typeof(PingMessage)),
+        new(NetworkMessageType.Pong, typeof(PongMessage)),
+
         new(NetworkMessageType.Motd, typeof(MotdMessage)),
         new(NetworkMessageType.MotdRequest, typeof(MotdRequestMessage)),
 
         new(NetworkMessageType.Version, typeof(VersionMessage)),
-        new(NetworkMessageType.Pong, typeof(PongMessage)),
+
         new(NetworkMessageType.ServerReady, typeof(ServerReadyMessage)),
+        new(NetworkMessageType.ServerShutdown, typeof(ServerShutdownMessage)),
+        new(NetworkMessageType.Chat, typeof(ChatMessage)),
 
         new(NetworkMessageType.WorldChunkRequest, typeof(WorldChunkRequestMessage)),
         new(NetworkMessageType.WorldChunkResponse, typeof(WorldChunkResponseMessage)),
