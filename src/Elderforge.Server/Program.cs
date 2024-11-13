@@ -127,7 +127,6 @@ public class Program
             .AddAutoStartService<IVariablesService, VariableService>(-1)
             .AddAutoStartService<IDiagnosticService, DiagnosticService>()
             .AddAutoStartService<IVersionService, VersionService>()
-            .AddAutoStartService<IMapGenerationService, MapGenerationService>(100)
             .AddAutoStartService<ISessionCheckService, SessionCheckService>()
             .AddAutoStartService<IMotdService, MotdService>()
             .AddAutoStartService<IChatService, ChatService>();

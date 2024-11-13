@@ -569,3 +569,4 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 *.dll
 test_server/elderforge.pid
+Elderforge.Client/.idea
