@@ -110,17 +110,15 @@ public class Program
                 }
             );
 
-        //
-        // hostBuilder.Services
-        //     .RegisterScriptModule<LoggerModule>()
-        //     .RegisterScriptModule<ContextVariableModule>()
-        //     .RegisterScriptModule<VariableServiceModule>()
-        //     .RegisterScriptModule<ScriptModule>()
-        //     .RegisterScriptModule<ElderforgeModule>()
-        //     ;
+
+        Log.Verbose("Registering Json settings");
+
 
         hostBuilder.Services
             .AddSingleton(JsonUtils.GetDefaultJsonSettings());
+
+
+        Log.Verbose("Registering network server and encoders/decoders (Protobuf)");
 
         hostBuilder.Services
             .RegisterNetworkServer<ElderforgeSession>()
@@ -128,10 +126,15 @@ public class Program
             .RegisterProtobufDecoder();
 
 
+        Log.Verbose("Registering network messages, count: {Count}", ElderforgeInstanceHolder.MessageTypes.Count);
+
         ElderforgeInstanceHolder.MessageTypes.AddMessageTypesToServiceCollection(hostBuilder.Services);
 
 
         hostBuilder.Services.AddSingleton(directoriesConfig);
+
+        Log.Verbose("Registering configs");
+        
         hostBuilder.Services
             .AddSingleton(new SchedulerServiceConfig(100, 50, 10))
             .AddSingleton(new WorldGeneratorConfig(64))
