@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Elderforge.Core.Interfaces.Services;
 using Elderforge.Core.Services;
 using Elderforge.Network.Client.Interfaces;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Packets.Chat;
+using Elderforge.Network.Packets.Login;
 using Elderforge.Network.Packets.Motd;
 using Elderforge.Network.Packets.System;
 using Elderforge.Network.Packets.World;
@@ -18,6 +21,10 @@ public class ElderforgeInstanceHolder
     private static ElderforgeInstanceHolder? _instance;
 
     public static ElderforgeInstanceHolder Instance => _instance;
+
+
+    private readonly CancellationTokenRegistration _cancellationTokenRegistration = new();
+
 
     public static INetworkClient NetworkClient { get; } = new NetworkClient(MessageTypes);
 
@@ -37,6 +44,10 @@ public class ElderforgeInstanceHolder
 
         new(NetworkMessageType.WorldChunkRequest, typeof(WorldChunkRequestMessage)),
         new(NetworkMessageType.WorldChunkResponse, typeof(WorldChunkResponseMessage)),
+
+        new(NetworkMessageType.LoginRequest, typeof(LoginRequestMessage)),
+
+        new(NetworkMessageType.LoginResponse, typeof(LoginResponseMessage)),
     ];
 
     public IEventBusService EventBusService { get; } = new EventBusService();
@@ -75,5 +86,25 @@ public class ElderforgeInstanceHolder
     public ElderforgeInstanceHolder(LoggerConfiguration configuration)
     {
         Log.Logger = configuration.CreateLogger();
+    }
+
+    public void PoolEventTask()
+    {
+        Task.Run(
+            async () =>
+            {
+                while (!_cancellationTokenRegistration.Token.IsCancellationRequested)
+                {
+                    await Task.Delay(15);
+                    NetworkClient.PoolEvents();
+                }
+
+            }
+        );
+    }
+
+    public void StopPooling()
+    {
+        _cancellationTokenRegistration.Dispose();
     }
 }

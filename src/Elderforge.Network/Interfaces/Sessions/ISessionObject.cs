@@ -15,5 +15,7 @@ public interface ISessionObject
 
     DateTime LastActive { get; set; }
 
+    bool IsLoggedIn { get; set; }
+
     TDataObject GetDataObject<TDataObject>(string key, bool throwIfNowExist) where TDataObject : class;
 }

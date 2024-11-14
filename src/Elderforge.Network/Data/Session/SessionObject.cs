@@ -12,6 +12,8 @@ public class SessionObject : ISessionObject
     public Dictionary<string, object> Data { get; }
     public NetDataWriter Writer { get; }
 
+    public bool IsLoggedIn { get; set; }
+
     public DateTime LastActive { get; set; }
 
     public SessionObject(NetPeer peer)

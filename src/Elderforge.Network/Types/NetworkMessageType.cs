@@ -11,6 +11,9 @@ public enum NetworkMessageType : byte
     ServerReady,
     ServerShutdown,
 
+    LoginRequest,
+    LoginResponse,
+
     WorldChunkRequest,
     WorldChunkResponse,
 }

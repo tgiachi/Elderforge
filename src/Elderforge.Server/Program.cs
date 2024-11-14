@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using Elderforge.Core.Interfaces.Services;
+using Elderforge.Core.Server.Attributes.Scripts;
 using Elderforge.Core.Server.Data.Config;
 using Elderforge.Core.Server.Data.Directories;
 using Elderforge.Core.Server.Data.Internal;
@@ -9,6 +10,7 @@ using Elderforge.Core.Server.Interfaces.Services.Game;
 using Elderforge.Core.Server.Interfaces.Services.System;
 using Elderforge.Core.Server.Interfaces.World;
 using Elderforge.Core.Server.Types;
+using Elderforge.Core.Server.Utils;
 using Elderforge.Core.Services;
 using Elderforge.Core.Utils;
 using Elderforge.Network.Client.Services;
@@ -96,13 +98,24 @@ public class Program
 
         Log.Information("Root directory: {RootDirectory}", options.Value.RootDirectory);
 
-        hostBuilder.Services
-            .RegisterScriptModule<LoggerModule>()
-            .RegisterScriptModule<ContextVariableModule>()
-            .RegisterScriptModule<VariableServiceModule>()
-            .RegisterScriptModule<ScriptModule>()
-            .RegisterScriptModule<ElderforgeModule>()
-            ;
+
+        AssemblyUtils.GetAttribute<ScriptModuleAttribute>().ForEach(
+            s =>
+            {
+                Log.Logger.Debug("Loading script module: {ScriptModule}", s.Name);
+
+                hostBuilder.Services.RegisterScriptModule(s);
+
+            });
+
+        //
+        // hostBuilder.Services
+        //     .RegisterScriptModule<LoggerModule>()
+        //     .RegisterScriptModule<ContextVariableModule>()
+        //     .RegisterScriptModule<VariableServiceModule>()
+        //     .RegisterScriptModule<ScriptModule>()
+        //     .RegisterScriptModule<ElderforgeModule>()
+        //     ;
 
         hostBuilder.Services
             .AddSingleton(JsonUtils.GetDefaultJsonSettings());
@@ -136,6 +149,7 @@ public class Program
             .AddAutoStartService<ISessionCheckService, SessionCheckService>()
             .AddAutoStartService<IWorldGeneratorService, WorldGeneratorService>()
             .AddAutoStartService<IWorldManagerService, WorldManagerService>()
+            .AddAutoStartService<IAccountService, AccountService>()
             .AddAutoStartService<IGameCommandService, GameCommandService>()
             .AddAutoStartService<IMotdService, MotdService>()
             .AddAutoStartService<IChatService, ChatService>();

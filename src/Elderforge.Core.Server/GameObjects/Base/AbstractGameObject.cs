@@ -52,4 +52,9 @@ public class AbstractGameObject : IGameObject, INotifyPropertyChanged
                 break;
         }
     }
+
+    public override string ToString()
+    {
+        return $"{Name} ({Id})";
+    }
 }

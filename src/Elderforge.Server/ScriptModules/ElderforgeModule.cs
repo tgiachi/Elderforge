@@ -16,7 +16,7 @@ public class ElderforgeModule
 
 
     [ScriptFunction("set_game_cfg")]
-    public void SetGameConfig(ElderforgeConfig config)
+    public void SetGameConfig(object config)
     {
         _scriptEngineService.AddContextVariable("gameConfig", config);
     }

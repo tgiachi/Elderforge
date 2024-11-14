@@ -3,7 +3,6 @@ using Elderforge.Core.Server.Entities;
 
 namespace Elderforge.Entities.Database;
 
-
 [Table("users")]
 public class UserEntity : AbstractBaseEntity
 {
@@ -11,4 +10,5 @@ public class UserEntity : AbstractBaseEntity
 
     public string PasswordHash { get; set; }
 
+    public bool IsAdmin { get; set; }
 }

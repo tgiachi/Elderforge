@@ -33,7 +33,6 @@ public class LiteDbDatabaseService : IDatabaseService
             {
                 Filename = Path.Combine(directoriesConfig[DirectoryType.Database], options.DatabaseFileName),
                 Connection = ConnectionType.Shared,
-                InitialSize = 1024
             }
         );
 
