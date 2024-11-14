@@ -19,7 +19,6 @@ public class NetworkServer : INetworkServer, IEventBusListener<SendMessageEvent>
 {
     public bool IsRunning { get; private set; }
 
-
     private readonly ILogger _logger = Log.ForContext<INetworkServer>();
 
     private readonly IMessageDispatcherService _messageDispatcherService;
@@ -43,7 +42,6 @@ public class NetworkServer : INetworkServer, IEventBusListener<SendMessageEvent>
     private readonly Task _writeMessageTask;
 
     private readonly EventBasedNetListener _serverListener = new();
-
 
     private readonly NetManager _netServer;
 

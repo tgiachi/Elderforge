@@ -11,7 +11,6 @@ public class WorldChunkResponseMessage : INetworkMessage
 {
     [ProtoMember(1)] public SerializableChunkEntity Chunk { get; set; }
 
-
     [ProtoMember(2)] public SerializableVector3Int Position { get; set; }
 
 
@@ -23,5 +22,6 @@ public class WorldChunkResponseMessage : INetworkMessage
 
     public WorldChunkResponseMessage()
     {
+
     }
 }
