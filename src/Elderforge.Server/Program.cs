@@ -5,6 +5,7 @@ using Elderforge.Core.Server.Data.Config;
 using Elderforge.Core.Server.Data.Directories;
 using Elderforge.Core.Server.Data.Internal;
 using Elderforge.Core.Server.Events.Engine;
+using Elderforge.Core.Server.Extensions;
 using Elderforge.Core.Server.Interfaces.Services;
 using Elderforge.Core.Server.Interfaces.Services.Game;
 using Elderforge.Core.Server.Interfaces.Services.System;
@@ -99,14 +100,15 @@ public class Program
         Log.Information("Root directory: {RootDirectory}", options.Value.RootDirectory);
 
 
-        AssemblyUtils.GetAttribute<ScriptModuleAttribute>().ForEach(
-            s =>
-            {
-                Log.Logger.Debug("Loading script module: {ScriptModule}", s.Name);
+        AssemblyUtils.GetAttribute<ScriptModuleAttribute>()
+            .ForEach(
+                s =>
+                {
+                    Log.Logger.Debug("Loading script module: {ScriptModule}", s.Name);
 
-                hostBuilder.Services.RegisterScriptModule(s);
-
-            });
+                    hostBuilder.Services.RegisterScriptModule(s);
+                }
+            );
 
         //
         // hostBuilder.Services
@@ -126,14 +128,12 @@ public class Program
             .RegisterProtobufDecoder();
 
 
-        ElderforgeInstanceHolder.MessageTypes.ForEach(
-            s => { hostBuilder.Services.RegisterNetworkMessage(s.Type, s.MessageType); }
-        );
+        ElderforgeInstanceHolder.MessageTypes.AddMessageTypesToServiceCollection(hostBuilder.Services);
 
 
         hostBuilder.Services.AddSingleton(directoriesConfig);
         hostBuilder.Services
-            .AddSingleton(new SchedulerServiceConfig(100, 50, 4))
+            .AddSingleton(new SchedulerServiceConfig(100, 50, 10))
             .AddSingleton(new WorldGeneratorConfig(64))
             .AddSingleton<ITerrainGenerator, BasicTerrainGenerator>()
             ;
