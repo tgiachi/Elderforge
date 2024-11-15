@@ -1,6 +1,5 @@
 using Elderforge.Core.Numerics;
 using Elderforge.Shared.Blocks;
-
 using Elderforge.Shared.Types;
 
 namespace Elderforge.Shared.Chunks;
@@ -8,6 +7,8 @@ namespace Elderforge.Shared.Chunks;
 public class ChunkEntity
 {
     public const int CHUNK_SIZE = 10;
+
+
     public Vector3Int Position { get; }
     private readonly BlockEntity[,,] blocks;
 
