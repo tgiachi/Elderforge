@@ -37,7 +37,7 @@ public class WorldVisualizer : MonoBehaviour
 
     private Queue<Action> _actions = new();
 
-    void Awake()
+    void Start()
     {
         ElderforgeInstanceHolder.Initialize(new LoggerConfiguration()
             .MinimumLevel.Debug()
