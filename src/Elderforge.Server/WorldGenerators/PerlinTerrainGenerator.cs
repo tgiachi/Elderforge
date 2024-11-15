@@ -7,7 +7,7 @@ namespace Elderforge.Server.WorldGenerators;
 
 public class PerlinTerrainGenerator : ITerrainGenerator
 {
-    private const float NOISE_SCALE = 0.03f;
+    private const float NOISE_SCALE = 0.01f;
     private const int SURFACE_HEIGHT = 64;
     private const float HEIGHT_VARIATION = 32f;
     private const int DIRT_DEPTH = 5;

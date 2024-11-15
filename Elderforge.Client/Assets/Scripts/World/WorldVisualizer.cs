@@ -29,6 +29,8 @@ public class WorldVisualizer : MonoBehaviour
     [SerializeField] private GameObjectManager gameObjectManager;
 
 
+    private bool isRunning;
+
 
     private Vector3Int lastPlayerChunk = new Vector3Int(-1, 0, -1);
     private HashSet<Vector3Int> requestedChunks;
@@ -37,8 +39,14 @@ public class WorldVisualizer : MonoBehaviour
 
     private Queue<Action> _actions = new();
 
+    void OnDisable()
+    {
+        isRunning = false;
+    }
+
     void Start()
     {
+        isRunning = true;
         ElderforgeInstanceHolder.Initialize(new LoggerConfiguration()
             .MinimumLevel.Debug()
             .WriteTo.DebugLog());
@@ -110,13 +118,18 @@ public class WorldVisualizer : MonoBehaviour
 
             if (isRenderEnabled)
             {
-                _actions.Enqueue(() => { chunkVisualizer.VisualizeChunk(chunk); });
+                _actions.Enqueue(
+                    () =>
+                    {
+                        chunkVisualizer.VisualizeChunk(chunk);
+                        requestedChunks.Remove(chunkPos);
+                        loadedChunks.Add(chunkPos);
+                    });
             }
 
 
 
-            requestedChunks.Remove(chunkPos);
-            loadedChunks.Add(chunkPos);
+
         }
         catch (System.Exception e)
         {
@@ -145,9 +158,9 @@ public class WorldVisualizer : MonoBehaviour
     private void StartOutputQueue()
     {
         Task.Run(
-            async () =>
+            () =>
             {
-                while (true)
+                while (isRunning)
                 {
                     ElderforgeInstanceHolder.NetworkClient.PoolEvents();
                 }
@@ -163,7 +176,7 @@ public class WorldVisualizer : MonoBehaviour
             Task.Run(
                 async () =>
                 {
-                    while (true)
+                    while (isRunning)
                     {
                         if (chunkRequestQueue.Count > 0)
                         {

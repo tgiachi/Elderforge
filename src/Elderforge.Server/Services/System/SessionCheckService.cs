@@ -54,6 +54,8 @@ public class SessionCheckService : ISessionCheckService, INetworkMessageListener
         foreach (var session in expiredSessions)
         {
             await _eventBusService.PublishAsync(new ClientDisconnectedEvent(session.Peer.Id.ToString()));
+
+            _networkSessionService.RemoveSession(session.Peer.Id.ToString());
         }
     }
 
