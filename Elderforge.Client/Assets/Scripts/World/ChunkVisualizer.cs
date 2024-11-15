@@ -74,6 +74,7 @@ public class ChunkVisualizer : MonoBehaviour
     private void ClearExistingChunk(Vector3Int chunkPosition)
     {
 
+
         Vector3Int startPos = chunkPosition * ChunkEntity.CHUNK_SIZE;
         Vector3Int endPos = startPos + new Vector3Int(
             ChunkEntity.CHUNK_SIZE,
@@ -93,6 +94,34 @@ public class ChunkVisualizer : MonoBehaviour
                     {
                         Destroy(existingBlock);
                         blockObjects.Remove(pos);
+                    }
+                }
+            }
+        }
+    }
+
+    public void ClearChunk(Vector3Int chunkPos)
+    {
+        // Calcola la posizione iniziale e finale dei blocchi del chunk
+        Vector3Int startPos = chunkPos * ChunkEntity.CHUNK_SIZE;
+        Vector3Int endPos = startPos + new Vector3Int(
+            ChunkEntity.CHUNK_SIZE,
+            ChunkEntity.CHUNK_SIZE,
+            ChunkEntity.CHUNK_SIZE
+        );
+
+        // Itera attraverso tutti i blocchi del chunk per rimuoverli
+        for (int x = startPos.x; x < endPos.x; x++)
+        {
+            for (int y = startPos.y; y < endPos.y; y++)
+            {
+                for (int z = startPos.z; z < endPos.z; z++)
+                {
+                    var pos = new Vector3Int(x, y, z);
+                    if (blockObjects.TryGetValue(pos, out GameObject existingBlock))
+                    {
+                        Destroy(existingBlock);   // Distrugge il GameObject dalla scena
+                        blockObjects.Remove(pos); // Rimuove il riferimento dal dizionario
                     }
                 }
             }

@@ -1,35 +1,41 @@
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Elderforge.Network.Client.Interfaces;
+using System.Collections.Concurrent;
 using Elderforge.Network.Client.Services;
 using Elderforge.Network.Packets.World;
 using Elderforge.Network.Serialization.Numerics;
 using Elderforge.Shared.Chunks;
 using Serilog;
-using Unity.VisualScripting;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reactive.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Assets.Scripts.World;
+using Elderforge.Network.Packets.GameObjects;
 using UnityEngine;
 
 public class WorldVisualizer : MonoBehaviour
 {
     [Header("Visualization")]
     [SerializeField] private ChunkVisualizer chunkVisualizer;
-    [SerializeField] private int renderDistance = 2;
+    [SerializeField] private int renderDistance = 1;
     [SerializeField] private Transform player;
+    [SerializeField] private Camera playerCamera;
+    [SerializeField] private int numOfRequestThreads = 1;
+
+    [SerializeField] private bool isRenderEnabled;
 
 
-    [Header("Settings")]
-    [Range(0.1f, 1.0f)]
-    [SerializeField] private float chunkRequestInterval = 0.1f;
+    [SerializeField] private GameObjectManager gameObjectManager;
 
 
-    private Vector3Int lastPlayerChunk;
+
+    private Vector3Int lastPlayerChunk = new Vector3Int(-1, 0, -1);
     private HashSet<Vector3Int> requestedChunks;
     private HashSet<Vector3Int> loadedChunks;
-    private Queue<WorldChunkRequestMessage> chunkRequestQueue;
+    private ConcurrentQueue<WorldChunkRequestMessage> chunkRequestQueue;
 
     private Queue<Action> _actions = new();
-
 
     void Awake()
     {
@@ -42,13 +48,44 @@ public class WorldVisualizer : MonoBehaviour
         ElderforgeInstanceHolder.NetworkClient.SubscribeToMessage<WorldChunkResponseMessage>()
             .Subscribe(OnWorldChunkResponse);
 
+
+        ElderforgeInstanceHolder.NetworkClient
+            .SubscribeToMessage<GameObjectCreateMessage>()
+
+            .Subscribe(
+                (m) =>
+                {
+                    _actions.Enqueue(() => { gameObjectManager.OnGameObjectCreated(m); });
+                });
+
+        ElderforgeInstanceHolder
+            .NetworkClient
+            .SubscribeToMessage<GameObjectDestroyMessage>()
+            .Subscribe(
+                (m) =>
+                {
+                    _actions.Enqueue(() => { gameObjectManager.OnGameObjectDestroyed(m); });
+                });
+
+        ElderforgeInstanceHolder
+            .NetworkClient
+            .SubscribeToMessage<GameObjectMoveMessage>()
+
+            .Subscribe(
+                (m) =>
+                {
+                    _actions.Enqueue(() => { gameObjectManager.OnGameObjectMoved(m); });
+                });
+
         requestedChunks = new HashSet<Vector3Int>();
         loadedChunks = new HashSet<Vector3Int>();
-        chunkRequestQueue = new Queue<WorldChunkRequestMessage>();
+        chunkRequestQueue = new ConcurrentQueue<WorldChunkRequestMessage>();
 
         ElderforgeInstanceHolder.NetworkClient.Connect("127.0.0.1", 5000);
 
         StartOutputQueue();
+        StartOutputQueueThreads();
+
     }
 
     private void OnWorldChunkResponse(WorldChunkResponseMessage obj)
@@ -56,6 +93,38 @@ public class WorldVisualizer : MonoBehaviour
         Log.Logger.Information("Received chunk for position {Pos}", obj.Position);
         ProcessChunkData(obj);
     }
+
+    private void ProcessChunkData(WorldChunkResponseMessage protoChunk)
+    {
+        try
+        {
+            var chunkPos = new Vector3Int(
+                protoChunk.Position.X,
+                protoChunk.Position.Y,
+                protoChunk.Position.Z
+            );
+
+
+            var chunk = protoChunk.Chunk.ToChunkEntity();
+
+
+            if (isRenderEnabled)
+            {
+                _actions.Enqueue(() => { chunkVisualizer.VisualizeChunk(chunk); });
+            }
+
+
+
+            requestedChunks.Remove(chunkPos);
+            loadedChunks.Add(chunkPos);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Failed to process chunk data: {e.Message}");
+        }
+    }
+
+
 
     void Update()
     {
@@ -76,58 +145,41 @@ public class WorldVisualizer : MonoBehaviour
     private void StartOutputQueue()
     {
         Task.Run(
-            () =>
+            async () =>
             {
                 while (true)
                 {
-                    if (chunkRequestQueue.Count > 0)
-                    {
-                        var request = chunkRequestQueue.Dequeue();
-                        ElderforgeInstanceHolder.NetworkClient.SendMessage(request);
-                    }
-
                     ElderforgeInstanceHolder.NetworkClient.PoolEvents();
-
-                    Task.Delay(TimeSpan.FromSeconds(chunkRequestInterval)).Wait();
                 }
 
             }
         );
     }
 
-
-    private void ProcessChunkData(WorldChunkResponseMessage protoChunk)
+    private void StartOutputQueueThreads()
     {
-        try
+        foreach (var _ in Enumerable.Range(1, numOfRequestThreads))
         {
-            var chunkPos = new Vector3Int(
-                protoChunk.Position.X,
-                protoChunk.Position.Y,
-                protoChunk.Position.Z
+            Task.Run(
+                async () =>
+                {
+                    while (true)
+                    {
+                        if (chunkRequestQueue.Count > 0)
+                        {
+                            chunkRequestQueue.TryDequeue(out var request);
+                            await ElderforgeInstanceHolder.NetworkClient.SendMessageAsync(request);
+                        }
+                    }
+                }
             );
-
-
-            var chunk = protoChunk.Chunk.ToChunkEntity();
-
-            _actions.Enqueue(() =>
-            {
-                chunkVisualizer.VisualizeChunk(chunk);
-            });
-
-
-
-            requestedChunks.Remove(chunkPos);
-            loadedChunks.Add(chunkPos);
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError($"Failed to process chunk data: {e.Message}");
         }
     }
 
     private void UpdatePlayerChunkPosition()
     {
         var playerPosition = player.position;
+
         var currentChunk = new Vector3Int(
             Mathf.FloorToInt(playerPosition.x / ChunkEntity.CHUNK_SIZE),
             Mathf.FloorToInt(playerPosition.y / ChunkEntity.CHUNK_SIZE),
@@ -151,13 +203,27 @@ public class WorldVisualizer : MonoBehaviour
                 for (int z = -renderDistance; z <= renderDistance; z++)
                 {
                     var chunkPos = centerChunk + new Vector3Int(x, y, z);
-                    if (!loadedChunks.Contains(chunkPos) && !requestedChunks.Contains(chunkPos))
+
+                    if (IsChunkVisible(chunkPos) && !loadedChunks.Contains(chunkPos) && !requestedChunks.Contains(chunkPos))
                     {
                         QueueChunkRequest(chunkPos);
                     }
                 }
             }
         }
+    }
+
+    private bool IsChunkVisible(Vector3Int chunkPos)
+    {
+        Vector3 chunkWorldPosition = new Vector3(
+            chunkPos.x * ChunkEntity.CHUNK_SIZE,
+            chunkPos.y * ChunkEntity.CHUNK_SIZE,
+            chunkPos.z * ChunkEntity.CHUNK_SIZE
+        );
+
+        Bounds chunkBounds = new Bounds(chunkWorldPosition, Vector3.one * ChunkEntity.CHUNK_SIZE);
+
+        return GeometryUtility.TestPlanesAABB(GeometryUtility.CalculateFrustumPlanes(playerCamera), chunkBounds);
     }
 
     private void QueueChunkRequest(Vector3Int chunkPos)
@@ -181,7 +247,7 @@ public class WorldVisualizer : MonoBehaviour
         var chunksToUnload = new List<Vector3Int>();
         foreach (var loadedChunk in loadedChunks)
         {
-            if (IsChunkTooFar(centerChunk, loadedChunk))
+            if (!IsChunkVisible(loadedChunk) || IsChunkTooFar(centerChunk, loadedChunk))
             {
                 chunksToUnload.Add(loadedChunk);
             }
@@ -196,13 +262,12 @@ public class WorldVisualizer : MonoBehaviour
     private bool IsChunkTooFar(Vector3Int centerChunk, Vector3Int checkChunk)
     {
         var distance = Vector3Int.Distance(centerChunk, checkChunk);
-        return distance > renderDistance + 1; // +1 per un po' di buffer
+        return distance > renderDistance + 1;
     }
 
     private void UnloadChunk(Vector3Int chunkPos)
     {
-        // chunkVisualizer.ClearChunk(chunkPos);
+        chunkVisualizer.ClearChunk(chunkPos);
         loadedChunks.Remove(chunkPos);
     }
-
 }
