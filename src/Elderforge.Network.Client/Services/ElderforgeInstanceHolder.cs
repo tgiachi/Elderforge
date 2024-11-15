@@ -7,6 +7,7 @@ using Elderforge.Core.Services;
 using Elderforge.Network.Client.Interfaces;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Packets.Chat;
+using Elderforge.Network.Packets.GameObjects;
 using Elderforge.Network.Packets.Login;
 using Elderforge.Network.Packets.Motd;
 using Elderforge.Network.Packets.System;
@@ -45,8 +46,12 @@ public class ElderforgeInstanceHolder
         new(NetworkMessageType.WorldChunkRequest, typeof(WorldChunkRequestMessage)),
         new(NetworkMessageType.WorldChunkResponse, typeof(WorldChunkResponseMessage)),
 
-        new(NetworkMessageType.LoginRequest, typeof(LoginRequestMessage)),
 
+        new(NetworkMessageType.GameObjectCreateResponse, typeof(GameObjectCreateMessage)),
+        new(NetworkMessageType.GameObjectDestroyResponse, typeof(GameObjectDestroyMessage)),
+        new(NetworkMessageType.GameObjectMoveResponse, typeof(GameObjectMoveMessage)),
+
+        new(NetworkMessageType.LoginRequest, typeof(LoginRequestMessage)),
         new(NetworkMessageType.LoginResponse, typeof(LoginResponseMessage)),
     ];
 
@@ -69,7 +74,7 @@ public class ElderforgeInstanceHolder
                 message =>
                 {
                     Log.Logger.Debug("Received ping message, sending pong message");
-                    NetworkClient.SendMessage(new PongMessage());
+                    NetworkClient.SendMessageAsync(new PongMessage());
                 }
             );
     }

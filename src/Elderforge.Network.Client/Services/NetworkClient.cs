@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Threading.Tasks;
 using Elderforge.Network.Client.Interfaces;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Encoders;
@@ -89,9 +90,15 @@ public class NetworkClient : INetworkClient
         IsConnected = true;
     }
 
-    public void SendMessage<T>(T message) where T : class, INetworkMessage
+    public async Task SendMessageAsync<T>(T message) where T : class, INetworkMessage
     {
-        var packet = (NetworkPacket)_networkMessageFactory.SerializeAsync(message).Result;
+        if (!IsConnected)
+        {
+            _logger.Warning("Dropping message {messageType} as client is not connected", message.GetType().Name);
+            return;
+        }
+
+        var packet = (NetworkPacket)(await _networkMessageFactory.SerializeAsync(message));
 
         writer.Reset();
 

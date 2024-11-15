@@ -26,6 +26,7 @@ using Elderforge.Network.Types;
 using Elderforge.Server.Data;
 using Elderforge.Server.Extensions;
 using Elderforge.Server.HostingService;
+using Elderforge.Server.Interfaces;
 using Elderforge.Server.ScriptModules;
 using Elderforge.Server.Services;
 using Elderforge.Server.Services.Game;
@@ -134,7 +135,7 @@ public class Program
         hostBuilder.Services.AddSingleton(directoriesConfig);
 
         Log.Verbose("Registering configs");
-        
+
         hostBuilder.Services
             .AddSingleton(new SchedulerServiceConfig(100, 50, 10))
             .AddSingleton(new WorldGeneratorConfig(64))
@@ -155,6 +156,7 @@ public class Program
             .AddAutoStartService<IAccountService, AccountService>()
             .AddAutoStartService<IGameCommandService, GameCommandService>()
             .AddAutoStartService<IMotdService, MotdService>()
+            .AddAutoStartService<ITestGameObjectEmitter, TestGameObjectEmitter>()
             .AddAutoStartService<IChatService, ChatService>();
 
 

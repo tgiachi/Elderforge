@@ -15,7 +15,7 @@ class Program
 
     private static Task _poolEventTask;
 
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
         var logger = new LoggerConfiguration()
             .WriteTo.Console()
@@ -38,7 +38,7 @@ class Program
                 pingMessage =>
                 {
                     logger.Information("Received ping message, sending pong message");
-                    networkClient.SendMessage(new PongMessage());
+                    networkClient.SendMessageAsync(new PongMessage());
                 }
             );
 

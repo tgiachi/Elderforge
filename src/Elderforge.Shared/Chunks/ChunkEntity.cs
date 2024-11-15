@@ -7,7 +7,7 @@ namespace Elderforge.Shared.Chunks;
 
 public class ChunkEntity
 {
-    public const int CHUNK_SIZE = 16;
+    public const int CHUNK_SIZE = 10;
     public Vector3Int Position { get; }
     private readonly BlockEntity[,,] blocks;
 

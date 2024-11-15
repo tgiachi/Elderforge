@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Packets.Base;
+using Humanizer;
 using LiteNetLib;
 using LiteNetLib.Utils;
 using Serilog;
@@ -35,6 +36,7 @@ public class MessageParserWriterService : IMessageParserWriterService
 
     public void ReadPackets(NetDataReader reader, NetPeer peer)
     {
+        _logger.Debug("<< Receiving ({Bytes}) from  ", reader.AvailableBytes.Bytes(), peer.Id);
         _netPacketProcessor.ReadAllPackets(reader, peer);
     }
 
@@ -42,9 +44,9 @@ public class MessageParserWriterService : IMessageParserWriterService
     {
         writer.Reset();
 
-        _logger.Debug("Writing message to {peerId} type: {Type}", peer.Id, message.MessageType);
-
         _netPacketProcessor.Write(writer, message);
+
+        _logger.Debug(">> Sending {Type}  ({Bytes}) to {peerId}", message.MessageType, writer.Length.Bytes(), peer.Id);
 
         peer.Send(writer, DeliveryMethod.ReliableOrdered);
     }

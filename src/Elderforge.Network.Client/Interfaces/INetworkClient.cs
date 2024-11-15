@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Elderforge.Network.Interfaces.Messages;
 using Elderforge.Network.Types;
 
@@ -17,7 +18,7 @@ public interface INetworkClient
 
     void Connect(string host, int port);
 
-    void SendMessage<T>(T message) where T : class, INetworkMessage;
+    Task SendMessageAsync<T>(T message) where T : class, INetworkMessage;
 
     public IObservable<T> SubscribeToMessage<T>() where T : class, INetworkMessage;
 }

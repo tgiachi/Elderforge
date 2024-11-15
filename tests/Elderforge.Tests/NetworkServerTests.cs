@@ -196,7 +196,7 @@ public class NetworkServerTests
 
         networkClient.Connect("localhost", 5000);
 
-        networkClient.SendMessage(new PingMessage());
+        networkClient.SendMessageAsync(new PingMessage());
 
         var count = 0;
 
