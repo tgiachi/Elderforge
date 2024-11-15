@@ -14,7 +14,7 @@ public class SerializableChunkEntity
 
     [ProtoMember(2)] public List<SerializableBlockEntity> Blocks { get; set; }
 
-    // Costruttore vuoto necessario per protobuf-net
+
     public SerializableChunkEntity()
     {
         Blocks = new List<SerializableBlockEntity>();

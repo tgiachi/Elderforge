@@ -67,6 +67,7 @@ public class ChunkVisualizer : MonoBehaviour
         {
             BlockType.Stone => stonePrefab,
             BlockType.Rock => rockPrefab,
+            BlockType.Air => null,
             _ => stonePrefab // fallback default
         };
     }
