@@ -2,7 +2,8 @@ namespace Elderforge.Shared.Types;
 
 public enum BlockType : byte
 {
-    Air ,
+    Air,
+    Grass,
     Stone,
     Rock,
 }

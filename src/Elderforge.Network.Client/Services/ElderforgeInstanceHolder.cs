@@ -26,7 +26,7 @@ public class ElderforgeInstanceHolder
     private readonly CancellationTokenRegistration _cancellationTokenRegistration = new();
 
 
-    public static INetworkClient NetworkClient { get; } = new NetworkClient(MessageTypes);
+    public static INetworkClient NetworkClient { get; private set; }
 
     public static List<MessageTypeObject> MessageTypes =>
     [
@@ -56,6 +56,8 @@ public class ElderforgeInstanceHolder
     public static void Initialize(LoggerConfiguration configuration)
     {
         _instance = new ElderforgeInstanceHolder(configuration);
+
+        NetworkClient = new NetworkClient(MessageTypes);
 
 
         NetworkClient.MessageReceived += (messageType, message) =>
@@ -98,7 +100,6 @@ public class ElderforgeInstanceHolder
                     await Task.Delay(15);
                     NetworkClient.PoolEvents();
                 }
-
             }
         );
     }

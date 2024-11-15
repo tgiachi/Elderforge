@@ -34,6 +34,7 @@ public class WorldManagerService : IWorldManagerService, INetworkMessageListener
         string sessionId, WorldChunkRequestMessage message
     )
     {
+        _logger.Debug("Received world chunk request from {SessionId} position: {Pos}", sessionId, message.Position);
         var chunk = _worldGeneratorService.GetOrGenerateChunk(message.Position.ToVector3Int());
 
         return new List<SessionNetworkMessage>

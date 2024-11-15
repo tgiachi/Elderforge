@@ -29,4 +29,9 @@ public class SerializableVector3Int
     {
         return new Vector3Int(X, Y, Z);
     }
+
+    public override string ToString()
+    {
+        return $"({X}, {Y}, {Z})";
+    }
 }
