@@ -8,6 +8,7 @@ using Elderforge.Network.Client.Interfaces;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Packets.Chat;
 using Elderforge.Network.Packets.GameObjects;
+using Elderforge.Network.Packets.GameObjects.Lights;
 using Elderforge.Network.Packets.Login;
 using Elderforge.Network.Packets.Motd;
 using Elderforge.Network.Packets.System;
@@ -53,6 +54,8 @@ public class ElderforgeInstanceHolder
 
         new(NetworkMessageType.LoginRequest, typeof(LoginRequestMessage)),
         new(NetworkMessageType.LoginResponse, typeof(LoginResponseMessage)),
+
+        new(NetworkMessageType.LightResponse, typeof(LightGameObjectResponseMessage))
     ];
 
     public IEventBusService EventBusService { get; } = new EventBusService();

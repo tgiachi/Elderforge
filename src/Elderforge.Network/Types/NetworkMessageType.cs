@@ -19,6 +19,9 @@ public enum NetworkMessageType : byte
 
     GameObjectCreateResponse,
     GameObjectDestroyResponse,
-    GameObjectMoveResponse
+    GameObjectMoveResponse,
+
+
+    LightResponse
 
 }
