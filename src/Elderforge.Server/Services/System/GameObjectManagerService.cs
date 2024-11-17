@@ -5,7 +5,7 @@ using Elderforge.Shared.Interfaces;
 
 namespace Elderforge.Server.Services.System;
 
-public class EntityManagerService : IEntityManagerService
+public class GameObjectManagerService : IGameObjectManagerService
 {
     private readonly BlockingCollection<IGameObject> _gameObjects = new();
 
