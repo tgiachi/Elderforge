@@ -23,9 +23,9 @@ public class EntityManagerService : IEntityManagerService
     {
         _gameObjects.TryTake(out var go);
 
-        entity.ScaleChanged -= ScaleChanged;
-        entity.PositionChanged -= PositionChanged;
-        entity.RotationChanged -= RotationChanged;
+        go.ScaleChanged -= ScaleChanged;
+        go.PositionChanged -= PositionChanged;
+        go.RotationChanged -= RotationChanged;
     }
 
     public void RemoveGameObject(string id)
@@ -40,7 +40,7 @@ public class EntityManagerService : IEntityManagerService
 
     private void ScaleChanged(IGameObject gameObject, Vector3 scale)
     {
-        
+
     }
 
     private void PositionChanged(IGameObject gameObject, Vector3 newValue)
