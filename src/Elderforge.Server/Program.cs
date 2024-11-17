@@ -157,6 +157,7 @@ public class Program
             .AddAutoStartService<IGameCommandService, GameCommandService>()
             .AddAutoStartService<IMotdService, MotdService>()
             .AddAutoStartService<ITestGameObjectEmitter, TestGameObjectEmitter>()
+            .AddAutoStartService<IEntityManagerService, EntityManagerService>()
             .AddAutoStartService<IChatService, ChatService>();
 
 

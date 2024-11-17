@@ -12,7 +12,7 @@ public class GameObjectsTests
 
         bool propertyChanged;
 
-        gameObject.PositionChanged += (position) =>
+        gameObject.PositionChanged += (go, position) =>
         {
             propertyChanged = true;
 
@@ -31,7 +31,7 @@ public class GameObjectsTests
 
         bool propertyChanged;
 
-        gameObject.RotationChanged += (rotation) =>
+        gameObject.RotationChanged += (go, rotation) =>
         {
             propertyChanged = true;
 
@@ -50,7 +50,7 @@ public class GameObjectsTests
 
         bool propertyChanged;
 
-        gameObject.ScaleChanged += (scale) =>
+        gameObject.ScaleChanged += (go, scale) =>
         {
             propertyChanged = true;
 

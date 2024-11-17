@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Numerics;
+using System.Reactive.Subjects;
 using Elderforge.Shared.Interfaces;
 
 namespace Elderforge.Core.Server.GameObjects.Base;
@@ -11,6 +12,10 @@ public class AbstractGameObject : IGameObject, INotifyPropertyChanged
     public event IGameObject.Vector3ChangedEventHandler? RotationChanged;
 
     public event IGameObject.Vector3ChangedEventHandler? ScaleChanged;
+
+    public ISubject<IGameObject.Vector3ChangedEventHandler> PositionSubject { get; }
+    public ISubject<IGameObject.Vector3ChangedEventHandler> RotationSubject { get; }
+    public ISubject<IGameObject.Vector3ChangedEventHandler> ScaleSubject { get; }
 
     public string Id { get; set; }
 
@@ -35,6 +40,10 @@ public class AbstractGameObject : IGameObject, INotifyPropertyChanged
         Scale = Vector3.One;
 
         PropertyChanged += OnPropertyChanged;
+
+        PositionSubject = new Subject<IGameObject.Vector3ChangedEventHandler>();
+        RotationSubject = new Subject<IGameObject.Vector3ChangedEventHandler>();
+        ScaleSubject = new Subject<IGameObject.Vector3ChangedEventHandler>();
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -42,13 +51,16 @@ public class AbstractGameObject : IGameObject, INotifyPropertyChanged
         switch (e.PropertyName)
         {
             case nameof(Position):
-                PositionChanged?.Invoke(Position);
+                PositionChanged?.Invoke(this, Position);
+                PositionSubject?.OnNext(PositionChanged);
                 break;
             case nameof(Rotation):
-                RotationChanged?.Invoke(Rotation);
+                RotationChanged?.Invoke(this, Rotation);
+                RotationSubject?.OnNext(RotationChanged);
                 break;
             case nameof(Scale):
-                ScaleChanged?.Invoke(Scale);
+                ScaleChanged?.Invoke(this, Scale);
+                ScaleSubject?.OnNext(ScaleChanged);
                 break;
         }
     }
