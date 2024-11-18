@@ -21,4 +21,6 @@ public interface ISessionObject
     bool IsLoggedIn { get; set; }
 
     TDataObject GetDataObject<TDataObject>(string key, bool throwIfNowExist = true);
+
+    void SetDataObject<TDataObject>(string key, TDataObject value);
 }

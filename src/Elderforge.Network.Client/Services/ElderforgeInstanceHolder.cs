@@ -11,6 +11,7 @@ using Elderforge.Network.Packets.GameObjects;
 using Elderforge.Network.Packets.GameObjects.Lights;
 using Elderforge.Network.Packets.Login;
 using Elderforge.Network.Packets.Motd;
+using Elderforge.Network.Packets.Player;
 using Elderforge.Network.Packets.System;
 using Elderforge.Network.Packets.World;
 using Elderforge.Network.Types;
@@ -54,6 +55,9 @@ public class ElderforgeInstanceHolder
 
         new(NetworkMessageType.LoginRequest, typeof(LoginRequestMessage)),
         new(NetworkMessageType.LoginResponse, typeof(LoginResponseMessage)),
+
+        new(NetworkMessageType.PlayerMoveRequest, typeof(PlayerMoveRequestMessage)),
+        new(NetworkMessageType.PlayerMoveResponse, typeof(PlayerMoveResponseMessage)),
 
         new(NetworkMessageType.LightResponse, typeof(LightGameObjectResponseMessage))
     ];

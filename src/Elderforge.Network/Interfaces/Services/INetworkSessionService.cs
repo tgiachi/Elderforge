@@ -11,7 +11,6 @@ public interface INetworkSessionService
     ISessionObject? GetSessionObject(string sessionId);
     void AddSession(string sessionId, ISessionObject sessionObject);
     void RemoveSession(string sessionId);
-
     void UpdateLastActive(string sessionId);
 
     IEnumerable<ISessionObject> GetExpiredSessions(TimeSpan expirationTime);

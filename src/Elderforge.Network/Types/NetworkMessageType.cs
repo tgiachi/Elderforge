@@ -22,6 +22,9 @@ public enum NetworkMessageType : byte
     GameObjectMoveResponse,
 
 
+    PlayerMoveRequest,
+    PlayerMoveResponse,
+
     LightResponse
 
 }

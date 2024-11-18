@@ -28,7 +28,7 @@ public class SessionObject : ISessionObject
 
     public TDataObject GetDataObject<TDataObject>(string key, bool throwIfNowExist = true)
     {
-        if (Data.TryGetValue(key, out var value))
+        if (Data.TryGetValue(key.ToLower(), out var value))
         {
             return value is TDataObject ? (TDataObject)value : default;
         }
@@ -39,6 +39,11 @@ public class SessionObject : ISessionObject
         }
 
         return default;
+    }
+
+    public void SetDataObject<TDataObject>(string key, TDataObject value)
+    {
+        Data[key.ToLower()] = value;
     }
 
     public override string ToString()
