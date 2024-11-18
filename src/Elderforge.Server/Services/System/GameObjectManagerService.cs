@@ -8,6 +8,7 @@ using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Interfaces.Sessions;
 using Elderforge.Network.Packets.GameObjects;
 using Elderforge.Network.Serialization.Numerics;
+using Elderforge.Server.Extensions;
 using Elderforge.Shared.Interfaces;
 
 namespace Elderforge.Server.Services.System;
@@ -69,7 +70,7 @@ public class GameObjectManagerService : IGameObjectManagerService
 
         message.Position = new SerializableVector3(newValue);
 
-        foreach (var player in GetSessionObjectCanSee(_renderDistance, gameObject.Position))
+        foreach (var player in _networkSessionService.GetSessionObjectCanSee(_renderDistance, gameObject.Position))
         {
             _networkServer.SendMessageAsync(new SessionNetworkMessage(player.Id, message));
         }
@@ -81,27 +82,9 @@ public class GameObjectManagerService : IGameObjectManagerService
 
         message.Rotation = new SerializableVector3(newValue);
 
-        foreach (var player in GetSessionObjectCanSee(_renderDistance, gameObject.Position))
+        foreach (var player in _networkSessionService.GetSessionObjectCanSee(_renderDistance, gameObject.Position))
         {
             _networkServer.SendMessageAsync(new SessionNetworkMessage(player.Id, message));
         }
-    }
-
-    private List<ISessionObject> GetSessionObjectCanSee(float renderDistance, Vector3 position)
-    {
-        return _networkSessionService.GetSessionIds
-            .Select(x => _networkSessionService.GetSessionObject(x))
-            .Where(x => x != null)
-            .Where(
-                x =>
-                {
-                    var playerPosition = x.GetDataObject<Vector3>("position");
-                    var maxDistance = renderDistance * renderDistance;
-                    var distanceSquared = (playerPosition - position).SqrMagnitude();
-
-                    return distanceSquared <= maxDistance;
-                }
-            )
-            .ToList();
     }
 }
