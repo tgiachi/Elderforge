@@ -26,4 +26,24 @@ public static class NetworkSessionExtension
             )
             .ToList();
     }
+
+    public static Vector3 GetPosition(this ISessionObject sessionObject)
+    {
+        return sessionObject.GetDataObject<Vector3>("position");
+    }
+
+    public static Vector3 GetRotation(this ISessionObject sessionObject)
+    {
+        return sessionObject.GetDataObject<Vector3>("rotation");
+    }
+
+    public static void SetPosition(this ISessionObject sessionObject, Vector3 position)
+    {
+        sessionObject.SetDataObject("position", position);
+    }
+
+    public static void SetRotation(this ISessionObject sessionObject, Vector3 rotation)
+    {
+        sessionObject.SetDataObject("rotation", rotation);
+    }
 }

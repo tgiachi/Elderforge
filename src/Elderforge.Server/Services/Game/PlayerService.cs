@@ -32,8 +32,8 @@ public class PlayerService : AbstractGameService, IPlayerService, INetworkMessag
     {
         var sessionObject = _networkSessionService.GetSessionObject(message.SessionId);
 
-        sessionObject.SetDataObject("position", Vector3.Zero);
-        sessionObject.SetDataObject("rotation", Vector3.Zero);
+        sessionObject.SetPosition(new Vector3(0, 0, 0));
+        sessionObject.SetRotation(new Vector3(0, 0, 0));
     }
 
     public async ValueTask<IEnumerable<SessionNetworkMessage>> OnMessageReceivedAsync(
@@ -42,8 +42,8 @@ public class PlayerService : AbstractGameService, IPlayerService, INetworkMessag
     {
         var sessionObject = _networkSessionService.GetSessionObject(sessionId);
 
-        sessionObject.SetDataObject("position", message.Position);
-        sessionObject.SetDataObject("rotation", message.Rotation);
+        sessionObject.SetPosition(message.Position.ToVector3());
+        sessionObject.SetRotation(message.Rotation.ToVector3());
 
         foreach (var player in _networkSessionService.GetSessionObjectCanSee(100, message.Position.ToVector3()))
         {

@@ -1,11 +1,8 @@
 using System.Collections.Concurrent;
 using System.Numerics;
-using Elderforge.Core.Extensions;
 using Elderforge.Core.Server.Interfaces.Services.System;
 using Elderforge.Network.Data.Internal;
-using Elderforge.Network.Events.Network;
 using Elderforge.Network.Interfaces.Services;
-using Elderforge.Network.Interfaces.Sessions;
 using Elderforge.Network.Packets.GameObjects;
 using Elderforge.Network.Serialization.Numerics;
 using Elderforge.Server.Extensions;
@@ -62,6 +59,14 @@ public class GameObjectManagerService : IGameObjectManagerService
 
     private void ScaleChanged(IGameObject gameObject, Vector3 scale)
     {
+        // var message = new GameObjectMoveMessage(gameObject);
+        //
+        // message.Scale = new SerializableVector3(scale);
+        //
+        // foreach (var player in _networkSessionService.GetSessionObjectCanSee(_renderDistance, gameObject.Position))
+        // {
+        //     _networkServer.SendMessageAsync(new SessionNetworkMessage(player.Id, message));
+        // }
     }
 
     private void PositionChanged(IGameObject gameObject, Vector3 newValue)

@@ -14,6 +14,8 @@ public class GameObjectMoveMessage : INetworkMessage
 
     [ProtoMember(3)] public SerializableVector3 Rotation { get; set; }
 
+
+
     public GameObjectMoveMessage(
         string id, SerializableVector3 position, SerializableVector3 rotation
     )
