@@ -12,12 +12,12 @@ public static class NetworkSessionExtension
     )
     {
         return sessionService.GetSessionIds
-            .Select(x => sessionService.GetSessionObject(x))
+            .Select(sessionService.GetSessionObject)
             .Where(x => x != null)
             .Where(
                 x =>
                 {
-                    var playerPosition = x.GetDataObject<Vector3>("position");
+                    var playerPosition = x.GetPosition();
                     var maxDistance = renderDistance * renderDistance;
                     var distanceSquared = (playerPosition - position).SqrMagnitude();
 

@@ -84,6 +84,7 @@ public class GameObjectManagerService : IGameObjectManagerService
 
         foreach (var player in _networkSessionService.GetSessionObjectCanSee(_renderDistance, gameObject.Position))
         {
+            _logger.Debug("Sending message to player {player} {message}", player, message);
             _networkServer.SendMessageAsync(new SessionNetworkMessage(player.Id, message));
         }
     }
@@ -149,6 +150,8 @@ public class GameObjectManagerService : IGameObjectManagerService
 
         foreach (var player in _networkSessionService.GetSessionObjectCanSee(_renderDistance, gameObject.Position))
         {
+            _logger.Debug("Sending message to player {player} {message}", player, message);
+
             _networkServer.SendMessageAsync(new SessionNetworkMessage(player.Id, message));
         }
     }

@@ -54,6 +54,7 @@ public class SessionCheckService : ISessionCheckService, INetworkMessageListener
 
         foreach (var session in expiredSessions)
         {
+            _logger.Warning("Session {sessionId} has expired", session.Peer.Id);
             await _eventBusService.PublishAsync(new ClientDisconnectedEvent(session.Peer.Id.ToString()));
 
             _networkSessionService.RemoveSession(session.Peer.Id.ToString());

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using Elderforge.Network.Client.Services;
 using Elderforge.Network.Packets.World;
@@ -15,6 +16,7 @@ using Assets.Scripts.World;
 using Elderforge.Network.Interfaces.Messages;
 using Elderforge.Network.Packets.GameObjects;
 using Elderforge.Network.Packets.Player;
+using Elderforge.Network.Packets.System;
 using UnityEngine;
 
 public class WorldVisualizer : MonoBehaviour
@@ -40,7 +42,10 @@ public class WorldVisualizer : MonoBehaviour
     private HashSet<Vector3Int> loadedChunks;
     private ConcurrentQueue<INetworkMessage> chunkRequestQueue;
 
-    private Queue<Action> _actions = new();
+    private readonly Queue<Action> _actions = new();
+
+
+    private IDisposable _positionUpdateSubscription;
 
     void OnDisable()
     {
@@ -69,6 +74,15 @@ public class WorldVisualizer : MonoBehaviour
                     _actions.Enqueue(() => { gameObjectManager.OnGameObjectCreated(m); });
                 });
 
+        ElderforgeInstanceHolder.NetworkClient
+            .SubscribeToMessage<PingMessage>()
+
+            .Subscribe(
+                (m) =>
+                {
+                    _actions.Enqueue(() => { ElderforgeInstanceHolder.NetworkClient.SendMessageAsync(new PongMessage()); });
+                });
+
         ElderforgeInstanceHolder
             .NetworkClient
             .SubscribeToMessage<GameObjectDestroyMessage>()
@@ -92,18 +106,31 @@ public class WorldVisualizer : MonoBehaviour
         loadedChunks = new HashSet<Vector3Int>();
         chunkRequestQueue = new ConcurrentQueue<INetworkMessage>();
 
-        
+
         ElderforgeInstanceHolder.NetworkClient.Connect("127.0.0.1", 5000);
+
+        Observable.Interval(TimeSpan.FromMilliseconds(500))
+            .Subscribe(
+                _ =>
+                {
+                    _actions.Enqueue(SentPositionToServer);
+                });
+
+
 
 
 
         StartOutputQueue();
         StartOutputQueueThreads();
 
-     
-
     }
 
+
+    void OnDestroy()
+    {
+
+        _positionUpdateSubscription?.Dispose();
+    }
     private void OnWorldChunkResponse(WorldChunkResponseMessage obj)
     {
         Log.Logger.Information("Received chunk for position {Pos}", obj.Position);
@@ -157,7 +184,8 @@ public class WorldVisualizer : MonoBehaviour
 
         UpdatePlayerChunkPosition();
 
-       
+
+
 
         while (_actions.Count > 0)
         {
@@ -165,10 +193,25 @@ public class WorldVisualizer : MonoBehaviour
         }
     }
 
-    private void SentPositionToServer(long obj)
+
+
+    private void SentPositionToServer()
     {
         Debug.Log("Sending position to server");
-        chunkRequestQueue.Enqueue(new PlayerMoveRequestMessage(player.transform.position.ToSerializableVector3(), player.transform.rotation.eulerAngles.ToSerializableVector3()));
+
+        if (ElderforgeInstanceHolder.NetworkClient == null)
+            return;
+
+        if (!ElderforgeInstanceHolder.NetworkClient.IsConnected)
+            return;
+
+
+        var message = new PlayerMoveRequestMessage(
+            player.transform.position.ToSerializableVector3(),
+            player.transform.rotation.eulerAngles.ToSerializableVector3()
+        );
+
+        ElderforgeInstanceHolder.NetworkClient.SendMessageAsync(message);
     }
 
     private void StartOutputQueue()
@@ -220,8 +263,6 @@ public class WorldVisualizer : MonoBehaviour
             RequestVisibleChunks(currentChunk);
             UnloadDistantChunks(currentChunk);
             lastPlayerChunk = currentChunk;
-
-            SentPositionToServer(0);
         }
     }
 
