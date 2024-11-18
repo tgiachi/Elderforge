@@ -15,4 +15,9 @@ public static class MathExtension
         var difference = pointA - pointB;
         return SqrMagnitude(difference);
     }
+
+    public static int Mod(int a, int b)
+    {
+        return (a % b + b) % b;
+    }
 }
