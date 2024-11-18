@@ -7,6 +7,9 @@ namespace Elderforge.Network.Interfaces.Sessions;
 
 public interface ISessionObject
 {
+
+    string Id { get;  }
+
     NetPeer Peer { get; }
 
     NetDataWriter Writer { get; }
@@ -17,5 +20,5 @@ public interface ISessionObject
 
     bool IsLoggedIn { get; set; }
 
-    TDataObject GetDataObject<TDataObject>(string key, bool throwIfNowExist) where TDataObject : class;
+    TDataObject GetDataObject<TDataObject>(string key, bool throwIfNowExist = true);
 }

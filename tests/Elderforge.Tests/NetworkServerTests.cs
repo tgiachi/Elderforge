@@ -43,7 +43,7 @@ public class NetworkServerTests
             _messageChannelService
         );
         _messageParserWriterService = new MessageParserWriterService(_networkMessageFactory, _messageChannelService);
-        _networkSessionService = new NetworkSessionService();
+        _networkSessionService = new NetworkSessionService(_eventBusService);
     }
 
 

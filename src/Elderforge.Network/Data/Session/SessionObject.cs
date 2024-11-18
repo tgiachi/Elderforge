@@ -8,6 +8,7 @@ namespace Elderforge.Network.Data.Session;
 
 public class SessionObject : ISessionObject
 {
+    public string Id { get; }
     public NetPeer Peer { get; }
     public Dictionary<string, object> Data { get; }
     public NetDataWriter Writer { get; }
@@ -22,13 +23,14 @@ public class SessionObject : ISessionObject
         Data = new Dictionary<string, object>();
         Writer = new NetDataWriter();
         LastActive = DateTime.UtcNow;
+        Id = peer.Id.ToString();
     }
 
-    public TDataObject GetDataObject<TDataObject>(string key, bool throwIfNowExist) where TDataObject : class
+    public TDataObject GetDataObject<TDataObject>(string key, bool throwIfNowExist = true)
     {
         if (Data.TryGetValue(key, out var value))
         {
-            return value as TDataObject;
+            return value is TDataObject ? (TDataObject)value : default;
         }
 
         if (throwIfNowExist)
@@ -36,7 +38,7 @@ public class SessionObject : ISessionObject
             throw new KeyNotFoundException($"Key {key} not found in session data");
         }
 
-        return null;
+        return default;
     }
 
     public override string ToString()

@@ -1,7 +1,7 @@
 using Elderforge.Core.Interfaces.Events;
 using Elderforge.Network.Interfaces.Messages;
 
-namespace Elderforge.Network.Events;
+namespace Elderforge.Network.Events.Network;
 
 public class SendMessageEvent : IElderforgeEvent
 {

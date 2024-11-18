@@ -1,6 +1,13 @@
 using System.Collections.Concurrent;
 using System.Numerics;
+using Elderforge.Core.Extensions;
 using Elderforge.Core.Server.Interfaces.Services.System;
+using Elderforge.Network.Data.Internal;
+using Elderforge.Network.Events.Network;
+using Elderforge.Network.Interfaces.Services;
+using Elderforge.Network.Interfaces.Sessions;
+using Elderforge.Network.Packets.GameObjects;
+using Elderforge.Network.Serialization.Numerics;
 using Elderforge.Shared.Interfaces;
 
 namespace Elderforge.Server.Services.System;
@@ -8,6 +15,20 @@ namespace Elderforge.Server.Services.System;
 public class GameObjectManagerService : IGameObjectManagerService
 {
     private readonly BlockingCollection<IGameObject> _gameObjects = new();
+
+    private readonly INetworkSessionService _networkSessionService;
+
+    private readonly INetworkServer _networkServer;
+
+    private float _renderDistance = 100;
+
+
+    public GameObjectManagerService(INetworkSessionService networkSessionService, INetworkServer networkServer)
+    {
+        _networkSessionService = networkSessionService;
+        _networkServer = networkServer;
+    }
+
 
     public void AddGameObject<TEntity>(TEntity entity) where TEntity : class, IGameObject
     {
@@ -40,14 +61,47 @@ public class GameObjectManagerService : IGameObjectManagerService
 
     private void ScaleChanged(IGameObject gameObject, Vector3 scale)
     {
-
     }
 
     private void PositionChanged(IGameObject gameObject, Vector3 newValue)
     {
+        var message = new GameObjectMoveMessage(gameObject);
+
+        message.Position = new SerializableVector3(newValue);
+
+        foreach (var player in GetSessionObjectCanSee(_renderDistance, gameObject.Position))
+        {
+            _networkServer.SendMessageAsync(new SessionNetworkMessage(player.Id, message));
+        }
     }
 
     private void RotationChanged(IGameObject gameObject, Vector3 newValue)
     {
+        var message = new GameObjectMoveMessage(gameObject);
+
+        message.Rotation = new SerializableVector3(newValue);
+
+        foreach (var player in GetSessionObjectCanSee(_renderDistance, gameObject.Position))
+        {
+            _networkServer.SendMessageAsync(new SessionNetworkMessage(player.Id, message));
+        }
+    }
+
+    private List<ISessionObject> GetSessionObjectCanSee(float renderDistance, Vector3 position)
+    {
+        return _networkSessionService.GetSessionIds
+            .Select(x => _networkSessionService.GetSessionObject(x))
+            .Where(x => x != null)
+            .Where(
+                x =>
+                {
+                    var playerPosition = x.GetDataObject<Vector3>("position");
+                    var maxDistance = renderDistance * renderDistance;
+                    var distanceSquared = (playerPosition - position).SqrMagnitude();
+
+                    return distanceSquared <= maxDistance;
+                }
+            )
+            .ToList();
     }
 }

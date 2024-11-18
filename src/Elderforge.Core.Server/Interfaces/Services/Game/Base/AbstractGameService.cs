@@ -1,5 +1,6 @@
 using Elderforge.Core.Interfaces.Services;
 using Elderforge.Network.Events;
+using Elderforge.Network.Events.Network;
 using Elderforge.Network.Interfaces.Messages;
 
 namespace Elderforge.Core.Server.Interfaces.Services.Game.Base;

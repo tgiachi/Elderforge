@@ -2,6 +2,8 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Elderforge.Core.Interfaces.Services;
+using Elderforge.Network.Events.Sessions;
 using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Interfaces.Sessions;
 using Serilog;
@@ -14,6 +16,13 @@ public class NetworkSessionService : INetworkSessionService
 
     private readonly ConcurrentDictionary<string, ISessionObject> _sessions = new();
     private readonly ILogger _logger = Log.ForContext<NetworkSessionService>();
+
+    private readonly IEventBusService _eventBusService;
+
+    public NetworkSessionService(IEventBusService eventBusService)
+    {
+        _eventBusService = eventBusService;
+    }
 
     public List<string> GetSessionIds => _sessions.Keys.ToList();
 
@@ -32,13 +41,20 @@ public class NetworkSessionService : INetworkSessionService
         }
 
         _logger.Debug("Adding session {sessionId}", sessionId);
-        _sessions.TryAdd(sessionId, sessionObject);
+        var isAdded = _sessions.TryAdd(sessionId, sessionObject);
+
+        if (isAdded)
+        {
+            _eventBusService.Publish(new SessionAddedEvent(sessionId));
+        }
     }
 
     public void RemoveSession(string sessionId)
     {
         _logger.Debug("Removing session {sessionId}", sessionId);
         _sessions.TryRemove(sessionId, out _);
+
+        _eventBusService.Publish(new SessionRemovedEvent(sessionId));
     }
 
     public void UpdateLastActive(string sessionId)

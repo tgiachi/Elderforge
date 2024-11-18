@@ -1,3 +1,4 @@
+using Elderforge.Core.Services;
 using Elderforge.Network.Data.Session;
 using Elderforge.Network.Services;
 
@@ -8,7 +9,7 @@ public class NetworkSessionServiceTests
     [Fact]
     public void TestNonExistSession()
     {
-        var sessionService = new NetworkSessionService();
+        var sessionService = new NetworkSessionService(new EventBusService());
 
         var session = sessionService.GetSessionObject("test");
 
@@ -18,7 +19,7 @@ public class NetworkSessionServiceTests
     [Fact]
     public void TestExistSession()
     {
-        var sessionService = new NetworkSessionService();
+        var sessionService = new NetworkSessionService(new EventBusService());
 
         var session = new SessionObject(null);
 

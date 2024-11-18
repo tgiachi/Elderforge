@@ -20,6 +20,7 @@ public interface IGameObject
 
     ISubject<Vector3ChangedEventHandler> ScaleSubject { get; }
 
+
     string Id { get; set; }
 
     string Name { get; set; }
