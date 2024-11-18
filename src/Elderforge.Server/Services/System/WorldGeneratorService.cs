@@ -83,7 +83,9 @@ public class WorldGeneratorService : IWorldGeneratorService, IEventBusListener<E
 
         var fileName = Path.Combine(_mapDirectory, $"{name}.map.gz");
 
-        WorldSerializer.SaveCompressedWorld(fileName, name, this);
+
+        // TODO: Commented 
+        //WorldSerializer.SaveCompressedWorld(fileName, name, this);
 
         _logger.Information("World saved to {FileName}", fileName);
 

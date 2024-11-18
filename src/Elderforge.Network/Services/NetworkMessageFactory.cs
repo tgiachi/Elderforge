@@ -45,7 +45,7 @@ public class NetworkMessageFactory : INetworkMessageFactory
 
         var endTime = Stopwatch.GetTimestamp();
 
-        _logger.Debug(
+        _logger.Verbose(
             "Encoding message of type {messageType} took {time}ms",
             message.GetType().Name,
             StopwatchUtils.GetElapsedMilliseconds(startTime, endTime)
@@ -68,7 +68,7 @@ public class NetworkMessageFactory : INetworkMessageFactory
 
         var endTime = Stopwatch.GetTimestamp();
 
-        _logger.Debug(
+        _logger.Verbose(
             "Decoding message of type {messageType} took {time}ms",
             message.GetType().Name,
             StopwatchUtils.GetElapsedMilliseconds(startTime, endTime)

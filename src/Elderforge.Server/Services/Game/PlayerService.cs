@@ -16,14 +16,22 @@ public class PlayerService : AbstractGameService, IPlayerService, INetworkMessag
 {
     private readonly INetworkSessionService _networkSessionService;
 
+    private readonly INetworkServer _networkServer;
+
     private readonly ILogger _logger = Log.ForContext<IPlayerService>();
 
 
-    public PlayerService(IEventBusService eventBusService, INetworkSessionService networkSessionService) : base(
+    public PlayerService(
+        IEventBusService eventBusService, INetworkSessionService networkSessionService, INetworkServer networkServer
+    ) : base(
         eventBusService
     )
     {
         _networkSessionService = networkSessionService;
+        _networkServer = networkServer;
+
+        _networkServer.RegisterMessageListener(this);
+
         SubscribeEvent<SessionAddedEvent>(OnSessionAdded);
     }
 
@@ -44,6 +52,8 @@ public class PlayerService : AbstractGameService, IPlayerService, INetworkMessag
 
         sessionObject.SetPosition(message.Position.ToVector3());
         sessionObject.SetRotation(message.Rotation.ToVector3());
+
+        _logger.Debug("Player {sessionId} moved to {position}", sessionId, message.Position);
 
         foreach (var player in _networkSessionService.GetSessionObjectCanSee(100, message.Position.ToVector3()))
         {

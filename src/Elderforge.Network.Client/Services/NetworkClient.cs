@@ -98,7 +98,10 @@ public class NetworkClient : INetworkClient
             return;
         }
 
+
         var packet = (NetworkPacket)(await _networkMessageFactory.SerializeAsync(message));
+
+        _logger.Debug(">> Sending message {messageType}", message.GetType().Name);
 
         writer.Reset();
 

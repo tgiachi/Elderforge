@@ -10,7 +10,7 @@ public class PlayerMoveRequestMessage : INetworkMessage
     [ProtoMember(1)] public SerializableVector3 Position { get; set; }
     [ProtoMember(2)] public SerializableVector3 Rotation { get; set; }
 
-    public PlayerMoveRequestMessage(string id, SerializableVector3 position, SerializableVector3 rotation)
+    public PlayerMoveRequestMessage(SerializableVector3 position, SerializableVector3 rotation)
     {
         Position = position;
         Rotation = rotation;

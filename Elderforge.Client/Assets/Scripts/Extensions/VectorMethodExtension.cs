@@ -20,5 +20,16 @@ namespace Assets.Scripts.Extensions
         {
             return new Vector3(vector.X, vector.Y, vector.Z);
         }
+
+        public static SerializableVector3Int ToSerializableVector3Int(this Vector3Int vector)
+        {
+            return new SerializableVector3Int(vector.x, vector.y, vector.z);
+        }
+
+        public static SerializableVector3 ToSerializableVector3(this Vector3 vector)
+        {
+            return new SerializableVector3(vector.x, vector.y, vector.z);
+        }
     }
 }
+

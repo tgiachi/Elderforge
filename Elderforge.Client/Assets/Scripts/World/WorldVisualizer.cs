@@ -10,8 +10,11 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Assets.Scripts.Extensions;
 using Assets.Scripts.World;
+using Elderforge.Network.Interfaces.Messages;
 using Elderforge.Network.Packets.GameObjects;
+using Elderforge.Network.Packets.Player;
 using UnityEngine;
 
 public class WorldVisualizer : MonoBehaviour
@@ -35,7 +38,7 @@ public class WorldVisualizer : MonoBehaviour
     private Vector3Int lastPlayerChunk = new Vector3Int(-1, 0, -1);
     private HashSet<Vector3Int> requestedChunks;
     private HashSet<Vector3Int> loadedChunks;
-    private ConcurrentQueue<WorldChunkRequestMessage> chunkRequestQueue;
+    private ConcurrentQueue<INetworkMessage> chunkRequestQueue;
 
     private Queue<Action> _actions = new();
 
@@ -87,12 +90,17 @@ public class WorldVisualizer : MonoBehaviour
 
         requestedChunks = new HashSet<Vector3Int>();
         loadedChunks = new HashSet<Vector3Int>();
-        chunkRequestQueue = new ConcurrentQueue<WorldChunkRequestMessage>();
+        chunkRequestQueue = new ConcurrentQueue<INetworkMessage>();
 
+        
         ElderforgeInstanceHolder.NetworkClient.Connect("127.0.0.1", 5000);
+
+
 
         StartOutputQueue();
         StartOutputQueueThreads();
+
+     
 
     }
 
@@ -149,10 +157,18 @@ public class WorldVisualizer : MonoBehaviour
 
         UpdatePlayerChunkPosition();
 
+       
+
         while (_actions.Count > 0)
         {
             _actions.Dequeue().Invoke();
         }
+    }
+
+    private void SentPositionToServer(long obj)
+    {
+        Debug.Log("Sending position to server");
+        chunkRequestQueue.Enqueue(new PlayerMoveRequestMessage(player.transform.position.ToSerializableVector3(), player.transform.rotation.eulerAngles.ToSerializableVector3()));
     }
 
     private void StartOutputQueue()
@@ -204,6 +220,8 @@ public class WorldVisualizer : MonoBehaviour
             RequestVisibleChunks(currentChunk);
             UnloadDistantChunks(currentChunk);
             lastPlayerChunk = currentChunk;
+
+            SentPositionToServer(0);
         }
     }
 
