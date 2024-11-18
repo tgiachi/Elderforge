@@ -36,7 +36,7 @@ public class MessageParserWriterService : IMessageParserWriterService
 
     public void ReadPackets(NetDataReader reader, NetPeer peer)
     {
-        _logger.Debug("<< Receiving ({Bytes}) from  ", reader.AvailableBytes.Bytes(), peer.Id);
+        _logger.Verbose("<< Receiving ({Bytes}) from", reader.AvailableBytes.Bytes());
         _netPacketProcessor.ReadAllPackets(reader, peer);
     }
 
@@ -46,7 +46,7 @@ public class MessageParserWriterService : IMessageParserWriterService
 
         _netPacketProcessor.Write(writer, message);
 
-        _logger.Debug(">> Sending {Type}  ({Bytes}) to {peerId}", message.MessageType, writer.Length.Bytes(), peer.Id);
+        _logger.Verbose(">> Sending {Type}  ({Bytes}) to {peerId}", message.MessageType, writer.Length.Bytes(), peer.Id);
 
         peer.Send(writer, DeliveryMethod.ReliableOrdered);
     }

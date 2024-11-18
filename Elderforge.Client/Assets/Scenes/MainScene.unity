@@ -411,7 +411,7 @@ MonoBehaviour:
   renderDistance: 2
   player: {fileID: 1614562449}
   playerCamera: {fileID: 865782248}
-  numOfRequestThreads: 3
+  numOfRequestThreads: 4
   isRenderEnabled: 1
   gameObjectManager: {fileID: 98082500}
 --- !u!4 &1237496879

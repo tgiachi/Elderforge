@@ -53,7 +53,7 @@ public class PlayerService : AbstractGameService, IPlayerService, INetworkMessag
         sessionObject.SetPosition(message.Position.ToVector3());
         sessionObject.SetRotation(message.Rotation.ToVector3());
 
-        _logger.Debug("Player {sessionId} moved to {position}", sessionId, message.Position);
+        _logger.Debug("Player {sessionId} moved to {position}", sessionId, message.Position.ToVector3());
 
         foreach (var player in _networkSessionService.GetSessionObjectCanSee(100, message.Position.ToVector3()))
         {
@@ -72,6 +72,8 @@ public class PlayerService : AbstractGameService, IPlayerService, INetworkMessag
                 }
             );
         }
+
+
 
 
         return [];

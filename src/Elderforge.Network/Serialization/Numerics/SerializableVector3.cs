@@ -31,6 +31,11 @@ public class SerializableVector3
         Z = z;
     }
 
+    override public string ToString()
+    {
+        return $"({X}, {Y}, {Z})";
+    }
+
 
     public Vector3 ToVector3()
     {
