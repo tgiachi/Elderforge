@@ -17,22 +17,32 @@ public class TestGameObjectEmitter : AbstractGameService, ITestGameObjectEmitter
 {
     private readonly ConcurrentDictionary<string, AbstractGameObject> _gameObjects = new();
 
+
+    private readonly IGameObjectManagerService _gameObjectManagerService;
+
+
     public TestGameObjectEmitter(
-        IEventBusService eventBusService, INetworkServer networkServer, ISchedulerService schedulerService
+        IEventBusService eventBusService, INetworkServer networkServer, ISchedulerService schedulerService,
+        IGameObjectManagerService gameObjectManagerService
     ) : base(eventBusService)
     {
+        _gameObjectManagerService = gameObjectManagerService;
         SubscribeEvent<ClientConnectedEvent>(OnClientConnected);
 
         SubscribeEvent<EngineStartedEvent>(
             @event =>
             {
-                // schedulerService.AddSchedulerJob(
-                //     "generate_game_objects",
-                //     TimeSpan.FromSeconds(5),
-                //     GenerateRandomGameObjects
-                // );
+                schedulerService.AddSchedulerJob(
+                    "generate_game_objects",
+                    TimeSpan.FromSeconds(5),
+                    GenerateRandomGameObjects
+                );
 
-                //   schedulerService.AddSchedulerJob("move_game_objects", TimeSpan.FromMilliseconds(1000), MoveRandomGameObjects);
+                schedulerService.AddSchedulerJob(
+                    "move_game_objects",
+                    TimeSpan.FromMilliseconds(1000),
+                    MoveRandomGameObjects
+                );
             }
         );
     }
@@ -60,7 +70,7 @@ public class TestGameObjectEmitter : AbstractGameService, ITestGameObjectEmitter
         _gameObjects.TryAdd(randomId, gameObject);
 
 
-        BroadcastNetworkMessage(new GameObjectCreateMessage(gameObject));
+        _gameObjectManagerService.AddGameObject(gameObject);
 
         return Task.CompletedTask;
     }
@@ -82,8 +92,6 @@ public class TestGameObjectEmitter : AbstractGameService, ITestGameObjectEmitter
                 gameObject.Rotation.Y + (float)(new Random().NextDouble() * 4),
                 gameObject.Rotation.Z + (float)(new Random().NextDouble() * 4)
             );
-
-            BroadcastNetworkMessage(new GameObjectMoveMessage(gameObject));
         }
 
         return Task.CompletedTask;
