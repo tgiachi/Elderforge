@@ -19,13 +19,18 @@ public class SessionObject : ISessionObject
 
     public DateTime LastActive { get; set; }
 
-    public SessionObject(NetPeer peer)
+    public SessionObject(NetPeer? peer)
     {
         Peer = peer;
         Data = new Dictionary<string, object>();
         Writer = new NetDataWriter();
         LastActive = DateTime.UtcNow;
-        Id = peer.Id.ToString();
+
+        if (peer != null)
+        {
+            Id = peer.Id.ToString();
+        }
+
         WriteLock = new SemaphoreSlim(1, 1);
     }
 

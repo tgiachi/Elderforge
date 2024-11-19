@@ -9,11 +9,8 @@ namespace Elderforge.Core.Server.GameObjects.Base;
 public class AbstractGameObject : IGameObject, INotifyPropertyChanged
 {
     public event IGameObject.Vector3ChangedEventHandler? PositionChanged;
-
     public event IGameObject.Vector3ChangedEventHandler? RotationChanged;
-
     public event IGameObject.Vector3ChangedEventHandler? ScaleChanged;
-
     public ISubject<IGameObject.Vector3ChangedEventHandler> PositionSubject { get; }
     public ISubject<IGameObject.Vector3ChangedEventHandler> RotationSubject { get; }
     public ISubject<IGameObject.Vector3ChangedEventHandler> ScaleSubject { get; }

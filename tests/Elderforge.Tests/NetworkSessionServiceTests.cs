@@ -23,7 +23,6 @@ public class NetworkSessionServiceTests
 
         var session = new SessionObject(null);
 
-
         sessionService.AddSession("test", session);
 
         var session2 = sessionService.GetSessionObject("test");
