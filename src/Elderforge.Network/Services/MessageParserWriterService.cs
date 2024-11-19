@@ -25,19 +25,23 @@ public class MessageParserWriterService : IMessageParserWriterService
     {
         _networkMessageFactory = networkMessageFactory;
         _messageChannelService = messageChannelService;
-        _netPacketProcessor.SubscribeReusable<NetworkPacket, NetPeer>(OnReceivePacket);
+        _netPacketProcessor.SubscribeReusable<NetworkPacket, (NetPeer, int)>(OnReceivePacket);
     }
 
-    private async void OnReceivePacket(NetworkPacket packet, NetPeer peer)
+    private async void OnReceivePacket(NetworkPacket packet, (NetPeer peer, int bytes) data)
     {
-        _logger.Debug("Received packet from {peerId} type: {Type}", peer.Id, packet.MessageType);
-        _messageChannelService.IncomingWriterChannel.TryWrite(new SessionNetworkPacket(peer.Id.ToString(), packet));
+        _logger.Debug(
+            "Received packet from {peerId} ({Size}) type: {Type}",
+            data.peer.Id,
+            data.bytes.Bytes(),
+            packet.MessageType
+        );
+        _messageChannelService.IncomingWriterChannel.TryWrite(new SessionNetworkPacket(data.peer.Id.ToString(), packet));
     }
 
     public void ReadPackets(NetDataReader reader, NetPeer peer)
     {
-        _logger.Debug("<< Receiving ({Bytes}) from {Session}", reader.AvailableBytes.Bytes(), peer.Id);
-        _netPacketProcessor.ReadAllPackets(reader, peer);
+        _netPacketProcessor.ReadAllPackets(reader, (peer, reader.AvailableBytes));
     }
 
     public async Task WriteMessageAsync(NetPeer peer, NetDataWriter writer, NetworkPacket message)

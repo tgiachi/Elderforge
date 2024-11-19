@@ -32,17 +32,17 @@ public class TestGameObjectEmitter : AbstractGameService, ITestGameObjectEmitter
         SubscribeEvent<EngineStartedEvent>(
             @event =>
             {
-                // schedulerService.AddSchedulerJob(
-                //     "generate_game_objects",
-                //     TimeSpan.FromSeconds(5),
-                //     GenerateRandomGameObjects
-                // );
-                //
-                // schedulerService.AddSchedulerJob(
-                //     "move_game_objects",
-                //     TimeSpan.FromMilliseconds(1000),
-                //     MoveRandomGameObjects
-                // );
+                schedulerService.AddSchedulerJob(
+                    "generate_game_objects",
+                    TimeSpan.FromSeconds(5),
+                    GenerateRandomGameObjects
+                );
+
+                schedulerService.AddSchedulerJob(
+                    "move_game_objects",
+                    TimeSpan.FromMilliseconds(1000),
+                    MoveRandomGameObjects
+                );
             }
         );
     }
