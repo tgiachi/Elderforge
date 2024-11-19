@@ -15,5 +15,6 @@ public enum BlockType : byte
     Glass,
     Brick,
     Snow,
-    Ice
+    Ice,
+    Cloud,
 }

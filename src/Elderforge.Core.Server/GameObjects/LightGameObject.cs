@@ -18,8 +18,9 @@ public class LightGameObject : AbstractGameObject, ILightGameObject
     public string LightColor { get; set; }
 
 
-    public LightGameObject() : base(GameObjectType.Light)
+    public LightGameObject(LightType lightType) : base(GameObjectType.Light)
     {
+        LightType = lightType;
         LightIntensitySubject = new Subject<ILightGameObject.LightIntensityHandler>();
         LightColorSubject = new Subject<ILightGameObject.LightColorHandler>();
 

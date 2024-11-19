@@ -1,5 +1,6 @@
 using System.Numerics;
 using Elderforge.Core.Server.GameObjects;
+using Elderforge.Shared.Types;
 
 
 namespace Elderforge.Tests;
@@ -9,7 +10,7 @@ public class GameObjectsTests
     [Fact]
     public void Test_GameObjectPositionPropertyChanged()
     {
-        var gameObject = new LightGameObject();
+        var gameObject = new LightGameObject(LightType.Point);
 
         bool propertyChanged;
 
@@ -28,7 +29,7 @@ public class GameObjectsTests
     [Fact]
     public void Test_GameObjectRotationPropertyChanged()
     {
-        var gameObject = new LightGameObject();
+        var gameObject = new LightGameObject(LightType.Point);
 
         bool propertyChanged;
 
@@ -47,7 +48,7 @@ public class GameObjectsTests
     [Fact]
     public void Test_GameObjectScalePropertyChanged()
     {
-        var gameObject = new LightGameObject();
+        var gameObject = new LightGameObject(LightType.Directional);
 
         bool propertyChanged;
 

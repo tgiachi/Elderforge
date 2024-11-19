@@ -49,6 +49,7 @@ public class ElderforgeInstanceHolder
 
 
         new(NetworkMessageType.GameObjectDestroyResponse, typeof(GameObjectDestroyMessage)),
+        new(NetworkMessageType.GameObjectActionRequest, typeof(GameObjectActionRequestMessage)),
         new(NetworkMessageType.LightUpdateResponse, typeof(LightGoUpdateResponseMessage)),
 
         new(NetworkMessageType.LoginRequest, typeof(LoginRequestMessage)),

@@ -18,6 +18,7 @@ public enum NetworkMessageType : byte
     WorldChunkResponse,
 
     GameObjectDestroyResponse,
+    GameObjectActionRequest,
 
     LightUpdateResponse,
 

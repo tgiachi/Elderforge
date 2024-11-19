@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using Elderforge.Core.Interfaces.Services;
 using Elderforge.Core.Server.Interfaces.Services.System;
 using Elderforge.Network.Data.Internal;
+using Elderforge.Network.Interfaces.Listeners;
 using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Packets.GameObjects;
 using Elderforge.Network.Packets.GameObjects.Lights;
@@ -13,7 +14,7 @@ using Serilog;
 
 namespace Elderforge.Server.Services.System;
 
-public class GameObjectManagerService : IGameObjectManagerService
+public class GameObjectManagerService : IGameObjectManagerService, INetworkMessageListener<GameObjectActionRequestMessage>
 {
     private readonly IEventBusService _eventBusService;
 
@@ -38,6 +39,7 @@ public class GameObjectManagerService : IGameObjectManagerService
         _networkServer = networkServer;
         _eventBusService = eventBusService;
         _gameObjects.CollectionChanged += OnCollectionChanged;
+        _networkServer.RegisterMessageListener<GameObjectActionRequestMessage>(this);
     }
 
     private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -142,5 +144,18 @@ public class GameObjectManagerService : IGameObjectManagerService
     {
         _gameObjectsLock.Dispose();
         _gameObjects.CollectionChanged -= OnCollectionChanged;
+    }
+
+    public async ValueTask<IEnumerable<SessionNetworkMessage>> OnMessageReceivedAsync(
+        string sessionId, GameObjectActionRequestMessage message
+    )
+    {
+        _logger.Debug(
+            "Received game object action request from {SessionId} action type: {Action}",
+            sessionId,
+            message.ActionType
+        );
+
+        return [];
     }
 }
