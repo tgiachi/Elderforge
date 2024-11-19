@@ -234,6 +234,7 @@ public class WorldVisualizer : MonoBehaviour
                 while (isRunning)
                 {
                     ElderforgeInstanceHolder.NetworkClient.PoolEvents();
+
                 }
 
             }
@@ -252,7 +253,14 @@ public class WorldVisualizer : MonoBehaviour
                         if (chunkRequestQueue.Count > 0)
                         {
                             chunkRequestQueue.TryDequeue(out var request);
+
+                            if (request == null)
+                            {
+                                continue;
+                            }
+
                             await ElderforgeInstanceHolder.NetworkClient.SendMessageAsync(request);
+                            Debug.Log("MessageSent from thead task:" + Thread.CurrentThread.Name);
                         }
                     }
                 }
