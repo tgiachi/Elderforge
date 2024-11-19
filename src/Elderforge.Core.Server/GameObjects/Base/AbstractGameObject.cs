@@ -6,7 +6,7 @@ using Elderforge.Shared.Types;
 
 namespace Elderforge.Core.Server.GameObjects.Base;
 
-public class AbstractGameObject : IGameObject, INotifyPropertyChanged
+public abstract class AbstractGameObject : IGameObject, INotifyPropertyChanged
 {
     public event IGameObject.Vector3ChangedEventHandler? PositionChanged;
     public event IGameObject.Vector3ChangedEventHandler? RotationChanged;
@@ -31,7 +31,7 @@ public class AbstractGameObject : IGameObject, INotifyPropertyChanged
     public event PropertyChangedEventHandler? PropertyChanged;
 
 
-    public AbstractGameObject(GameObjectType objectType)
+    protected AbstractGameObject(GameObjectType objectType)
     {
         ObjectType = objectType;
         Position = Vector3.Zero;

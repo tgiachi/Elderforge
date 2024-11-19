@@ -6,7 +6,6 @@ using Elderforge.Core.Server.Data.Directories;
 using Elderforge.Core.Server.Data.Internal;
 using Elderforge.Core.Server.Events.Engine;
 using Elderforge.Core.Server.Extensions;
-using Elderforge.Core.Server.Interfaces.Services;
 using Elderforge.Core.Server.Interfaces.Services.Game;
 using Elderforge.Core.Server.Interfaces.Services.System;
 using Elderforge.Core.Server.Interfaces.World;
@@ -16,19 +15,11 @@ using Elderforge.Core.Services;
 using Elderforge.Core.Utils;
 using Elderforge.Network.Client.Services;
 using Elderforge.Network.Interfaces.Services;
-using Elderforge.Network.Packets;
-using Elderforge.Network.Packets.Chat;
-using Elderforge.Network.Packets.Motd;
-using Elderforge.Network.Packets.System;
 using Elderforge.Network.Server.Data;
 using Elderforge.Network.Server.Extensions;
-using Elderforge.Network.Types;
 using Elderforge.Server.Data;
 using Elderforge.Server.Extensions;
 using Elderforge.Server.HostingService;
-using Elderforge.Server.Interfaces;
-using Elderforge.Server.ScriptModules;
-using Elderforge.Server.Services;
 using Elderforge.Server.Services.Game;
 using Elderforge.Server.Services.System;
 using Elderforge.Server.WorldGenerators;
@@ -156,7 +147,6 @@ public class Program
             .AddAutoStartService<IAccountService, AccountService>()
             .AddAutoStartService<IGameCommandService, GameCommandService>()
             .AddAutoStartService<IMotdService, MotdService>()
-            .AddAutoStartService<ITestGameObjectEmitter, TestGameObjectEmitter>()
             .AddAutoStartService<IGameObjectManagerService, GameObjectManagerService>()
             .AddAutoStartService<IPlayerService, PlayerService>()
             .AddAutoStartService<IChatService, ChatService>();
