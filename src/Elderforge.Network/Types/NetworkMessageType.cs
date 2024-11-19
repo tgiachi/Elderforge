@@ -17,14 +17,11 @@ public enum NetworkMessageType : byte
     WorldChunkRequest,
     WorldChunkResponse,
 
-    GameObjectCreateResponse,
     GameObjectDestroyResponse,
-    GameObjectMoveResponse,
+
+    LightUpdateResponse,
 
 
     PlayerMoveRequest,
     PlayerMoveResponse,
-
-    LightResponse
-
 }

@@ -48,17 +48,14 @@ public class ElderforgeInstanceHolder
         new(NetworkMessageType.WorldChunkResponse, typeof(WorldChunkResponseMessage)),
 
 
-        new(NetworkMessageType.GameObjectCreateResponse, typeof(GameObjectCreateMessage)),
         new(NetworkMessageType.GameObjectDestroyResponse, typeof(GameObjectDestroyMessage)),
-        new(NetworkMessageType.GameObjectMoveResponse, typeof(GameObjectMoveMessage)),
+        new(NetworkMessageType.LightUpdateResponse, typeof(LightGoUpdateResponseMessage)),
 
         new(NetworkMessageType.LoginRequest, typeof(LoginRequestMessage)),
         new(NetworkMessageType.LoginResponse, typeof(LoginResponseMessage)),
 
         new(NetworkMessageType.PlayerMoveRequest, typeof(PlayerMoveRequestMessage)),
         new(NetworkMessageType.PlayerMoveResponse, typeof(PlayerMoveResponseMessage)),
-
-        new(NetworkMessageType.LightResponse, typeof(LightGameObjectResponseMessage))
     ];
 
     public IEventBusService EventBusService { get; } = new EventBusService();

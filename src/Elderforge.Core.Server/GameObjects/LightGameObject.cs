@@ -1,10 +1,11 @@
 using System.Reactive.Subjects;
+using Elderforge.Core.Server.GameObjects.Base;
 using Elderforge.Shared.Interfaces;
 using Elderforge.Shared.Types;
 
-namespace Elderforge.Core.Server.GameObjects.Base;
+namespace Elderforge.Core.Server.GameObjects;
 
-public class AbstractLightObject : AbstractGameObject, ILightGameObject
+public class LightGameObject : AbstractGameObject, ILightGameObject
 {
     public event ILightGameObject.LightIntensityHandler? LightIntensityChanged;
     public event ILightGameObject.LightColorHandler? LightColorChanged;
@@ -17,13 +18,13 @@ public class AbstractLightObject : AbstractGameObject, ILightGameObject
     public string LightColor { get; set; }
 
 
-    public AbstractLightObject() : base(GameObjectType.Light)
+    public LightGameObject() : base(GameObjectType.Light)
     {
         LightIntensitySubject = new Subject<ILightGameObject.LightIntensityHandler>();
         LightColorSubject = new Subject<ILightGameObject.LightColorHandler>();
 
 
-        PropertyChanged += (sender, args) =>
+        PropertyChanged += (_, args) =>
         {
             if (args.PropertyName == nameof(LightIntensity))
             {

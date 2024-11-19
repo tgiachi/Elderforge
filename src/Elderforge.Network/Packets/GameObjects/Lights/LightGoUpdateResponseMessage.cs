@@ -6,15 +6,15 @@ using ProtoBuf;
 namespace Elderforge.Network.Packets.GameObjects.Lights;
 
 [ProtoContract]
-public class LightGameObjectResponseMessage : INetworkMessage
+public class LightGoUpdateResponseMessage : INetworkMessage
 {
     [ProtoMember(1)] public SerializableLightEntity Light { get; set; }
 
-    public LightGameObjectResponseMessage()
+    public LightGoUpdateResponseMessage()
     {
     }
 
-    public LightGameObjectResponseMessage(ILightGameObject light)
+    public LightGoUpdateResponseMessage(ILightGameObject light)
     {
         Light = new SerializableLightEntity(light);
     }

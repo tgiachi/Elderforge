@@ -1,6 +1,7 @@
 using Elderforge.Network.Interfaces.Messages;
 using Elderforge.Network.Serialization.Numerics;
 using Elderforge.Shared.Interfaces;
+using Elderforge.Shared.Types;
 using ProtoBuf;
 
 namespace Elderforge.Network.Packets.GameObjects;
@@ -17,6 +18,7 @@ public class GameObjectCreateMessage : INetworkMessage
     [ProtoMember(4)] public SerializableVector3 Scale { get; set; }
 
     [ProtoMember(5)] public SerializableVector3 Rotation { get; set; }
+
 
     public GameObjectCreateMessage(
         string id, string name, SerializableVector3 position, SerializableVector3 scale,
