@@ -46,7 +46,7 @@ public class AbstractGameObject : IGameObject, INotifyPropertyChanged
         ScaleSubject = new Subject<IGameObject.Vector3ChangedEventHandler>();
     }
 
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    protected void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         switch (e.PropertyName)
         {
