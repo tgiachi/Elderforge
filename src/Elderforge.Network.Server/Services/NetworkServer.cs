@@ -1,10 +1,8 @@
 using Elderforge.Core.Interfaces.EventBus;
 using Elderforge.Core.Interfaces.Services;
-using Elderforge.Core.Server.Events;
 using Elderforge.Core.Server.Events.Network;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Data.Session;
-using Elderforge.Network.Events;
 using Elderforge.Network.Events.Network;
 using Elderforge.Network.Interfaces.Listeners;
 using Elderforge.Network.Interfaces.Messages;
@@ -16,7 +14,8 @@ using Serilog;
 
 namespace Elderforge.Network.Server.Services;
 
-public class NetworkServer : INetworkServer, IEventBusListener<SendMessageEvent>
+public class NetworkServer
+    : INetworkServer, IEventBusListener<SendMessageEvent>, IEventBusListener<RegisterNetworkListenerEvent<INetworkMessage>>
 {
     public bool IsRunning { get; private set; }
 
@@ -65,7 +64,8 @@ public class NetworkServer : INetworkServer, IEventBusListener<SendMessageEvent>
         _serverListener.PeerDisconnectedEvent += OnPeerDisconnection;
         _serverListener.NetworkReceiveEvent += OnNetworkEvent;
 
-        _eventBusService.Subscribe(this);
+        _eventBusService.Subscribe<SendMessageEvent>(this);
+        _eventBusService.Subscribe<RegisterNetworkListenerEvent<INetworkMessage>>(this);
 
         _netServer = new NetManager(_serverListener);
 
@@ -212,5 +212,12 @@ public class NetworkServer : INetworkServer, IEventBusListener<SendMessageEvent>
     public async Task OnEventAsync(SendMessageEvent message)
     {
         await SendMessageAsync(new SessionNetworkMessage(message.SessionId, message.Message));
+    }
+
+    public Task OnEventAsync(RegisterNetworkListenerEvent<INetworkMessage> message)
+    {
+        RegisterMessageListener(message.Listener);
+
+        return Task.CompletedTask;
     }
 }
