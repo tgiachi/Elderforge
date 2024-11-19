@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Elderforge.Network.Interfaces.Sessions;
 using LiteNetLib;
 using LiteNetLib.Utils;
@@ -13,6 +14,7 @@ public class SessionObject : ISessionObject
     public Dictionary<string, object> Data { get; }
     public NetDataWriter Writer { get; }
 
+    public SemaphoreSlim WriteLock { get; }
     public bool IsLoggedIn { get; set; }
 
     public DateTime LastActive { get; set; }
@@ -24,6 +26,7 @@ public class SessionObject : ISessionObject
         Writer = new NetDataWriter();
         LastActive = DateTime.UtcNow;
         Id = peer.Id.ToString();
+        WriteLock = new SemaphoreSlim(1, 1);
     }
 
     public TDataObject GetDataObject<TDataObject>(string key, bool throwIfNowExist = true)

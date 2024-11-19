@@ -214,7 +214,7 @@ public class SchedulerService
             if (job.CurrentMs >= job.TotalMs)
             {
                 job.CurrentMs = 0;
-                _logger.Debug("Executing scheduler job {job}", job.Name);
+                _logger.Verbose("Executing scheduler job {job}", job.Name);
                 EnqueueAction(new ScheduledGameAction(job.Action));
             }
         }

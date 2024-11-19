@@ -15,6 +15,9 @@ public class SerializableVector3
 
     public SerializableVector3()
     {
+        X = 0;
+        Y = 0;
+        Z = 0;
     }
 
     public SerializableVector3(Vector3 vector)

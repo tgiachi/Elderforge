@@ -28,7 +28,6 @@ public class ElderforgeInstanceHolder
 
     private readonly CancellationTokenRegistration _cancellationTokenRegistration = new();
 
-
     public static INetworkClient NetworkClient { get; private set; }
 
     public static List<MessageTypeObject> MessageTypes =>
@@ -74,16 +73,16 @@ public class ElderforgeInstanceHolder
 
         NetworkClient.MessageReceived += (messageType, message) =>
         {
-            Log.Logger.Debug("Received message of type {MessageType}", messageType);
+            Log.Debug("Received message of type {MessageType}", messageType);
         };
-        NetworkClient.SubscribeToMessage<PingMessage>()
-            .Subscribe(
-                message =>
-                {
-                    Log.Logger.Debug("Received ping message, sending pong message");
-                    NetworkClient.SendMessageAsync(new PongMessage());
-                }
-            );
+        // NetworkClient.SubscribeToMessage<PingMessage>()
+        //     .Subscribe(
+        //         message =>
+        //         {
+        //             Log.Logger.Debug("Received ping message, sending pong message");
+        //             NetworkClient.SendMessageAsync(new PongMessage());
+        //         }
+        //     );
     }
 
 

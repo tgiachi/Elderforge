@@ -105,11 +105,15 @@ public class NetworkServer : INetworkServer, IEventBusListener<SendMessageEvent>
                 var session = _networkSessionService.GetSessionObject(packet.SessionId);
                 var message = await _networkMessageFactory.SerializeAsync(packet.Packet);
 
+
+                await session.WriteLock.WaitAsync();
                 await _messageParserWriterService.WriteMessageAsync(
                     session.Peer,
                     session.Writer,
                     (NetworkPacket)message
                 );
+
+                session.WriteLock.Release();
             }
         }
     }

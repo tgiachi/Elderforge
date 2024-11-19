@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Assets.Scripts.Extensions;
 using Elderforge.Network.Packets.GameObjects;
+using Elderforge.Network.Packets.Player;
 using UnityEngine;
 
 namespace Assets.Scripts.World
@@ -14,8 +15,10 @@ namespace Assets.Scripts.World
 
         [SerializeField] private GameObject networkGameObjectPrefab;
 
+        [SerializeField] private GameObject playerGameObjectPrefab;
 
-        private readonly Dictionary<string, GameObject> networkGameObjects = new Dictionary<string, GameObject>();
+
+        private readonly Dictionary<string, GameObject> networkGameObjects = new();
 
 
         public void OnGameObjectCreated(GameObjectCreateMessage message)
@@ -73,6 +76,29 @@ namespace Assets.Scripts.World
             o.transform.position = message.Position.ToUnityVector3();
             o.transform.rotation = Quaternion.Euler(message.Rotation.ToUnityVector3());
 
+        }
+
+        public void OnPlayerGameObjectCreated(PlayerMoveResponseMessage message)
+        {
+            Debug.Log("Creating player gameObject");
+
+            if (networkGameObjects.TryGetValue(message.Id, out var exPl))
+            {
+                Debug.LogWarning($"GameObject with id {message.Id} already exists, updating");
+
+                exPl.transform.position = message.Position.ToUnityVector3();
+                exPl.transform.rotation = Quaternion.Euler(message.Rotation.ToUnityVector3());
+                return;
+            }
+
+            var playerGameObject = Instantiate(
+                playerGameObjectPrefab,
+                message.Position.ToUnityVector3(),
+                Quaternion.Euler(message.Rotation.ToUnityVector3()),
+                transform
+            );
+            Debug.Log("Player gameobject created");
+            networkGameObjects[message.Id] = playerGameObject;
         }
     }
 }

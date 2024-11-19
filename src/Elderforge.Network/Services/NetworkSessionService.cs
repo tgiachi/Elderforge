@@ -68,7 +68,7 @@ public class NetworkSessionService : INetworkSessionService
     public IEnumerable<ISessionObject> GetExpiredSessions(TimeSpan expirationTime)
     {
         return _sessions
-            .Where(x => DateTime.UtcNow - x.Value.LastActive > expirationTime)
+            .Where(x => x.Value.LastActive + expirationTime < DateTime.UtcNow)
             .Select(x => x.Value)
             .ToList();
     }

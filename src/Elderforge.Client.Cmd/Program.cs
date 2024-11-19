@@ -1,9 +1,9 @@
-﻿using Elderforge.Network.Client.Services;
-using Elderforge.Network.Data.Internal;
-using Elderforge.Network.Packets;
+﻿using System.Numerics;
+using Elderforge.Network.Client.Services;
 using Elderforge.Network.Packets.Motd;
+using Elderforge.Network.Packets.Player;
 using Elderforge.Network.Packets.System;
-using Elderforge.Network.Types;
+using Elderforge.Network.Serialization.Numerics;
 using Serilog;
 
 
@@ -14,6 +14,12 @@ class Program
     private static readonly CancellationTokenSource _cancellationTokenSource = new();
 
     private static Task _poolEventTask;
+
+    private static Task _moveTask;
+
+    private static Vector3 _myPosition = new(0, 0, 0);
+
+    private static Vector3 _myRotation = new(0, 0, 0);
 
     static async Task Main(string[] args)
     {
@@ -68,12 +74,36 @@ class Program
 
 
         _poolEventTask = Task.Run(
-            () =>
+            async () =>
             {
                 while (!_cancellationTokenSource.Token.IsCancellationRequested)
                 {
                     networkClient.PoolEvents();
-                    Thread.Sleep(30);
+                    await Task.Delay(30);
+                }
+            },
+            _cancellationTokenSource.Token
+        );
+
+        _moveTask = Task.Run(
+            async () =>
+            {
+                while (!_cancellationTokenSource.Token.IsCancellationRequested)
+                {
+                    _myPosition += new Vector3(0.1f, 0, 0);
+                    _myRotation += new Vector3(0, 0.1f, 0);
+
+                    var movePlayerMessage = new PlayerMoveRequestMessage(
+                        new SerializableVector3(_myPosition),
+                        new SerializableVector3(_myRotation)
+                    );
+
+                    if (networkClient != null && networkClient.IsConnected)
+                    {
+                        await networkClient.SendMessageAsync(movePlayerMessage);
+                    }
+
+                    await Task.Delay(10);
                 }
             },
             _cancellationTokenSource.Token

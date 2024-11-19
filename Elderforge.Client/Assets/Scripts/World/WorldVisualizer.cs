@@ -102,6 +102,18 @@ public class WorldVisualizer : MonoBehaviour
                     _actions.Enqueue(() => { gameObjectManager.OnGameObjectMoved(m); });
                 });
 
+
+        ElderforgeInstanceHolder.NetworkClient.SubscribeToMessage<PlayerMoveResponseMessage>()
+            .Subscribe(
+                m =>
+                {
+                    _actions.Enqueue(() =>
+                    {
+                        gameObjectManager.OnPlayerGameObjectCreated(m);
+                    });
+                }
+            );
+
         requestedChunks = new HashSet<Vector3Int>();
         loadedChunks = new HashSet<Vector3Int>();
         chunkRequestQueue = new ConcurrentQueue<INetworkMessage>();

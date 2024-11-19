@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Threading;
 using System.Threading.Tasks;
 using Elderforge.Network.Client.Interfaces;
 using Elderforge.Network.Data.Internal;
@@ -28,6 +29,8 @@ public class NetworkClient : INetworkClient
     private readonly EventBasedNetListener _clientListener = new();
 
     private readonly Subject<INetworkMessage> _messageSubject = new();
+
+    private readonly SemaphoreSlim _writeLock = new(1, 1);
 
     private readonly NetManager _netManager;
 
@@ -98,6 +101,7 @@ public class NetworkClient : INetworkClient
             return;
         }
 
+        await _writeLock.WaitAsync();
 
         var packet = (NetworkPacket)(await _networkMessageFactory.SerializeAsync(message));
 
@@ -107,7 +111,13 @@ public class NetworkClient : INetworkClient
 
         _netPacketProcessor.Write(writer, packet);
 
-        _netManager.FirstPeer.Send(writer, DeliveryMethod.ReliableOrdered);
+
+        foreach (var peer in _netManager.ConnectedPeerList)
+        {
+            peer.Send(writer, DeliveryMethod.ReliableOrdered);
+        }
+
+        _writeLock.Release();
     }
 
     public IObservable<T> SubscribeToMessage<T>() where T : class, INetworkMessage

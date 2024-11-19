@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using LiteNetLib;
 using LiteNetLib.Utils;
 
@@ -17,6 +18,8 @@ public interface ISessionObject
     Dictionary<string, object> Data { get; }
 
     DateTime LastActive { get; set; }
+
+    SemaphoreSlim WriteLock { get; }
 
     bool IsLoggedIn { get; set; }
 

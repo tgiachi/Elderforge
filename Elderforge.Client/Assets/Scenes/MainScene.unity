@@ -149,6 +149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   networkGameObjectPrefab: {fileID: 57104657699737448, guid: abb303b00f2f8454592fd412f81b5504, type: 3}
+  playerGameObjectPrefab: {fileID: 2129128525369366943, guid: 5b24e140ff167084dafb76aa8b19482c, type: 3}
 --- !u!4 &98082501
 Transform:
   m_ObjectHideFlags: 0
@@ -303,7 +304,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerGameObject: {fileID: 1614562445}
-  speed: 0
+  speed: 1.6
 --- !u!1 &905223032
 GameObject:
   m_ObjectHideFlags: 0
