@@ -9,6 +9,7 @@ using Elderforge.Core.Server.Interfaces.Services.System;
 using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Packets.GameObjects;
 using Elderforge.Server.Interfaces;
+using Elderforge.Shared.Types;
 using Serilog;
 
 namespace Elderforge.Server.Services.Game;
@@ -17,9 +18,7 @@ public class TestGameObjectEmitter : AbstractGameService, ITestGameObjectEmitter
 {
     private readonly ConcurrentDictionary<string, AbstractGameObject> _gameObjects = new();
 
-
     private readonly IGameObjectManagerService _gameObjectManagerService;
-
 
     public TestGameObjectEmitter(
         IEventBusService eventBusService, INetworkServer networkServer, ISchedulerService schedulerService,
@@ -58,7 +57,7 @@ public class TestGameObjectEmitter : AbstractGameService, ITestGameObjectEmitter
 
         Log.Information("Generating random game object with id {id}", randomId);
 
-        var gameObject = new AbstractGameObject()
+        var gameObject = new AbstractGameObject(GameObjectType.Item)
         {
             Id = randomId,
             Name = "Test Object " + randomId,

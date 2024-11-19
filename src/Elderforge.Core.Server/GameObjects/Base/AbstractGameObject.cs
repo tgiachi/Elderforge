@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Numerics;
 using System.Reactive.Subjects;
 using Elderforge.Shared.Interfaces;
+using Elderforge.Shared.Types;
 
 namespace Elderforge.Core.Server.GameObjects.Base;
 
@@ -19,6 +20,8 @@ public class AbstractGameObject : IGameObject, INotifyPropertyChanged
 
     public string Id { get; set; }
 
+    public GameObjectType ObjectType { get; set; }
+
     public string Name { get; set; }
 
 
@@ -31,8 +34,9 @@ public class AbstractGameObject : IGameObject, INotifyPropertyChanged
     public event PropertyChangedEventHandler? PropertyChanged;
 
 
-    public AbstractGameObject()
+    public AbstractGameObject(GameObjectType objectType)
     {
+        ObjectType = objectType;
         Position = Vector3.Zero;
 
         Rotation = Vector3.Zero;
@@ -67,6 +71,6 @@ public class AbstractGameObject : IGameObject, INotifyPropertyChanged
 
     public override string ToString()
     {
-        return $"{Name} ({Id})";
+        return $"{Name} ({Id}) - {ObjectType} - Position: {Position}, Rotation: {Rotation}, Scale: {Scale}";
     }
 }

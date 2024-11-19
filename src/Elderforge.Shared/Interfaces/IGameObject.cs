@@ -1,5 +1,6 @@
 using System.Numerics;
 using System.Reactive.Subjects;
+using Elderforge.Shared.Types;
 
 namespace Elderforge.Shared.Interfaces;
 
@@ -22,6 +23,8 @@ public interface IGameObject
 
 
     string Id { get; set; }
+
+    GameObjectType ObjectType { get; set; }
 
     string Name { get; set; }
 

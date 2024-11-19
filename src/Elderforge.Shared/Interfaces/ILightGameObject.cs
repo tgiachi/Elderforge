@@ -10,11 +10,9 @@ public interface ILightGameObject : IGameObject, INotifyPropertyChanged
 
     delegate void LightColorHandler(object sender, string color);
 
-
     event LightIntensityHandler LightIntensityChanged;
 
     event LightColorHandler LightColorChanged;
-
 
     ISubject<LightIntensityHandler> LightIntensitySubject { get; }
 
