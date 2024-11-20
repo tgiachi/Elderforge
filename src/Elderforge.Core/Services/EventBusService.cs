@@ -3,10 +3,13 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Elderforge.Core.Interfaces.EventBus;
 using Elderforge.Core.Interfaces.Services;
+using Elderforge.Core.Server.Attributes.Services;
 using Serilog;
 
 namespace Elderforge.Core.Services;
 
+
+[ElderforgeService]
 public class EventBusService : IEventBusService
 {
     private readonly ILogger _logger = Log.ForContext<EventBusService>();
