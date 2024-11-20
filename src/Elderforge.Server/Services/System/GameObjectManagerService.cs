@@ -57,6 +57,11 @@ public class GameObjectManagerService : IGameObjectManagerService, INetworkMessa
                 {
                     LightAdded(lightGameObject);
                 }
+
+                if (item is IPlayerGameObject playerGameObject)
+                {
+                    PlayerAdded(playerGameObject);
+                }
             }
         }
         else if (e.Action == NotifyCollectionChangedAction.Remove)
@@ -66,6 +71,11 @@ public class GameObjectManagerService : IGameObjectManagerService, INetworkMessa
                 if (item is ILightGameObject lightGameObject)
                 {
                     LightRemoved(lightGameObject);
+                }
+
+                if (item is IPlayerGameObject playerGameObject)
+                {
+                    PlayerRemoved(playerGameObject);
                 }
             }
         }

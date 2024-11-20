@@ -17,4 +17,10 @@ public class TimeChangedMessage : INetworkMessage
     [ProtoMember(4)] public DayPhase Phase { get; set; }
 
     [ProtoMember(5)] public bool IsDayTime { get; set; }
+
+
+    public override string ToString()
+    {
+        return $"{Hours:00}:{Minutes:00} ({Phase})";
+    }
 }

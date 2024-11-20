@@ -25,7 +25,7 @@ public class PlayerService
 {
     private readonly INetworkSessionService _networkSessionService;
 
-    private readonly ConcurrentDictionary<Guid, PlayerGameObject> _players = new();
+    private readonly ConcurrentDictionary<string, PlayerGameObject> _players = new();
 
     private readonly IGameObjectManagerService _gameObjectManager;
 
@@ -47,8 +47,29 @@ public class PlayerService
 
 
         SubscribeEvent<SessionAddedEvent>(OnSessionAdded);
+        SubscribeEvent<SessionRemovedEvent>(OnSessionRemoved);
         SubscribeEvent<PlayerLoggedEvent>(this);
         SubscribeEvent<PlayerLogoutEvent>(this);
+
+        _networkServer.RegisterMessageListener<PlayerMoveRequestMessage>(OnPlayerMoveRequest);
+
+        SubscribeEvent<SessionAddedEvent>(
+            @event => { SendEventAsync(new PlayerLoggedEvent(Guid.NewGuid(), @event.SessionId)); }
+        );
+    }
+
+
+    private async ValueTask<IEnumerable<SessionNetworkMessage>> OnPlayerMoveRequest(
+        string sessionId, PlayerMoveRequestMessage message
+    )
+    {
+        if (_players.TryGetValue(sessionId, out var player))
+        {
+            player.Position = message.Position.ToVector3();
+            player.Rotation = message.Rotation.ToVector3();
+        }
+
+        return [];
     }
 
 
@@ -58,6 +79,13 @@ public class PlayerService
 
         sessionObject.SetPosition(new Vector3(0, 0, 0));
         sessionObject.SetRotation(new Vector3(0, 0, 0));
+    }
+
+    private void OnSessionRemoved(SessionRemovedEvent obj)
+    {
+        _players.TryGetValue(obj.SessionId, out var player);
+
+        SendEvent(new PlayerLogoutEvent(player.PlayerId, player.SessionId));
     }
 
     private void UpdatePlayer(PlayerGameObject player)
@@ -73,6 +101,8 @@ public class PlayerService
         var player = new PlayerGameObject
         {
             Id = message.SessionId,
+            SessionId = message.SessionId,
+            PlayerId = Guid.NewGuid(),
             Name = "User" + message.SessionId,
         };
 
@@ -80,7 +110,7 @@ public class PlayerService
         player.PositionSubject.Subscribe(_ => UpdatePlayer(player));
         player.RotationSubject.Subscribe(_ => UpdatePlayer(player));
 
-        _players.TryAdd(message.PlayerId, player);
+        _players.TryAdd(message.SessionId, player);
 
         _gameObjectManager.AddGameObject(player);
     }
@@ -89,7 +119,7 @@ public class PlayerService
     {
         _logger.Information("Player logged out: {Name}", "User" + message.SessionId);
 
-        if (_players.TryRemove(message.PlayerId, out var player))
+        if (_players.TryRemove(message.SessionId, out var player))
         {
             _gameObjectManager.RemoveGameObject(player);
         }

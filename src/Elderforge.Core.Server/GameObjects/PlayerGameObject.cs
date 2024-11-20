@@ -6,6 +6,7 @@ namespace Elderforge.Core.Server.GameObjects;
 
 public class PlayerGameObject : AbstractGameObject, IPlayerGameObject
 {
+    public Guid PlayerId { get; set; }
     public string SessionId { get; set; }
     public PlayerGameObject() : base(GameObjectType.Player)
     {
