@@ -1,4 +1,4 @@
-namespace Elderforge.Core.Server.Types;
+namespace Elderforge.Shared.Types;
 
 public enum DayPhase
 {

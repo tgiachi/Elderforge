@@ -22,6 +22,8 @@ public enum NetworkMessageType : byte
 
     LightUpdateResponse,
 
+    TimeChangedResponse,
+    DayPhaseChangedResponse,
 
     PlayerMoveRequest,
     PlayerMoveResponse,

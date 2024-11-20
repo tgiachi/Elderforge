@@ -1,4 +1,5 @@
 using Elderforge.Core.Server.Types;
+using Elderforge.Shared.Types;
 
 namespace Elderforge.Core.Server.Data.TimeWeather;
 

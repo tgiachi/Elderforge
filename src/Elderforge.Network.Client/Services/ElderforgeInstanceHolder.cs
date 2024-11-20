@@ -13,6 +13,7 @@ using Elderforge.Network.Packets.Login;
 using Elderforge.Network.Packets.Motd;
 using Elderforge.Network.Packets.Player;
 using Elderforge.Network.Packets.System;
+using Elderforge.Network.Packets.TimeAndWeather;
 using Elderforge.Network.Packets.World;
 using Elderforge.Network.Types;
 using Serilog;
@@ -50,10 +51,14 @@ public class ElderforgeInstanceHolder
 
         new(NetworkMessageType.GameObjectDestroyResponse, typeof(GameObjectDestroyMessage)),
         new(NetworkMessageType.GameObjectActionRequest, typeof(GameObjectActionRequestMessage)),
+
         new(NetworkMessageType.LightUpdateResponse, typeof(LightGoUpdateResponseMessage)),
 
         new(NetworkMessageType.LoginRequest, typeof(LoginRequestMessage)),
         new(NetworkMessageType.LoginResponse, typeof(LoginResponseMessage)),
+
+        new(NetworkMessageType.TimeChangedResponse, typeof(TimeChangedMessage)),
+        new(NetworkMessageType.DayPhaseChangedResponse, typeof(DayPhaseChangedMessage)),
 
         new(NetworkMessageType.PlayerMoveRequest, typeof(PlayerMoveRequestMessage)),
         new(NetworkMessageType.PlayerMoveResponse, typeof(PlayerMoveResponseMessage)),

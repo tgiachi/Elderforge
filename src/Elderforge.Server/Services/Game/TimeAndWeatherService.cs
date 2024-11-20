@@ -5,6 +5,8 @@ using Elderforge.Core.Server.Interfaces.Services.Game;
 using Elderforge.Core.Server.Interfaces.Services.Game.Base;
 using Elderforge.Core.Server.Interfaces.Services.System;
 using Elderforge.Core.Server.Types;
+using Elderforge.Network.Packets.TimeAndWeather;
+using Elderforge.Shared.Types;
 using Serilog;
 
 namespace Elderforge.Server.Services.Game;
@@ -22,7 +24,6 @@ public class TimeAndWeatherService : AbstractGameService, ITimeAndWeatherService
     private float currentGameTime;
 
     private readonly ILogger _logger = Log.ForContext<TimeAndWeatherService>();
-
 
 
     public TimeAndWeatherService(ISchedulerService schedulerService, IEventBusService eventBusService) : base(
@@ -43,6 +44,7 @@ public class TimeAndWeatherService : AbstractGameService, ITimeAndWeatherService
 
         _logger.Debug("Current Time: {Time}", timeData);
         await SendEventAsync(new TimeChangeEvent(timeData));
+        BroadcastNetworkMessage(CreateTimeChangedMessage(timeData));
     }
 
 
@@ -61,6 +63,18 @@ public class TimeAndWeatherService : AbstractGameService, ITimeAndWeatherService
         };
     }
 
+    private static TimeChangedMessage CreateTimeChangedMessage(TimeOfDayData timeData)
+    {
+        return new TimeChangedMessage
+        {
+            Hours = timeData.Hours,
+            Minutes = timeData.Minutes,
+            NormalizedTime = timeData.NormalizedTime,
+            Phase = timeData.Phase,
+            IsDayTime = timeData.IsDayTime
+        };
+    }
+
     private async Task CheckPhaseChange(TimeOfDayData timeData)
     {
         if (timeData.Phase != lastPhase)
@@ -68,6 +82,7 @@ public class TimeAndWeatherService : AbstractGameService, ITimeAndWeatherService
             lastPhase = timeData.Phase;
             _logger.Debug("Day phase changed to {Phase}", timeData.Phase);
             await SendEventAsync(new DayPhaseChangeEvent(lastPhase));
+            BroadcastNetworkMessage(new DayPhaseChangedMessage(lastPhase));
         }
     }
 
