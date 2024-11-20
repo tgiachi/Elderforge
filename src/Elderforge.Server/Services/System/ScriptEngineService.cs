@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using Elderforge.Core.Server.Attributes.Scripts;
+using Elderforge.Core.Server.Attributes.Services;
 using Elderforge.Core.Server.Data.Directories;
 using Elderforge.Core.Server.Data.Scripts;
 using Elderforge.Core.Server.Interfaces.Services.System;
@@ -14,6 +15,7 @@ using Serilog;
 
 namespace Elderforge.Server.Services.System;
 
+[ElderforgeService]
 public class ScriptEngineService : IScriptEngineService
 {
     private readonly ILogger _logger = Log.ForContext<ScriptEngineService>();

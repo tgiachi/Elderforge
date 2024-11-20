@@ -1,3 +1,4 @@
+using Elderforge.Core.Server.Attributes.Services;
 using Elderforge.Core.Server.Interfaces.Services.System;
 using Elderforge.Core.Server.Utils;
 using Elderforge.Entities.Database;
@@ -9,6 +10,8 @@ using Serilog;
 
 namespace Elderforge.Server.Services.System;
 
+
+[ElderforgeService]
 public class AccountService : IAccountService, INetworkMessageListener<LoginRequestMessage>
 {
     private readonly ILogger _logger = Log.ForContext<AccountService>();

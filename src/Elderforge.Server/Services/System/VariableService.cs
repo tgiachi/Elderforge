@@ -2,12 +2,15 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Elderforge.Core.Interfaces.EventBus;
 using Elderforge.Core.Interfaces.Services;
+using Elderforge.Core.Server.Attributes.Services;
 using Elderforge.Core.Server.Events.Variables;
 using Elderforge.Core.Server.Interfaces.Services.System;
 using Serilog;
 
 namespace Elderforge.Server.Services.System;
 
+
+[ElderforgeService(-1)]
 public class VariableService
     : IVariablesService, IEventBusListener<AddVariableEvent>, IEventBusListener<AddVariableBuilderEvent>
 {

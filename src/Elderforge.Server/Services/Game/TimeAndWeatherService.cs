@@ -1,4 +1,5 @@
 using Elderforge.Core.Interfaces.Services;
+using Elderforge.Core.Server.Attributes.Services;
 using Elderforge.Core.Server.Data.TimeWeather;
 using Elderforge.Core.Server.Events.World.TimeAndWeather;
 using Elderforge.Core.Server.Interfaces.Services.Game;
@@ -10,6 +11,8 @@ using Serilog;
 
 namespace Elderforge.Server.Services.Game;
 
+
+[ElderforgeService]
 public class TimeAndWeatherService : AbstractGameService, ITimeAndWeatherService
 {
     private const float REAL_MINUTES_PER_GAME_DAY = 60f;

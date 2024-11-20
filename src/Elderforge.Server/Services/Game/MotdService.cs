@@ -1,4 +1,5 @@
 using Elderforge.Core.Interfaces.Services;
+using Elderforge.Core.Server.Attributes.Services;
 using Elderforge.Core.Server.Data.Motd;
 using Elderforge.Core.Server.Events.Network;
 using Elderforge.Core.Server.Interfaces.Services.Game;
@@ -13,6 +14,8 @@ using Serilog;
 
 namespace Elderforge.Server.Services.Game;
 
+
+[ElderforgeService]
 public class MotdService : AbstractGameService, IMotdService, INetworkMessageListener<MotdRequestMessage>
 {
     private const string MotdContextVariable = "motd";

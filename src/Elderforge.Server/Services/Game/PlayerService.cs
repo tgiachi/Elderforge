@@ -1,5 +1,6 @@
 using System.Numerics;
 using Elderforge.Core.Interfaces.Services;
+using Elderforge.Core.Server.Attributes.Services;
 using Elderforge.Core.Server.Interfaces.Services.Game;
 using Elderforge.Core.Server.Interfaces.Services.Game.Base;
 using Elderforge.Network.Data.Internal;
@@ -12,6 +13,8 @@ using Serilog;
 
 namespace Elderforge.Server.Services.Game;
 
+
+[ElderforgeService]
 public class PlayerService : AbstractGameService, IPlayerService, INetworkMessageListener<PlayerMoveRequestMessage>
 {
     private readonly INetworkSessionService _networkSessionService;
@@ -74,7 +77,7 @@ public class PlayerService : AbstractGameService, IPlayerService, INetworkMessag
         }
 
 
-        
+
         return [];
     }
 }

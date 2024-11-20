@@ -13,4 +13,12 @@ public static class AutoStartServiceExtension
         services.AddSingleton<TInterface, TService>();
         return services.AddToRegisterTypedList(new AutoStartService(typeof(TInterface), priority));
     }
+
+    public static IServiceCollection AddAutoStartService(
+        this IServiceCollection services, Type interf, Type service, int priority = 0
+    )
+    {
+        services.AddSingleton(interf, service);
+        return services.AddToRegisterTypedList(new AutoStartService(interf, priority));
+    }
 }

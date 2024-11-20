@@ -1,3 +1,4 @@
+using Elderforge.Core.Server.Attributes.Services;
 using Elderforge.Core.Server.Interfaces.Services.System;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Interfaces.Listeners;
@@ -7,6 +8,8 @@ using Serilog;
 
 namespace Elderforge.Server.Services.System;
 
+
+[ElderforgeService]
 public class WorldManagerService : IWorldManagerService, INetworkMessageListener<WorldChunkRequestMessage>
 {
     private readonly ILogger _logger = Log.ForContext<WorldManagerService>();

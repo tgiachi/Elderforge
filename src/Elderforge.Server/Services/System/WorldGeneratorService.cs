@@ -3,6 +3,7 @@ using System.Numerics;
 using Elderforge.Core.Interfaces.EventBus;
 using Elderforge.Core.Interfaces.Services;
 using Elderforge.Core.Numerics;
+using Elderforge.Core.Server.Attributes.Services;
 using Elderforge.Core.Server.Data.Config;
 using Elderforge.Core.Server.Data.Directories;
 using Elderforge.Core.Server.Data.Internal;
@@ -19,6 +20,7 @@ using Serilog;
 
 namespace Elderforge.Server.Services.System;
 
+[ElderforgeService]
 public class WorldGeneratorService : IWorldGeneratorService, IEventBusListener<EngineStartedEvent>
 {
     private readonly ILogger _logger = Log.ForContext<WorldGeneratorService>();

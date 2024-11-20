@@ -1,4 +1,5 @@
 using Elderforge.Core.Interfaces.Services;
+using Elderforge.Core.Server.Attributes.Services;
 using Elderforge.Core.Server.Data.Internal;
 using Elderforge.Core.Server.Interfaces.Services.Game;
 using Elderforge.Core.Server.Interfaces.Services.Game.Base;
@@ -12,6 +13,8 @@ using Serilog;
 
 namespace Elderforge.Server.Services.Game;
 
+
+[ElderforgeService]
 public class GameCommandService : AbstractGameService, IGameCommandService, INetworkMessageListener<ChatMessage>
 {
     private readonly ILogger _logger = Log.ForContext<GameCommandService>();

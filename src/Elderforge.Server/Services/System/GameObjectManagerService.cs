@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Elderforge.Core.Interfaces.Services;
+using Elderforge.Core.Server.Attributes.Services;
 using Elderforge.Core.Server.Interfaces.Services.System;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Interfaces.Listeners;
@@ -10,10 +11,13 @@ using Elderforge.Network.Packets.GameObjects.Lights;
 using Elderforge.Network.Serialization.Lights;
 using Elderforge.Server.Extensions;
 using Elderforge.Shared.Interfaces;
+using Elderforge.Shared.Interfaces.GameObjects;
 using Serilog;
 
 namespace Elderforge.Server.Services.System;
 
+
+[ElderforgeService]
 public class GameObjectManagerService : IGameObjectManagerService, INetworkMessageListener<GameObjectActionRequestMessage>
 {
     private readonly IEventBusService _eventBusService;
@@ -155,6 +159,16 @@ public class GameObjectManagerService : IGameObjectManagerService, INetworkMessa
             sessionId,
             message.ActionType
         );
+
+        var gameObject = _gameObjects.FirstOrDefault(x => x.Id == message.Id);
+
+
+        // ReSharper disable once SuspiciousTypeConversion.Global
+        if (gameObject is IActionGameObject actionGameObject)
+        {
+            await actionGameObject.ActionAsync(message.ActionType, gameObject);
+        }
+
 
         return [];
     }

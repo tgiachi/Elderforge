@@ -48,7 +48,6 @@ public class ElderforgeInstanceHolder
         new(NetworkMessageType.WorldChunkRequest, typeof(WorldChunkRequestMessage)),
         new(NetworkMessageType.WorldChunkResponse, typeof(WorldChunkResponseMessage)),
 
-
         new(NetworkMessageType.GameObjectDestroyResponse, typeof(GameObjectDestroyMessage)),
         new(NetworkMessageType.GameObjectActionRequest, typeof(GameObjectActionRequestMessage)),
 

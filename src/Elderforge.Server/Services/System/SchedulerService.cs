@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Reactive.Linq;
 using Elderforge.Core.Interfaces.EventBus;
 using Elderforge.Core.Interfaces.Services;
+using Elderforge.Core.Server.Attributes.Services;
 using Elderforge.Core.Server.Data.Config;
 using Elderforge.Core.Server.Data.Internal;
 using Elderforge.Core.Server.Events.Scheduler;
@@ -15,6 +16,8 @@ using Serilog;
 
 namespace Elderforge.Server.Services.System;
 
+
+[ElderforgeService(-1)]
 public class SchedulerService
     : ISchedulerService, IEventBusListener<EnqueueGameActionEvent>, IEventBusListener<AddSchedulerJobEvent>
 {

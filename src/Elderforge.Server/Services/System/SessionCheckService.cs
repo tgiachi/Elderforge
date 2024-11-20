@@ -1,4 +1,5 @@
 using Elderforge.Core.Interfaces.Services;
+using Elderforge.Core.Server.Attributes.Services;
 using Elderforge.Core.Server.Events.Network;
 using Elderforge.Core.Server.Interfaces.Services.System;
 using Elderforge.Network.Data.Internal;
@@ -11,6 +12,8 @@ using Serilog;
 
 namespace Elderforge.Server.Services.System;
 
+
+[ElderforgeService]
 public class SessionCheckService : ISessionCheckService, INetworkMessageListener<PongMessage>
 {
     private readonly ILogger _logger = Log.ForContext<ISessionCheckService>();

@@ -1,4 +1,5 @@
 using Elderforge.Core.Interfaces.Services;
+using Elderforge.Core.Server.Attributes.Services;
 using Elderforge.Core.Server.Interfaces.Services.Game;
 using Elderforge.Core.Server.Interfaces.Services.Game.Base;
 using Elderforge.Network.Data.Internal;
@@ -8,6 +9,7 @@ using Serilog;
 
 namespace Elderforge.Server.Services.Game;
 
+[ElderforgeService]
 public class ChatService : AbstractGameService, IChatService, INetworkMessageListener<ChatMessage>
 {
     private readonly ILogger _logger = Log.Logger.ForContext<ChatService>();

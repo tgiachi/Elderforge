@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Elderforge.Core.Interfaces.EventBus;
 using Elderforge.Core.Interfaces.Services;
+using Elderforge.Core.Server.Attributes.Services;
 using Elderforge.Core.Server.Data.Directories;
 using Elderforge.Core.Server.Events.Engine;
 using Elderforge.Core.Server.Events.Scheduler;
@@ -10,6 +11,7 @@ using Serilog;
 
 namespace Elderforge.Server.Services.System;
 
+[ElderforgeService]
 public class DiagnosticService
     : IDiagnosticService, IEventBusListener<EngineStartedEvent>, IEventBusListener<EngineShuttingDownEvent>
 {
