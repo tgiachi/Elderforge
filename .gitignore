@@ -570,3 +570,5 @@ crashlytics-build.properties
 *.dll
 test_server/elderforge.pid
 Elderforge.Client/.idea
+Elderforge.Client_old/Assets/.DS_Store
+**/**/.DS_Store
