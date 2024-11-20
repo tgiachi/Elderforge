@@ -11,16 +11,16 @@ namespace Elderforge.Server.Services.System;
 
 
 [ElderforgeService(-1)]
-public class VariableService
+public class VariablesService
     : IVariablesService, IEventBusListener<AddVariableEvent>, IEventBusListener<AddVariableBuilderEvent>
 {
     private static Regex TokenRegex => new(@"\{([^}]+)\}");
 
-    private readonly ILogger _logger = Log.ForContext<VariableService>();
+    private readonly ILogger _logger = Log.ForContext<VariablesService>();
     private readonly Dictionary<string, Func<object>> _variableBuilder = new();
     private readonly Dictionary<string, object> _variables = new();
 
-    public VariableService(IEventBusService eventBusService)
+    public VariablesService(IEventBusService eventBusService)
     {
         eventBusService.Subscribe<AddVariableEvent>(this);
         eventBusService.Subscribe<AddVariableBuilderEvent>(this);

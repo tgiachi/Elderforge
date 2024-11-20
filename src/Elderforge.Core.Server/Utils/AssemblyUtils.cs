@@ -86,6 +86,12 @@ public static class AssemblyUtils
         return types.ToList();
     }
 
+
+    public static Type? GetInterfaceOfService(Type service)
+    {
+        return GetInterfacesOfType(service).FirstOrDefault(s => s.Name.EndsWith("I" + service.Name));
+    }
+
     /// <summary>
     ///  Get all types with a specific attribute.
     /// </summary>

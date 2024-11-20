@@ -1,6 +1,8 @@
-﻿using CommandLine;
+﻿using System.Reflection;
+using CommandLine;
 using Elderforge.Core.Interfaces.Services;
 using Elderforge.Core.Server.Attributes.Scripts;
+using Elderforge.Core.Server.Attributes.Services;
 using Elderforge.Core.Server.Data.Config;
 using Elderforge.Core.Server.Data.Directories;
 using Elderforge.Core.Server.Data.Internal;
@@ -134,23 +136,47 @@ public class Program
             ;
 
 
-        hostBuilder.Services
-            .AddAutoStartService<IEventBusService, EventBusService>()
-            .AddAutoStartService<ISchedulerService, SchedulerService>(-1)
-            .AddAutoStartService<IScriptEngineService, ScriptEngineService>()
-            .AddAutoStartService<IVariablesService, VariableService>(-1)
-            .AddAutoStartService<IDiagnosticService, DiagnosticService>()
-            .AddAutoStartService<IVersionService, VersionService>()
-            .AddAutoStartService<ISessionCheckService, SessionCheckService>()
-            .AddAutoStartService<IWorldGeneratorService, WorldGeneratorService>()
-            .AddAutoStartService<IWorldManagerService, WorldManagerService>()
-            .AddAutoStartService<IAccountService, AccountService>()
-            .AddAutoStartService<IGameCommandService, GameCommandService>()
-            .AddAutoStartService<IMotdService, MotdService>()
-            .AddAutoStartService<IGameObjectManagerService, GameObjectManagerService>()
-            .AddAutoStartService<IPlayerService, PlayerService>()
-            .AddAutoStartService<ITimeAndWeatherService, TimeAndWeatherService>()
-            .AddAutoStartService<IChatService, ChatService>();
+        // hostBuilder.Services
+        //     .AddAutoStartService<IEventBusService, EventBusService>()
+        //     .AddAutoStartService<ISchedulerService, SchedulerService>(-1)
+        //     .AddAutoStartService<IScriptEngineService, ScriptEngineService>()
+        //     .AddAutoStartService<IVariablesService, VariableService>(-1)
+        //     .AddAutoStartService<IDiagnosticService, DiagnosticService>()
+        //     .AddAutoStartService<IVersionService, VersionService>()
+        //     .AddAutoStartService<ISessionCheckService, SessionCheckService>()
+        //     .AddAutoStartService<IWorldGeneratorService, WorldGeneratorService>()
+        //     .AddAutoStartService<IWorldManagerService, WorldManagerService>()
+        //     .AddAutoStartService<IAccountService, AccountService>()
+        //     .AddAutoStartService<IGameCommandService, GameCommandService>()
+        //     .AddAutoStartService<IMotdService, MotdService>()
+        //     .AddAutoStartService<IGameObjectManagerService, GameObjectManagerService>()
+        //     .AddAutoStartService<IPlayerService, PlayerService>()
+        //     .AddAutoStartService<ITimeAndWeatherService, TimeAndWeatherService>()
+        //     .AddAutoStartService<IChatService, ChatService>();
+
+
+        AssemblyUtils.GetAttribute<ElderforgeServiceAttribute>()
+            .ForEach(
+                service =>
+                {
+                    var att = service.GetCustomAttribute<ElderforgeServiceAttribute>();
+                    var interfaceType = AssemblyUtils.GetInterfaceOfService(service);
+
+                    if (interfaceType == null)
+                    {
+                        Log.Error("Service {Service} does not have an interface", service.Name);
+                        return;
+                    }
+
+                    Log.Debug(
+                        "Registering service {Service} with interface {Interface}",
+                        service.Name,
+                        interfaceType.Name
+                    );
+
+                    hostBuilder.Services.AddAutoStartService(interfaceType, service, att.Priority);
+                }
+            );
 
 
         if (options.Value.DatabaseType == DatabaseType.LiteDb)
