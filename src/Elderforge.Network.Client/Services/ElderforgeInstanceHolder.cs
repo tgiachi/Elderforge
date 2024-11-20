@@ -60,7 +60,8 @@ public class ElderforgeInstanceHolder
         new(NetworkMessageType.DayPhaseChangedResponse, typeof(DayPhaseChangedMessage)),
 
         new(NetworkMessageType.PlayerMoveRequest, typeof(PlayerMoveRequestMessage)),
-        new(NetworkMessageType.PlayerMoveResponse, typeof(PlayerMoveResponseMessage)),
+        new(NetworkMessageType.PlayerUpdateResponse, typeof(PlayerUpdateResponseMessage)),
+        new(NetworkMessageType.PlayerDisconnectedResponse, typeof(PlayerDisconnectedMessage))
     ];
 
     public IEventBusService EventBusService { get; } = new EventBusService();

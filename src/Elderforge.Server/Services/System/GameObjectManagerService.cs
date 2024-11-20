@@ -8,14 +8,15 @@ using Elderforge.Network.Interfaces.Listeners;
 using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Packets.GameObjects;
 using Elderforge.Network.Packets.GameObjects.Lights;
+using Elderforge.Network.Packets.Player;
 using Elderforge.Network.Serialization.Lights;
+using Elderforge.Network.Serialization.Numerics;
 using Elderforge.Server.Extensions;
 using Elderforge.Shared.Interfaces;
 using Elderforge.Shared.Interfaces.GameObjects;
 using Serilog;
 
 namespace Elderforge.Server.Services.System;
-
 
 [ElderforgeService]
 public class GameObjectManagerService : IGameObjectManagerService, INetworkMessageListener<GameObjectActionRequestMessage>
@@ -68,6 +69,23 @@ public class GameObjectManagerService : IGameObjectManagerService, INetworkMessa
                 }
             }
         }
+    }
+
+    private void PlayerAdded(IPlayerGameObject playerGameObject)
+    {
+        _logger.Debug("Player added {id} in position: {Pos}", playerGameObject.Id, playerGameObject.Position);
+
+        playerGameObject.PositionSubject.Subscribe(_ => SendPlayerUpdate(playerGameObject));
+        playerGameObject.RotationSubject.Subscribe(_ => SendPlayerUpdate(playerGameObject));
+
+        _ = SendPlayerUpdate(playerGameObject);
+    }
+
+    private void PlayerRemoved(IPlayerGameObject playerGameObject)
+    {
+        _logger.Debug("Player removed {id}", playerGameObject.Id);
+
+        _ = SendDestroyObject(playerGameObject);
     }
 
 
@@ -124,6 +142,26 @@ public class GameObjectManagerService : IGameObjectManagerService, INetworkMessa
                 new SessionNetworkMessage(session.Id, CreateLightGameObjectResponseMessage(lightGameObject))
             );
         }
+    }
+
+    private async Task SendPlayerUpdate(IPlayerGameObject playerGameObject)
+    {
+        var message = CreatePlayerGameObjectResponseMessage(playerGameObject);
+        foreach (var session in _networkSessionService.GetSessionIds.AsEnumerable()
+                     .Where(s => s != playerGameObject.SessionId))
+        {
+            await _networkServer.SendMessageAsync(new SessionNetworkMessage(session, message));
+        }
+    }
+
+    private static PlayerUpdateResponseMessage CreatePlayerGameObjectResponseMessage(IPlayerGameObject playerGameObject)
+    {
+        return new PlayerUpdateResponseMessage
+        {
+            Position = new SerializableVector3(playerGameObject.Position),
+            Rotation = new SerializableVector3(playerGameObject.Position),
+            Id = playerGameObject.Id
+        };
     }
 
     private async Task SendDestroyObject(IGameObject gameObject)

@@ -39,11 +39,15 @@ public static class NetworkSessionExtension
 
     public static void SetPosition(this ISessionObject sessionObject, Vector3 position)
     {
+        sessionObject.WriteLock.Wait();
         sessionObject.SetDataObject("position", position);
+        sessionObject.WriteLock.Release();
     }
 
     public static void SetRotation(this ISessionObject sessionObject, Vector3 rotation)
     {
+        sessionObject.WriteLock.Wait();
         sessionObject.SetDataObject("rotation", rotation);
+        sessionObject.WriteLock.Release();
     }
 }

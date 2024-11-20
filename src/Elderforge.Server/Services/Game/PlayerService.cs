@@ -1,11 +1,15 @@
+using System.Collections.Concurrent;
 using System.Numerics;
+using Elderforge.Core.Interfaces.EventBus;
 using Elderforge.Core.Interfaces.Services;
 using Elderforge.Core.Server.Attributes.Services;
+using Elderforge.Core.Server.Events.Player;
+using Elderforge.Core.Server.GameObjects;
 using Elderforge.Core.Server.Interfaces.Services.Game;
 using Elderforge.Core.Server.Interfaces.Services.Game.Base;
+using Elderforge.Core.Server.Interfaces.Services.System;
 using Elderforge.Network.Data.Internal;
 using Elderforge.Network.Events.Sessions;
-using Elderforge.Network.Interfaces.Listeners;
 using Elderforge.Network.Interfaces.Services;
 using Elderforge.Network.Packets.Player;
 using Elderforge.Server.Extensions;
@@ -13,11 +17,17 @@ using Serilog;
 
 namespace Elderforge.Server.Services.Game;
 
-
 [ElderforgeService]
-public class PlayerService : AbstractGameService, IPlayerService, INetworkMessageListener<PlayerMoveRequestMessage>
+public class PlayerService
+    : AbstractGameService, IPlayerService,
+        IEventBusListener<PlayerLoggedEvent>,
+        IEventBusListener<PlayerLogoutEvent>
 {
     private readonly INetworkSessionService _networkSessionService;
+
+    private readonly ConcurrentDictionary<Guid, PlayerGameObject> _players = new();
+
+    private readonly IGameObjectManagerService _gameObjectManager;
 
     private readonly INetworkServer _networkServer;
 
@@ -25,17 +35,20 @@ public class PlayerService : AbstractGameService, IPlayerService, INetworkMessag
 
 
     public PlayerService(
-        IEventBusService eventBusService, INetworkSessionService networkSessionService, INetworkServer networkServer
+        IEventBusService eventBusService, INetworkSessionService networkSessionService, INetworkServer networkServer,
+        IGameObjectManagerService gameObjectManager
     ) : base(
         eventBusService
     )
     {
         _networkSessionService = networkSessionService;
         _networkServer = networkServer;
+        _gameObjectManager = gameObjectManager;
 
-        _networkServer.RegisterMessageListener(this);
 
         SubscribeEvent<SessionAddedEvent>(OnSessionAdded);
+        SubscribeEvent<PlayerLoggedEvent>(this);
+        SubscribeEvent<PlayerLogoutEvent>(this);
     }
 
 
@@ -47,37 +60,38 @@ public class PlayerService : AbstractGameService, IPlayerService, INetworkMessag
         sessionObject.SetRotation(new Vector3(0, 0, 0));
     }
 
-    public async ValueTask<IEnumerable<SessionNetworkMessage>> OnMessageReceivedAsync(
-        string sessionId, PlayerMoveRequestMessage message
-    )
+    private void UpdatePlayer(PlayerGameObject player)
     {
-        var sessionObject = _networkSessionService.GetSessionObject(sessionId);
+        _networkSessionService.GetSessionObject(player.Id).SetPosition(player.Position);
+        _networkSessionService.GetSessionObject(player.Id).SetRotation(player.Rotation);
+    }
 
-        sessionObject.SetPosition(message.Position.ToVector3());
-        sessionObject.SetRotation(message.Rotation.ToVector3());
+    public async Task OnEventAsync(PlayerLoggedEvent message)
+    {
+        _logger.Information("Player logged in: {Name}", "User" + message.SessionId);
 
-        _logger.Debug("Player {sessionId} moved to {position}", sessionId, message.Position.ToVector3());
-
-        foreach (var player in _networkSessionService.GetSessionObjectCanSee(100, message.Position.ToVector3()))
+        var player = new PlayerGameObject
         {
-            if (player.Id == sessionId)
-            {
-                continue;
-            }
+            Id = message.SessionId,
+            Name = "User" + message.SessionId,
+        };
 
-            SendNetworkMessage(
-                player.Id,
-                new PlayerMoveResponseMessage
-                {
-                    Position = message.Position,
-                    Rotation = message.Rotation,
-                    Id = sessionId
-                }
-            );
+
+        player.PositionSubject.Subscribe(_ => UpdatePlayer(player));
+        player.RotationSubject.Subscribe(_ => UpdatePlayer(player));
+
+        _players.TryAdd(message.PlayerId, player);
+
+        _gameObjectManager.AddGameObject(player);
+    }
+
+    public async Task OnEventAsync(PlayerLogoutEvent message)
+    {
+        _logger.Information("Player logged out: {Name}", "User" + message.SessionId);
+
+        if (_players.TryRemove(message.PlayerId, out var player))
+        {
+            _gameObjectManager.RemoveGameObject(player);
         }
-
-
-
-        return [];
     }
 }

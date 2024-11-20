@@ -1,3 +1,4 @@
+using Elderforge.Core.Interfaces.EventBus;
 using Elderforge.Core.Interfaces.Services;
 using Elderforge.Network.Events;
 using Elderforge.Network.Events.Network;
@@ -38,5 +39,10 @@ public abstract class AbstractGameService
     protected void SubscribeEvent<TEvent>(Action<TEvent> handler) where TEvent : class
     {
         _eventBusService.Subscribe(handler);
+    }
+
+    protected void SubscribeEvent<TEvent>(IEventBusListener<TEvent> listener) where TEvent : class
+    {
+        _eventBusService.Subscribe<TEvent>(listener);
     }
 }

@@ -26,5 +26,6 @@ public enum NetworkMessageType : byte
     DayPhaseChangedResponse,
 
     PlayerMoveRequest,
-    PlayerMoveResponse,
+    PlayerUpdateResponse,
+    PlayerDisconnectedResponse
 }
