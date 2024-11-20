@@ -4,7 +4,6 @@ using Elderforge.Core.Server.Events.World.TimeAndWeather;
 using Elderforge.Core.Server.Interfaces.Services.Game;
 using Elderforge.Core.Server.Interfaces.Services.Game.Base;
 using Elderforge.Core.Server.Interfaces.Services.System;
-using Elderforge.Core.Server.Types;
 using Elderforge.Network.Packets.TimeAndWeather;
 using Elderforge.Shared.Types;
 using Serilog;
