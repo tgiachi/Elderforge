@@ -130,7 +130,7 @@ public class Program
         hostBuilder.Services
             .AddSingleton(new SchedulerServiceConfig(100, 50, 10))
             .AddSingleton(new WorldGeneratorConfig(64))
-            .AddSingleton<ITerrainGenerator, BasicTerrainGenerator>()
+            .AddSingleton<ITerrainGenerator, FlatWorldGenerator>()
             ;
 
 
