@@ -7,8 +7,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /
 
-RUN apt-get update && apt-get install -y lua5.4 \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y lua5.4 liblua5.4-dev
 COPY ["src", "src/"]
 RUN dotnet restore "src/Elderforge.Server/Elderforge.Server.csproj"
 COPY . .

@@ -17,6 +17,7 @@ tasks:
   docker_run:
     cmds:
       - if [ $(docker ps -q -f name=elderforge_server) ]; then docker stop elderforge_server && docker rm elderforge_server; fi
+      - docker rm elderforge_server || true
       - docker run --name elderforge_server -p 5000:5000/tcp -p 5000:5000/udp -v $(pwd)/test_server:/elderforge -e ELDERFORGE_ROOT_DIRECTORY=/elderforge elderforge/server
       - docker logs -f elderforge_server
     deps:
