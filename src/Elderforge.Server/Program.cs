@@ -149,6 +149,7 @@ public class Program
             .AddAutoStartService<IMotdService, MotdService>()
             .AddAutoStartService<IGameObjectManagerService, GameObjectManagerService>()
             .AddAutoStartService<IPlayerService, PlayerService>()
+            .AddAutoStartService<ITimeAndWeatherService, TimeAndWeatherService>()
             .AddAutoStartService<IChatService, ChatService>();
 
 

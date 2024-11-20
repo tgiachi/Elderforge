@@ -19,6 +19,16 @@ public abstract class AbstractGameService
         _eventBusService.Publish(new SendMessageEvent(sessionId, message));
     }
 
+    protected Task SendEventAsync<TEvent>(TEvent @event) where TEvent : class
+    {
+        return _eventBusService.PublishAsync(@event);
+    }
+
+    protected void SendEvent<TEvent>(TEvent @event) where TEvent : class
+    {
+        _eventBusService.Publish(@event);
+    }
+
     protected void BroadcastNetworkMessage<TMessage>(TMessage message) where TMessage : class, INetworkMessage
     {
         SendNetworkMessage(string.Empty, message);
